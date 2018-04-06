@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+	<nav class="navbar navbar-default" th:fragment="navbar">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<a class="navbar-brand" th:href="@{/}">EasyCBT</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li class="active"><a th:href="@{/questions}">xxx</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a></li>
+				</ul>
+			</div>
+			<div>
+				<form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true"></form>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+  
+</html>

@@ -35,6 +35,8 @@ public class QuestionServiceTest {
 	QuestionRepository questionRepository;
 	@Autowired
 	QuestionAnswerRepository questionAnswerRepository;
+	@Autowired
+	QuestionService questionService;
 	
 	@Before
 	public void before() {
@@ -74,11 +76,7 @@ public class QuestionServiceTest {
 		answer3.setIsCorrect(false);
 		questionAnswerRepository.save(answer3);
 		
-		List<QuestionCategory> categories = questionCategoryRepository.findAll();
-		assertThat(categories.size(), is(1));
-		assertThat(categories.get(0).getName(), is("category1"));
-		
-		List<Question> questions = questionRepository.findAll();
+		List<Question> questions = questionService.getQuestionsByCategory(category1);
 		assertThat(questions.size(), is(1));
 		Question question = questions.get(0);
 		assertThat(question.getQuestionType(), is(QuestionType.SINGLE_CHOICE));

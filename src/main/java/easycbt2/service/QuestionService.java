@@ -1,7 +1,6 @@
 package easycbt2.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,5 @@ public class QuestionService {
 
 	public List<Question> getQuestionsByCategory(QuestionCategory questionCategory) {
 		return questionRepository.findByQuestionCategory(questionCategory);
-	}
-
-	public Optional<Question> getQuestion(long questionId) {
-		return questionRepository.findById(questionId);
 	}
 }
