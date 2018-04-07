@@ -19,15 +19,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
-@Table(name="examinations_categories")
-public class ExaminationsCategories {
+@Table(name="questions_auth_users")
+public class QuestionsAuthUsers {
 	@Id
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
-	private Examination examination;
+	private Question question;
 	@ManyToOne
-	private QuestionCategory questionCategory;
+	private User user;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -38,23 +38,24 @@ public class ExaminationsCategories {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date modifiedDate;
+    
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Examination getExamination() {
-		return examination;
+	public Question getQuestion() {
+		return question;
 	}
-	public void setExamination(Examination examination) {
-		this.examination = examination;
+	public void setQuestion(Question question) {
+		this.question = question;
 	}
-	public QuestionCategory getQuestionCategory() {
-		return questionCategory;
+	public User getUser() {
+		return user;
 	}
-	public void setQuestionCategory(QuestionCategory questionCategory) {
-		this.questionCategory = questionCategory;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	public String getCreatedBy() {
 		return createdBy;

@@ -3,7 +3,6 @@ package easycbt2.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -11,81 +10,68 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import easycbt2.model.Examination;
 import easycbt2.model.Question;
-import easycbt2.model.QuestionAnswer;
-import easycbt2.model.QuestionCategory;
-import easycbt2.model.QuestionType;
-import easycbt2.repository.QuestionAnswerRepository;
-import easycbt2.repository.QuestionCategoryRepository;
-import easycbt2.repository.QuestionRepository;
+import easycbt2.model.User;
+import easycbt2.repository.ExaminationRepository;
+import easycbt2.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class QuestionServiceTest {
 	@Autowired
-	QuestionCategoryRepository questionCategoryRepository;
+	UserRepository userRepository;
 	@Autowired
-	QuestionRepository questionRepository;
-	@Autowired
-	QuestionAnswerRepository questionAnswerRepository;
+	ExaminationRepository examinationRepository;
 	@Autowired
 	QuestionService questionService;
 	
+	private User user3;
+	private User user4;
+	private Examination examination3;
+	private Examination examination4;
+	private Examination examination5;
+	
 	@Before
 	public void before() {
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
-        Authentication authentication = new UsernamePasswordAuthenticationToken("user", null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        user3 = userRepository.findById("user3").get();
+        user4 = userRepository.findById("user4").get();
+        
+        examination3 = examinationRepository.findById(3L).get();
+        examination4 = examinationRepository.findById(4L).get();
+        examination5 = examinationRepository.findById(5L).get();
 	}
 
 	@Test
-	public void testQuestion() {
-		QuestionCategory category1 = new QuestionCategory();
-		category1.setName("category1");
-		questionCategoryRepository.save(category1);
-		
-		Question question1 = new Question();
-		question1.setQuestionType(QuestionType.SINGLE_CHOICE);
-		question1.setText("text");
-		question1.setQuestionCategory(category1);
-		question1.setDefaultText("defaultText");
-		question1.setExplanation("explanation");
-		questionRepository.save(question1);
-
-		QuestionAnswer answer1 = new QuestionAnswer();
-		answer1.setQuestion(question1);
-		answer1.setText("answer1");
-		answer1.setIsCorrect(false);
-		questionAnswerRepository.save(answer1);
-		QuestionAnswer answer2 = new QuestionAnswer();
-		answer2.setQuestion(question1);
-		answer2.setText("answer2");
-		answer2.setIsCorrect(true);
-		questionAnswerRepository.save(answer2);
-		QuestionAnswer answer3 = new QuestionAnswer();
-		answer3.setQuestion(question1);
-		answer3.setText("answer3");
-		answer3.setIsCorrect(false);
-		questionAnswerRepository.save(answer3);
-		
-		List<Question> questions = questionService.getQuestionsByCategory(category1);
+	public void testQuestionUser3Examination3() {
+		List<Question> questions = questionService.getQuestionsByUserAndExamination(user3, examination3);
+		assertThat(questions.size(), is(2));
+	}
+	@Test
+	public void testQuestionUser3Examination4() {
+		List<Question> questions = questionService.getQuestionsByUserAndExamination(user3, examination4);
+		assertThat(questions.size(), is(2));
+	}
+	@Test
+	public void testQuestionUser3Examination5() {
+		List<Question> questions = questionService.getQuestionsByUserAndExamination(user3, examination5);
+		assertThat(questions.size(), is(4));
+	}
+	@Test
+	public void testQuestionUser4Examination3() {
+		List<Question> questions = questionService.getQuestionsByUserAndExamination(user4, examination3);
 		assertThat(questions.size(), is(1));
-		Question question = questions.get(0);
-		assertThat(question.getQuestionType(), is(QuestionType.SINGLE_CHOICE));
-		assertThat(question.getText(), is("text"));
-		assertThat(question.getQuestionCategory().getName(), is("category1"));
-		assertThat(question.getDefaultText(), is("defaultText"));
-		assertThat(question.getExplanation(), is("explanation"));
-		
-		List<QuestionAnswer> questionAnswers = question.getQuestionAnswerList();
-		assertThat(questionAnswers.size(), is(3));
+	}
+	@Test
+	public void testQuestionUser4Examination4() {
+		List<Question> questions = questionService.getQuestionsByUserAndExamination(user4, examination4);
+		assertThat(questions.size(), is(1));
+	}
+	@Test
+	public void testQuestionUser4Examination5() {
+		List<Question> questions = questionService.getQuestionsByUserAndExamination(user4, examination5);
+		assertThat(questions.size(), is(2));
 	}
 }

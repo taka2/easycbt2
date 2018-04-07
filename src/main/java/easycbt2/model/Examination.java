@@ -1,5 +1,6 @@
 package easycbt2.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class Examination {
     @LastModifiedDate
     private Date modifiedDate;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "examination")
-    private List<ExaminationsCategories> cateogryList;
+    private List<ExaminationsCategories> categoryList;
     
 	public Long getId() {
 		return id;
@@ -86,10 +87,20 @@ public class Examination {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
-	public List<ExaminationsCategories> getCateogryList() {
-		return cateogryList;
+	public List<ExaminationsCategories> getCategoryList() {
+		return categoryList;
 	}
-	public void setCateogryList(List<ExaminationsCategories> cateogryList) {
-		this.cateogryList = cateogryList;
+	public void setCategoryList(List<ExaminationsCategories> categoryList) {
+		this.categoryList = categoryList;
+	}
+
+	public List<QuestionCategory> getCategories() {
+		List<QuestionCategory> resultList = new ArrayList<>();
+
+		for(ExaminationsCategories anElement : this.getCategoryList()) {
+			resultList.add(anElement.getQuestionCategory());
+		}
+		
+		return resultList;
 	}
 }
