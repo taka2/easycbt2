@@ -10,15 +10,22 @@ import easycbt2.model.Examination;
 import easycbt2.model.ExaminationsAuthPublic;
 import easycbt2.model.ExaminationsAuthUsers;
 import easycbt2.model.User;
+import easycbt2.repository.ExaminationRepository;
 import easycbt2.repository.ExaminationsAuthPublicRepository;
 import easycbt2.repository.ExaminationsAuthUsersRepository;
 
 @Service
 public class ExaminationService {
 	@Autowired
+	ExaminationRepository examinationRepository;
+	@Autowired
 	ExaminationsAuthPublicRepository examinationsAuthPublicRepository;
 	@Autowired
 	ExaminationsAuthUsersRepository examinationsAuthUsersRepository;
+
+	public Examination getExaminationById(Long id) {
+		return examinationRepository.findById(id).get();
+	}
 
 	public List<Examination> getExaminationsByUser(User user) {
 		List<Examination> resultList = new ArrayList<>();

@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('take_examination_list')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<form name="form1" autocomplete="off">
+			<table class="table table-striped">
+				<tbody>
+					<tr th:each="question,rowStat:*{questions}">
+						<td th:text="${'Q' + (rowStat.index + 1) + '. ' + question.text}">
+							<span th:each="answer:*{question.questionAnswerList}">
+								<span th:text="${answer.text}"></span>
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+</body>
+</html>
+
