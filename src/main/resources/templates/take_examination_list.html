@@ -4,18 +4,19 @@
 <body>
 	<nav th:replace="_navbar::navbar"></nav>
 	<div class="container">
-		<form name="form1" autocomplete="off">
-			<table class="table table-striped">
-				<tbody>
-					<tr th:each="question,rowStat:*{questions}">
-						<td th:text="${'Q' + (rowStat.index + 1) + '. ' + question.text}">
-							<span th:each="answer:*{question.questionAnswerList}">
-								<span th:text="${answer.text}"></span>
-							</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+		<form name="form1" action="/answer_examination_list" autocomplete="off">
+			<div th:each="question,rowStat:*{questions}">
+				<span th:text="${'Q' + (rowStat.index + 1) + '. ' + question.text}"></span>
+				<ul th:if="${question.questionType.getString()} eq 'single_choice'">
+					<li th:each="answer:${question.questionAnswerList}">
+						<input type="radio" th:name="${question.id}" th:value="${answer.id}" th:text="${answer.text}"></input>
+					</li>
+				</ul>
+			</div>
+
+			<p class="finish">
+				<input type="button" name="finish" value="完了" id='btn_finish' class="btn btn-primary">
+			</p>
 		</form>
 	</div>
 </body>

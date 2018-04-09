@@ -3,17 +3,18 @@ package easycbt2.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
-import easycbt2.model.QuestionAnswer;
 import easycbt2.model.User;
 import easycbt2.service.ExaminationService;
 import easycbt2.service.QuestionService;
@@ -53,4 +54,16 @@ public class ExaminationController {
     	return "take_examination_list";
     }
 
+    @RequestMapping("/answer_examination_list")
+    public String takeExaminationList(Model model, Principal principal, @RequestParam MultiValueMap<String, String> params) throws IOException {
+    	// TODO
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	User user = userService.findByUsername(username);
+    	
+    	for(Map.Entry<String,List<String>> entry : params.entrySet()) {
+    		System.out.println(entry);
+    	}
+
+    	return "redirect:/examinations";
+    }
 }
