@@ -20,17 +20,17 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
-@Table(name="questions_answers")
-public class QuestionAnswer {
+@Table(name="take_examinations_answers")
+public class TakeExaminationsAnswer {
 	@Id
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
-	private Question question;
+	private TakeExaminationsQuestion takeExaminationsQuestion;
 	@Column
-	private String text;
+	private Long answerId;
 	@Column
-	private Boolean isCorrect;
+	private String answerText;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -41,30 +41,30 @@ public class QuestionAnswer {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date modifiedDate;
-
+    
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Question getQuestion() {
-		return question;
+	public TakeExaminationsQuestion getTakeExaminationsQuestion() {
+		return takeExaminationsQuestion;
 	}
-	public void setQuestion(Question question) {
-		this.question = question;
+	public void setTakeExaminationsQuestion(TakeExaminationsQuestion takeExaminationsQuestion) {
+		this.takeExaminationsQuestion = takeExaminationsQuestion;
 	}
-	public String getText() {
-		return text;
+	public Long getAnswerId() {
+		return answerId;
 	}
-	public void setText(String text) {
-		this.text = text;
+	public void setAnswerId(Long answerId) {
+		this.answerId = answerId;
 	}
-	public Boolean getIsCorrect() {
-		return isCorrect;
+	public String getAnswerText() {
+		return answerText;
 	}
-	public void setIsCorrect(Boolean isCorrect) {
-		this.isCorrect = isCorrect;
+	public void setAnswerText(String answerText) {
+		this.answerText = answerText;
 	}
 	public String getCreatedBy() {
 		return createdBy;

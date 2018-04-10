@@ -12,15 +12,22 @@ import easycbt2.model.QuestionCategory;
 import easycbt2.model.QuestionsAuthPublic;
 import easycbt2.model.QuestionsAuthUsers;
 import easycbt2.model.User;
+import easycbt2.repository.QuestionRepository;
 import easycbt2.repository.QuestionsAuthPublicRepository;
 import easycbt2.repository.QuestionsAuthUsersRepository;
 
 @Service
 public class QuestionService {
 	@Autowired
+	QuestionRepository questionRepository;
+	@Autowired
 	QuestionsAuthPublicRepository questionsAuthPublicRepository;
 	@Autowired
 	QuestionsAuthUsersRepository questionsAuthUsersRepository;
+
+	public Question getQuestionById(Long id) {
+		return questionRepository.findById(id).get();
+	}
 
 	public List<Question> getQuestionsByUserAndExamination(User user, Examination examination) {
 		List<Question> resultList = new ArrayList<>();

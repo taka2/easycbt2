@@ -1,5 +1,9 @@
+DELETE FROM take_examinations_answers;
+DELETE FROM take_examinations_questions;
+DELETE FROM take_examinations;
 DELETE FROM questions_auth_users;
 DELETE FROM questions_auth_public;
+DELETE FROM questions_answers;
 DELETE FROM questions;
 DELETE FROM examinations_auth_users;
 DELETE FROM examinations_auth_public;
