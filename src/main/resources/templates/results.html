@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('results')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>examination</th>
+					<th>questionCount</th>
+					<th>correctCount</th>
+					<th>percentage</th>
+					<th>dateTime</th>
+					<th> </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="takeExamination,rowStat:*{takeExaminations}">
+					<td th:text="${takeExamination.id}"/>
+					<td th:text="${takeExamination.examination.text}"/>
+					<td th:text="${takeExamination.questionCount}"/>
+					<td th:text="${takeExamination.correctCount}"/>
+					<td th:text="${#numbers.formatDecimal(takeExamination.getCorrectPercentage(), 0, 'COMMA', 2, 'POINT')}"/>
+					<td th:text="${takeExamination.createdDate}"/>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
+

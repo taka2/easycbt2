@@ -19,7 +19,7 @@ INSERT INTO authorities(username, authority) VALUES('user1', 'ROLE_USER');
 
 INSERT INTO question_categories(id, name) VALUES(1, 'AWS-Certified-Solutions-Architect-Associate-JP');
 
-INSERT INTO examinations(id, text, question_count) VALUES(1, 'AWS認定ソリューションアーキテクトアソシエイト(JP) 10問', 1);
+INSERT INTO examinations(id, text, question_count) VALUES(1, 'AWS認定ソリューションアーキテクトアソシエイト(JP) 10問', 10);
 
 INSERT INTO examinations_categories(id, examination_id, question_category_id) VALUES(1, 1, 1);
 

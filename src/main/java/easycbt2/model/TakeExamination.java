@@ -101,4 +101,28 @@ public class TakeExamination {
 	public void setTakeExaminationsQuestions(List<TakeExaminationsQuestion> takeExaminationsQuestions) {
 		this.takeExaminationsQuestions = takeExaminationsQuestions;
 	}
+
+	public int getQuestionCount() {
+		return getTakeExaminationsQuestions().size();
+	}
+	public int getCorrectCount() {
+		int correctCount = 0;
+		for(TakeExaminationsQuestion question : getTakeExaminationsQuestions()) {
+			if(question.isCorrect()) {
+				correctCount++;
+			}
+		}
+		
+		return correctCount;
+	}
+	public double getCorrectPercentage() {
+		int questionCount = getQuestionCount();
+		int correctCount = getCorrectCount();
+	
+		if(questionCount == 0) {
+			return 0d;
+		}
+
+		return correctCount / (double)questionCount * 100;
+	}
 }

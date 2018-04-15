@@ -86,4 +86,8 @@ public class TakeExaminationService {
 
 		return takeExamination;
 	}
+
+	public List<TakeExamination> findTakeExaminationsByUserOrderByIdDesc(User user) {
+		return takeExaminationRepository.findByUserOrderByIdDesc(user);
+	}
 }

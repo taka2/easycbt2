@@ -1,6 +1,7 @@
 package easycbt2.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,10 @@ public class QuestionService {
 	}
 
 	public List<Question> getQuestionsByUserAndExamination(User user, Examination examination) {
+		return getQuestionsByUserAndExamination(user, examination, false);
+	}
+
+	public List<Question> getQuestionsByUserAndExamination(User user, Examination examination, Boolean isRandomize) {
 		List<Question> resultList = new ArrayList<>();
 
 		// Get Examination categories
@@ -52,6 +57,13 @@ public class QuestionService {
 				resultList.add(question);
 			}
 		}
+
+		// Randomize
+		Collections.shuffle(resultList);
+
+		// Limit size
+		int indexTo = Math.min(resultList.size(), examination.getQuestionCount());
+		resultList = resultList.subList(0, indexTo);
 
 		return resultList;
 	}

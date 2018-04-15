@@ -60,7 +60,7 @@ public class ExaminationController {
     	Examination examination = examinationService.getExaminationById(examinationId);
     	session.setAttribute("examination", examination);
 
-    	List<Question> questions = questionService.getQuestionsByUserAndExamination(user, examination);
+    	List<Question> questions = questionService.getQuestionsByUserAndExamination(user, examination, true);
     	session.setAttribute("questions", questions);
     	
     	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
