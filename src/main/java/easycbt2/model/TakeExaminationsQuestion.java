@@ -1,6 +1,7 @@
 package easycbt2.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -34,8 +35,6 @@ public class TakeExaminationsQuestion {
 	@OneToOne
 	private Question question;
 	@Column
-	private Boolean isCorrect;
-	@Column
 	private Long elapsedTime;
     @CreatedBy
     private String createdBy;
@@ -67,12 +66,6 @@ public class TakeExaminationsQuestion {
 	}
 	public void setQuestion(Question question) {
 		this.question = question;
-	}
-	public Boolean getIsCorrect() {
-		return isCorrect;
-	}
-	public void setIsCorrect(Boolean isCorrect) {
-		this.isCorrect = isCorrect;
 	}
 	public Long getElapsedTime() {
 		return elapsedTime;
@@ -109,5 +102,65 @@ public class TakeExaminationsQuestion {
 	}
 	public void setTakeExaminationsAnswers(Set<TakeExaminationsAnswer> takeExaminationsAnswers) {
 		this.takeExaminationsAnswers = takeExaminationsAnswers;
+	}
+
+	public Boolean isCorrect() {
+		if(getTakeExaminationsAnswers() == null) {
+			return false;
+		}
+		
+		Question question = getQuestion();
+		List<QuestionAnswer> expectedAnswers = question.getCorrectQuestionAnswerList();
+		Set<TakeExaminationsAnswer> actualAnswers = getTakeExaminationsAnswers();
+
+		switch(question.getQuestionType()) {
+		case SINGLE_CHOICE:
+			if(expectedAnswers.size() != 1 || actualAnswers.size() != 1) {
+				return false;
+			}
+			QuestionAnswer expectedAnswer = expectedAnswers.iterator().next();
+			TakeExaminationsAnswer actualAnswer_ = actualAnswers.iterator().next();
+			return expectedAnswer.getId() == actualAnswer_.getAnswerId();
+		case MULTIPLE_CHOICE:
+			if(expectedAnswers.size() != actualAnswers.size()) {
+				return false;
+			}
+			for(TakeExaminationsAnswer actualAnswer : actualAnswers) {
+				if(!isContainsAnswerId(expectedAnswers, actualAnswer.getAnswerId())) {
+					return false;
+				}
+			}
+			return true;
+		case TEXT:
+			if(expectedAnswers.size() != actualAnswers.size()) {
+				return false;
+			}
+			for(TakeExaminationsAnswer actualAnswer : actualAnswers) {
+				if(!isContainsAnswerText(expectedAnswers, actualAnswer.getAnswerText())) {
+					return false;
+				}
+			}
+			return true;
+		default:
+			return false;
+		}
+	}
+	
+	private Boolean isContainsAnswerId(List<QuestionAnswer> expectedAnswers, Long actualAnswer) {
+		for(QuestionAnswer expectedAnswer : expectedAnswers) {
+			if(expectedAnswer.getId() == actualAnswer) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Boolean isContainsAnswerText(List<QuestionAnswer> expectedAnswers, String actualAnswer) {
+		for(QuestionAnswer expectedAnswer : expectedAnswers) {
+			if(expectedAnswer.getText().equals(actualAnswer)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

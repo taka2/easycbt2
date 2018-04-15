@@ -1,7 +1,12 @@
 package easycbt2.service;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +15,8 @@ import org.springframework.util.MultiValueMap;
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
 import easycbt2.model.TakeExamination;
+import easycbt2.model.TakeExaminationsAnswer;
+import easycbt2.model.TakeExaminationsQuestion;
 import easycbt2.model.User;
 import easycbt2.repository.TakeExaminationRepository;
 import easycbt2.repository.TakeExaminationsAnswerRepository;
@@ -28,26 +35,53 @@ public class TakeExaminationService {
 	@Autowired
 	QuestionService questionService;
 
-	private static final String EXAMINATION_ID_PARAM_NAME = "examination_id";
-
-	public TakeExamination save(User user, MultiValueMap<String, String> params) {
+	@Transactional
+	public TakeExamination save(User user, Examination examination, List<Question> questions, Instant startDateTime, Instant endDateTime, MultiValueMap<String, String> params) {
 		TakeExamination takeExamination = new TakeExamination();
+		takeExamination.setUser(user);
+		takeExamination.setExamination(examination);
+		takeExamination.setElapsedTime(Duration.between(startDateTime, endDateTime).toMillis());
+		takeExaminationRepository.save(takeExamination);
 
-		Examination examination = examinationService.getExaminationById(Long.parseLong(params.getFirst(EXAMINATION_ID_PARAM_NAME)));
-		for(Map.Entry<String,List<String>> entry : params.entrySet()) {
-			String key = entry.getKey();
-			List<String> values = entry.getValue();
+		for(Question question : questions) {
+			List<String> values = params.get(Long.toString(question.getId()));
 
-			if(EXAMINATION_ID_PARAM_NAME.equals(key)) { 
-				continue;
+			// Questions
+    		TakeExaminationsQuestion takeExaminationsQuestion = new TakeExaminationsQuestion();
+    		takeExaminationsQuestion.setTakeExamination(takeExamination);
+    		takeExaminationsQuestion.setQuestion(question);
+    		takeExaminationsQuestion.setElapsedTime(-1L);
+    		takeExaminationsQuestionRepository.save(takeExaminationsQuestion);
+
+    		// Answers
+			Set<TakeExaminationsAnswer> takeExaminationsAnswers = new HashSet<>();
+			if(values == null) {
+    			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
+    			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
+    			takeExaminationsAnswerRepository.save(takeExaminationAnswer);
+    			takeExaminationsAnswers.add(takeExaminationAnswer);
+			} else {
+				for(String value : values) {
+	    			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
+	    			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
+	        		switch(question.getQuestionType()) {
+	        		case SINGLE_CHOICE:
+	        		case MULTIPLE_CHOICE:
+	        			takeExaminationAnswer.setAnswerId(Long.parseLong(value));
+	        			break;
+	        		case TEXT:
+	        			takeExaminationAnswer.setAnswerText(value);
+	        			break;
+	        		default:
+	        			System.err.println("Unsupported QuestionType");
+	        		}
+	    			takeExaminationAnswer.setAnswerId(Long.parseLong(value));
+	    			takeExaminationsAnswerRepository.save(takeExaminationAnswer);
+	    			takeExaminationsAnswers.add(takeExaminationAnswer);
+				}
 			}
-
-    		// Questions
-    		System.out.println(entry);
-    		Question question = questionService.getQuestionById(Long.parseLong(key));
-    		System.out.println(examination);
-    		System.out.println(question);
-    	}
+			takeExaminationsQuestion.setTakeExaminationsAnswers(takeExaminationsAnswers);
+		}
 
 		return takeExamination;
 	}

@@ -1,6 +1,8 @@
 package easycbt2.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -118,5 +120,16 @@ public class Question {
 	}
 	public void setQuestionAnswerList(Set<QuestionAnswer> questionAnswerList) {
 		this.questionAnswerList = questionAnswerList;
+	}
+
+	public List<QuestionAnswer> getCorrectQuestionAnswerList() {
+		List<QuestionAnswer> resultList = new ArrayList<>();
+		for(QuestionAnswer questionAnswer : getQuestionAnswerList()) {
+			if(questionAnswer.getIsCorrect()) {
+				resultList.add(questionAnswer);
+			}
+		}
+		
+		return resultList;
 	}
 }
