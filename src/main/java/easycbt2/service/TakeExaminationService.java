@@ -2,9 +2,8 @@ package easycbt2.service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -43,6 +42,7 @@ public class TakeExaminationService {
 		takeExamination.setElapsedTime(Duration.between(startDateTime, endDateTime).toMillis());
 		takeExaminationRepository.save(takeExamination);
 
+		List<TakeExaminationsQuestion> takeExaminationsQuestions = new ArrayList<>();
 		for(Question question : questions) {
 			List<String> values = params.get(Long.toString(question.getId()));
 
@@ -54,7 +54,7 @@ public class TakeExaminationService {
     		takeExaminationsQuestionRepository.save(takeExaminationsQuestion);
 
     		// Answers
-			Set<TakeExaminationsAnswer> takeExaminationsAnswers = new HashSet<>();
+			List<TakeExaminationsAnswer> takeExaminationsAnswers = new ArrayList<>();
 			if(values == null) {
     			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
     			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
@@ -75,13 +75,14 @@ public class TakeExaminationService {
 	        		default:
 	        			System.err.println("Unsupported QuestionType");
 	        		}
-	    			takeExaminationAnswer.setAnswerId(Long.parseLong(value));
 	    			takeExaminationsAnswerRepository.save(takeExaminationAnswer);
 	    			takeExaminationsAnswers.add(takeExaminationAnswer);
 				}
 			}
 			takeExaminationsQuestion.setTakeExaminationsAnswers(takeExaminationsAnswers);
+			takeExaminationsQuestions.add(takeExaminationsQuestion);
 		}
+		takeExamination.setTakeExaminationsQuestions(takeExaminationsQuestions);
 
 		return takeExamination;
 	}

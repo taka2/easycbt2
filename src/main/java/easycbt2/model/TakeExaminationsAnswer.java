@@ -1,6 +1,7 @@
 package easycbt2.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -89,5 +90,21 @@ public class TakeExaminationsAnswer {
 	}
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public String getAnswerDescription() {
+		if(answerId != null) {
+			Set<QuestionAnswer> answers = getTakeExaminationsQuestion().getQuestion().getQuestionAnswerList();
+			for(QuestionAnswer answer : answers) {
+				if(answerId == answer.getId()) {
+					return answer.getText();
+				}
+			}
+			return "";
+		} else if(answerText != null) {
+			return answerText;
+		} else {
+			return "";
+		}
 	}
 }

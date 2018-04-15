@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('take_examination_result')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<h2 th:text="${takeExamination.examination.text}"></h2>
+	<div class="container">
+		<div th:each="takeExaminationQuestion,rowStat:*{takeExamination.takeExaminationsQuestions}">
+			<div th:text="${'Q' + (rowStat.index + 1) + '. ' + takeExaminationQuestion.question.text}"></div>
+			<span class="correct_answer" th:if="${takeExaminationQuestion.isCorrect()}">正解！</span>
+			<span class="incorrect_answer" th:if="${!takeExaminationQuestion.isCorrect()}">不正解。。</span>
+			<div>
+				＜回答＞：
+				<ul>
+					<li th:each="actualAnswer,rowStat:*{takeExaminationQuestion.takeExaminationsAnswers}" th:text="${actualAnswer.getAnswerDescription()}"></li>
+				</ul>
+			</div>
+			<div th:if="${!takeExaminationQuestion.isCorrect()}">
+				＜正解＞：
+				<ul>
+					<li th:each="expectedAnswer,rowStat:*{takeExaminationQuestion.question.getCorrectQuestionAnswerList()}" th:text="${expectedAnswer.text}"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

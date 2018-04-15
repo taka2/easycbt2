@@ -3,7 +3,6 @@ package easycbt2.controller;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -86,6 +85,6 @@ public class ExaminationController {
     	TakeExamination takeExamination = takeExaminationService.save(user, examination, questions, startDateTime, endDateTime, params);
     	model.addAttribute("takeExamination", takeExamination);
 
-    	return "redirect:/examinations";
+    	return "take_examination_result";
     }
 }
