@@ -2,8 +2,10 @@ package easycbt2.service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -42,7 +44,7 @@ public class TakeExaminationService {
 		takeExamination.setElapsedTime(Duration.between(startDateTime, endDateTime).toMillis());
 		takeExaminationRepository.save(takeExamination);
 
-		List<TakeExaminationsQuestion> takeExaminationsQuestions = new ArrayList<>();
+		Set<TakeExaminationsQuestion> takeExaminationsQuestions = new HashSet<>();
 		for(Question question : questions) {
 			List<String> values = params.get(Long.toString(question.getId()));
 
@@ -54,7 +56,7 @@ public class TakeExaminationService {
     		takeExaminationsQuestionRepository.save(takeExaminationsQuestion);
 
     		// Answers
-			List<TakeExaminationsAnswer> takeExaminationsAnswers = new ArrayList<>();
+			Set<TakeExaminationsAnswer> takeExaminationsAnswers = new HashSet<>();
 			if(values == null) {
     			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
     			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
@@ -89,5 +91,19 @@ public class TakeExaminationService {
 
 	public List<TakeExamination> findTakeExaminationsByUserOrderByIdDesc(User user) {
 		return takeExaminationRepository.findByUserOrderByIdDesc(user);
+	}
+	
+	public TakeExamination findByIdAndUser(Long id, User user) {
+		Optional<TakeExamination> takeExaminationOptional = takeExaminationRepository.findById(id);
+		if(!takeExaminationOptional.isPresent()) {
+			return null;
+		}
+
+		TakeExamination takeExamination = takeExaminationOptional.get();
+		if(takeExamination.getUser().equals(user)) {
+			return takeExamination;
+		} else {
+			return null;
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package easycbt2.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,7 +45,7 @@ public class TakeExamination {
     @LastModifiedDate
     private Date modifiedDate;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "takeExamination")
-    private List<TakeExaminationsQuestion> takeExaminationsQuestions;
+    private Set<TakeExaminationsQuestion> takeExaminationsQuestions;
     
 	public Long getId() {
 		return id;
@@ -95,10 +95,10 @@ public class TakeExamination {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
-	public List<TakeExaminationsQuestion> getTakeExaminationsQuestions() {
+	public Set<TakeExaminationsQuestion> getTakeExaminationsQuestions() {
 		return takeExaminationsQuestions;
 	}
-	public void setTakeExaminationsQuestions(List<TakeExaminationsQuestion> takeExaminationsQuestions) {
+	public void setTakeExaminationsQuestions(Set<TakeExaminationsQuestion> takeExaminationsQuestions) {
 		this.takeExaminationsQuestions = takeExaminationsQuestions;
 	}
 

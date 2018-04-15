@@ -2,6 +2,7 @@ package easycbt2.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ public class TakeExaminationsQuestion {
     @LastModifiedDate
     private Date modifiedDate;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "takeExaminationsQuestion")
-    private List<TakeExaminationsAnswer> takeExaminationsAnswers;
+    private Set<TakeExaminationsAnswer> takeExaminationsAnswers;
     
 	public Long getId() {
 		return id;
@@ -96,10 +97,10 @@ public class TakeExaminationsQuestion {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
-	public List<TakeExaminationsAnswer> getTakeExaminationsAnswers() {
+	public Set<TakeExaminationsAnswer> getTakeExaminationsAnswers() {
 		return takeExaminationsAnswers;
 	}
-	public void setTakeExaminationsAnswers(List<TakeExaminationsAnswer> takeExaminationsAnswers) {
+	public void setTakeExaminationsAnswers(Set<TakeExaminationsAnswer> takeExaminationsAnswers) {
 		this.takeExaminationsAnswers = takeExaminationsAnswers;
 	}
 
@@ -110,7 +111,7 @@ public class TakeExaminationsQuestion {
 		
 		Question question = getQuestion();
 		List<QuestionAnswer> expectedAnswers = question.getCorrectQuestionAnswerList();
-		List<TakeExaminationsAnswer> actualAnswers = getTakeExaminationsAnswers();
+		Set<TakeExaminationsAnswer> actualAnswers = getTakeExaminationsAnswers();
 
 		switch(question.getQuestionType()) {
 		case SINGLE_CHOICE:

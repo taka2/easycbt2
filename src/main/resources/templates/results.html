@@ -24,6 +24,7 @@
 					<td th:text="${takeExamination.correctCount}"/>
 					<td th:text="${#numbers.formatDecimal(takeExamination.getCorrectPercentage(), 0, 'COMMA', 2, 'POINT')}"/>
 					<td th:text="${takeExamination.createdDate}"/>
+					<td><a th:href = "@{'/show_examination_result?take_examination_id=' + ${takeExamination.id}}">Show examination result</a></td>
 				</tr>
 			</tbody>
 		</table>

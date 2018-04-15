@@ -87,4 +87,18 @@ public class ExaminationController {
 
     	return "take_examination_result";
     }
+
+    @RequestMapping("/show_examination_result")
+    public String showExaminationResult(Model model, Principal principal , @RequestParam("take_examination_id") Long takeExaminationId) throws IOException {
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	User user = userService.findByUsername(username);
+    	
+    	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(takeExaminationId, user);
+    	if(takeExamination != null) {
+    		model.addAttribute("takeExamination", takeExamination);
+    		return "take_examination_result";
+    	} else {
+    		return "redirect:/examinations";
+    	}
+    }
 }
