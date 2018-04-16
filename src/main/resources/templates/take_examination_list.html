@@ -8,6 +8,7 @@
 		<form name="form1" action="/answer_examination_list" autocomplete="off">
 			<div th:each="question,rowStat:*{session.questions}">
 				<span th:text="${'Q' + (rowStat.index + 1) + '. ' + question.text}"></span>
+				<span class="bg-info" th:text="${question.questionCategory.name}"></span>
 				<ul th:if="${question.questionType.getString()} eq 'single_choice'">
 					<li th:each="answer:${question.questionAnswerList}">
 						<input type="radio" th:name="${question.id}" th:value="${answer.id}" th:text="${answer.text}"></input>

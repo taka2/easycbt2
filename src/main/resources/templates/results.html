@@ -7,24 +7,26 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>id</th>
 					<th>examination</th>
 					<th>questionCount</th>
 					<th>correctCount</th>
 					<th>percentage</th>
+					<th>elapsedTime</th>
 					<th>dateTime</th>
+					<th> </th>
 					<th> </th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="takeExamination,rowStat:*{takeExaminations}">
-					<td th:text="${takeExamination.id}"/>
-					<td th:text="${takeExamination.examination.text}"/>
+					<td><a th:href = "@{'/show_examination_result?take_examination_id=' + ${takeExamination.id}}" th:text="${takeExamination.examination.text}"></a></td>
 					<td th:text="${takeExamination.questionCount}"/>
 					<td th:text="${takeExamination.correctCount}"/>
 					<td th:text="${#numbers.formatDecimal(takeExamination.getCorrectPercentage(), 0, 'COMMA', 2, 'POINT')}"/>
+					<td th:text="${takeExamination.getFormattedElapsedTime()}"/>
 					<td th:text="${takeExamination.createdDate}"/>
-					<td><a th:href = "@{'/show_examination_result?take_examination_id=' + ${takeExamination.id}}">Show examination result</a></td>
+					<td><a th:href = "@{'/take_examination_list?examination_id=' + ${takeExamination.examination.id}}">Retake exam as list</a></td>
+					<td><a th:href = "@{'/retake_examination_list_only_incorrect_answer?take_examination_id=' + ${takeExamination.id}}">Retake exam as list(incorrect only)</a></td>
 				</tr>
 			</tbody>
 		</table>

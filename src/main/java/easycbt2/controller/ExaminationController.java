@@ -68,6 +68,23 @@ public class ExaminationController {
     	return "take_examination_list";
     }
 
+    @RequestMapping("/retake_examination_list_only_incorrect_answer")
+    public String retakeExaminationListOnlyWrongAnswer(Model model, Principal principal, HttpSession session, @RequestParam("take_examination_id") Long takeExaminationId) throws IOException {
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	User user = userService.findByUsername(username);
+    	
+    	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(takeExaminationId, user);
+    	Examination examination = takeExamination.getExamination();
+    	session.setAttribute("examination", examination);
+
+    	List<Question> questions = takeExamination.getIncorrectAnsweredQuestions();
+    	session.setAttribute("questions", questions);
+    	
+    	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
+
+    	return "take_examination_list";
+    }
+
     @RequestMapping("/answer_examination_list")
     public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) throws IOException {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();

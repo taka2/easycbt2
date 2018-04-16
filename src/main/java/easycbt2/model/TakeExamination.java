@@ -1,6 +1,13 @@
 package easycbt2.model;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -124,5 +131,22 @@ public class TakeExamination {
 		}
 
 		return correctCount / (double)questionCount * 100;
+	}
+	
+	public List<Question> getIncorrectAnsweredQuestions() {
+		List<Question> resultList = new ArrayList<>();
+		for(TakeExaminationsQuestion question : this.getTakeExaminationsQuestions()) {
+			if(!question.isCorrect()) {
+				resultList.add(question.getQuestion());
+			}
+		}
+
+		return resultList;
+	}
+	
+	public String getFormattedElapsedTime() {
+		Instant instant = Instant.ofEpochMilli(getElapsedTime());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withLocale(Locale.getDefault()).withZone(ZoneId.of("GMT"));
+		return formatter.format(instant);
 	}
 }
