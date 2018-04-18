@@ -1,30 +1,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-	<nav class="navbar navbar-default" th:fragment="navbar">
-		<div class="container-fluid">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<a class="navbar-brand" th:href="@{/}">EasyCBT</a>
-			</div>
-
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse"
-				id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<li class="active"><a th:href="@{/examinations}">Examinations</a></li>
-					<li class="active"><a th:href="@{/results}">Results</a></li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a></li>
-				</ul>
-			</div>
-			<div>
-				<form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true"></form>
-			</div>
-			<!-- /.navbar-collapse -->
+<nav class="navbar navbar-default" th:fragment="navbar">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<a class="navbar-brand" th:href="@{/}">EasyCBT</a>
 		</div>
-		<!-- /.container-fluid -->
-	</nav>
-  
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse"
+			id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a th:href="@{/examinations}">Examinations</a></li>
+				<li class="active"><a th:href="@{/results}">Results</a></li>
+				<li sec:authorize="hasRole('ROLE_ADMIN')">
+					<a th:href="@{/results}">Admin</a>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false" sec:authentication="name"> </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item"
+							href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<form name="logoutForm" th:action="@{/logout}" method="post"
+				th:hidden="true"></form>
+		</div>
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container-fluid -->
+</nav>
+
 </html>

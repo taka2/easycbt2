@@ -1,6 +1,5 @@
 package easycbt2.controller;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.List;
@@ -12,19 +11,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
 import easycbt2.model.TakeExamination;
-//import easycbt2.model.TakeExamination;
 import easycbt2.model.User;
 import easycbt2.service.DateTimeService;
 import easycbt2.service.ExaminationService;
 import easycbt2.service.QuestionService;
 import easycbt2.service.TakeExaminationService;
-//import easycbt2.service.TakeExaminationService;
 import easycbt2.service.UserService;
 
 @Controller
@@ -42,7 +40,7 @@ public class ExaminationController {
 	DateTimeService dateTimeService;
 
     @RequestMapping("/examinations")
-    public String examinations(Model model, Principal principal) throws IOException {
+    public String examinations(Model model, Principal principal) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
@@ -53,7 +51,7 @@ public class ExaminationController {
     }
 
     @RequestMapping("/take_examination_list")
-    public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam("examination_id") Long examinationId) throws IOException {
+    public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam("examination_id") Long examinationId) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
@@ -69,7 +67,7 @@ public class ExaminationController {
     }
 
     @RequestMapping("/retake_examination_list_only_incorrect_answer")
-    public String retakeExaminationListOnlyWrongAnswer(Model model, Principal principal, HttpSession session, @RequestParam("take_examination_id") Long takeExaminationId) throws IOException {
+    public String retakeExaminationListOnlyWrongAnswer(Model model, Principal principal, HttpSession session, @RequestParam("take_examination_id") Long takeExaminationId) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
@@ -85,8 +83,8 @@ public class ExaminationController {
     	return "take_examination_list";
     }
 
-    @RequestMapping("/answer_examination_list")
-    public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) throws IOException {
+    @PostMapping("/answer_examination_list")
+    public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
@@ -106,7 +104,7 @@ public class ExaminationController {
     }
 
     @RequestMapping("/show_examination_result")
-    public String showExaminationResult(Model model, Principal principal , @RequestParam("take_examination_id") Long takeExaminationId) throws IOException {
+    public String showExaminationResult(Model model, Principal principal , @RequestParam("take_examination_id") Long takeExaminationId) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	

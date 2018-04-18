@@ -13,7 +13,7 @@ DELETE FROM question_categories;
 DELETE FROM authorities;
 DELETE FROM users;
 
-INSERT INTO users(username, password, enabled) VALUES('user1', 'password', true);
+INSERT INTO users(username, password, enabled) VALUES('user1', '$2a$10$BOv2SDD3xL3/GHH2cCW6cuWdbkigOYdxPza5jpKWVz5aCXtdnG/vW', true);
 
 INSERT INTO authorities(username, authority) VALUES('user1', 'ROLE_USER');
 

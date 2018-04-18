@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('register_admin')"></head>
+<body>
+	<h2>Register Admin password</h2>
+	<div class="container">
+		<form name="form1" method="POST" th:action="@{/register_admin}" autocomplete="off">
+			<input type="text" th:name="admin_password"></input>
+			<p class="finish">
+				<input type="button" name="finish" value="登録" id='btn_finish' class="btn btn-primary"></input>
+			</p>
+		</form>
+	</div>
+</body>
+</html>
