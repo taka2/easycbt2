@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('question_categories')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2 th:value="${title}"></h2>
+		<form th:action="@{/maintenance/question_categories}" th:method="post">
+			<div class="form-group">
+				<label class="control-label">name</label> <input
+					class="form-control" type="text" name="name" />
+			</div>
+			<button class="btn btn-default" type="submit">作成</button>
+		</form>
+		<div class="pull-right">
+			<a class="btn btn-link" href="/maintenance/question_categories">一覧画面へ</a>
+		</div>
+	</div>
+</body>
+</html>

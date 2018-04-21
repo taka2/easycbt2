@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('question_categories')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h1>Listing Players</h1>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>name</th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="questionCategory:${questionCategories}" th:object="${questionCategory}">
+					<td th:text="*{id}"></td>
+					<td th:text="*{name}"></td>
+					<!-- �C -->
+					<td><a class="btn btn-default btn-xs"
+						th:href="@{/maintenance/question_categories/{id}(id=*{id})}">参照</a></td>
+					<td><a class="btn btn-default btn-xs"
+						th:href="@{/maintenance/question_categories/{id}/edit(id=*{id})}">編集</a></td>
+					<td>
+						<!-- �D -->
+						<form th:action="@{/maintenance/question_categories/{id}(id=*{id})}" th:method="delete">
+							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<a class="btn btn-default" href="/maintenance/question_categories/new">新規</a>
+	</div>
+</body>
+</html>

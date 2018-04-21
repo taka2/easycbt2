@@ -15,6 +15,15 @@
 			<ul class="nav navbar-nav">
 				<li class="active"><a th:href="@{/examinations}">Examinations</a></li>
 				<li class="active"><a th:href="@{/results}">Results</a></li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false">Maintenance</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item"
+							th:href="@{/maintenance/question_categories}" role="menuitem">Question Categories</a>
+					</div>
+				</li>
 				<li sec:authorize="hasRole('ROLE_ADMIN')">
 					<a th:href="@{/results}">Admin</a>
 				</li>

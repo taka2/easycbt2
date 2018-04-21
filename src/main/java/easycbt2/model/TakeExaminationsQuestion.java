@@ -132,15 +132,12 @@ public class TakeExaminationsQuestion {
 			}
 			return true;
 		case TEXT:
-			if(expectedAnswers.size() != actualAnswers.size()) {
-				return false;
-			}
 			for(TakeExaminationsAnswer actualAnswer : actualAnswers) {
-				if(!isContainsAnswerText(expectedAnswers, actualAnswer.getAnswerText())) {
-					return false;
+				if(isContainsAnswerText(expectedAnswers, actualAnswer.getAnswerText())) {
+					return true;
 				}
 			}
-			return true;
+			return false;
 		default:
 			return false;
 		}
