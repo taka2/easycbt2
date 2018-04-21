@@ -4,13 +4,13 @@
 <body>
 	<nav th:replace="_navbar::navbar"></nav>
 	<div class="container">
-		<h2>New Question Category</h2>
-		<form th:action="@{/maintenance/question_categories}" th:method="post">
+		<h2>Edit Question Category</h2>
+		<form th:action="@{/maintenance/question_categories/{id}(id=*{id})}" th:method="put" th:object="${questionCategory}">
 			<div class="form-group">
 				<label class="control-label">name</label> <input
-					class="form-control" type="text" name="name" />
+					class="form-control" type="text" th:field="*{name}" />
 			</div>
-			<button class="btn btn-default" type="submit">作成</button>
+			<button class="btn btn-default" type="submit">保存</button>
 		</form>
 		<div class="pull-right">
 			<a class="btn btn-link" href="/maintenance/question_categories">一覧画面へ</a>

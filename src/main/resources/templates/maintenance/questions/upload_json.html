@@ -2,8 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('maintenance/questions/upload_json')"></head>
 <body>
-	<h2>Upload JSON</h2>
+	<nav th:replace="_navbar::navbar"></nav>
+
 	<div class="container">
+		<h2>Upload JSON</h2>
 		<form name="form1" method="POST" th:action="@{/maintenance/questions/upload_json}" enctype="multipart/form-data">
 			<div> File to upload: <input type="file" name="file" /></div>
 			<p class="finish">

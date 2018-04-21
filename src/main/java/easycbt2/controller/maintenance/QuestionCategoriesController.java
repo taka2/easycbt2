@@ -35,7 +35,7 @@ public class QuestionCategoriesController {
     }
 
     @GetMapping("{id}/edit")
-    public String edit(@PathVariable Long id, Model model) { // ⑤
+    public String edit(@PathVariable Long id, Model model) {
     	QuestionCategory questionCategory = questionCategoryService.findOne(id);
         model.addAttribute("questionCategory", questionCategory);
         return "maintenance/question_categories/edit";
@@ -49,7 +49,7 @@ public class QuestionCategoriesController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute QuestionCategory questionCategory) { // ⑥
+    public String create(@ModelAttribute QuestionCategory questionCategory) {
     	questionCategoryService.save(questionCategory);
         return "redirect:/maintenance/question_categories";
     }
