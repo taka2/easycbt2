@@ -18,12 +18,16 @@ INSERT INTO users(username, password, enabled) VALUES('user1', '$2a$10$BOv2SDD3x
 INSERT INTO authorities(username, authority) VALUES('user1', 'ROLE_USER');
 
 INSERT INTO question_categories(id, name) VALUES(1, 'AWS-Certified-Solutions-Architect-Associate-JP');
+INSERT INTO question_categories(id, name) VALUES(2, 'Instant english writing training');
 
 INSERT INTO examinations(id, text, question_count) VALUES(1, 'AWS認定ソリューションアーキテクトアソシエイト(JP) 10問', 10);
+INSERT INTO examinations(id, text, question_count) VALUES(2, 'Instant english writing training', 10);
 
 INSERT INTO examinations_categories(id, examination_id, question_category_id) VALUES(1, 1, 1);
+INSERT INTO examinations_categories(id, examination_id, question_category_id) VALUES(2, 2, 2);
 
 INSERT INTO examinations_auth_public(id, examination_id) VALUES(1, 1);
+INSERT INTO examinations_auth_public(id, examination_id) VALUES(2, 2);
 
 INSERT INTO questions(id, question_type, text, question_category_id) VALUES(1, 'SINGLE_CHOICE', '次の構成のうち、最も可用性が高くなる構成はどれか？', 1);
 INSERT INTO questions(id, question_type, text, question_category_id) VALUES(2, 'MULTIPLE_CHOICE', '次のうち、利用者の責任で実施しなければいけないセキュリティ対策はどれか？2つ選べ。', 1);

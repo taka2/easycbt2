@@ -21,11 +21,15 @@ public class QuestionCategoryService {
         return questionCategoryRepository.getOne(id);
     }
 
-    public QuestionCategory save(QuestionCategory player) {
-        return questionCategoryRepository.save(player);
+    public QuestionCategory save(QuestionCategory questionCategory) {
+        return questionCategoryRepository.save(questionCategory);
     }
 
     public void delete(Long id) {
     	questionCategoryRepository.deleteById(id);
+    }
+    
+    public QuestionCategory findByName(String name) {
+    	return questionCategoryRepository.findByName(name);
     }
 }

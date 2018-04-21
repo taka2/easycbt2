@@ -67,4 +67,8 @@ public class QuestionService {
 
 		return resultList;
 	}
+
+    public Question save(Question question) {
+        return questionRepository.save(question);
+    }
 }
