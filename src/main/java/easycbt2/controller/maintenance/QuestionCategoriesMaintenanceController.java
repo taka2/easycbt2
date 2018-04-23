@@ -18,7 +18,7 @@ import easycbt2.service.QuestionCategoryService;
 
 @Controller
 @RequestMapping("/maintenance/question_categories")
-public class QuestionCategoriesController {
+public class QuestionCategoriesMaintenanceController {
     @Autowired
     private QuestionCategoryService questionCategoryService;
 

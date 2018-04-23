@@ -7,7 +7,6 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>id</th>
 					<th>text</th>
 					<th>questionCount</th>
 					<th> </th>
@@ -15,7 +14,6 @@
 			</thead>
 			<tbody>
 				<tr th:each="examination,rowStat:*{examinations}">
-					<td th:text="${examination.id}"/>
 					<td th:text="${examination.text}"/>
 					<td th:text="${examination.questionCount}"/>
 					<td><a th:href = "@{'/take_examination_list?examination_id=' + ${examination.id}}">Take exam as list</a></td>

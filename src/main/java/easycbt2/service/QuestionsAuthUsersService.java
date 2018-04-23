@@ -9,9 +9,9 @@ import easycbt2.repository.QuestionsAuthUsersRepository;
 @Service
 public class QuestionsAuthUsersService {
 	@Autowired
-	QuestionsAuthUsersRepository questionAuthUsersRepository;
+	QuestionsAuthUsersRepository questionsAuthUsersRepository;
 
     public QuestionsAuthUsers save(QuestionsAuthUsers questionsAuthUsers) {
-        return questionAuthUsersRepository.save(questionsAuthUsers);
+        return questionsAuthUsersRepository.save(questionsAuthUsers);
     }
 }

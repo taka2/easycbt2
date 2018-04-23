@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('examinations')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2>Edit Examination</h2>
+		<form th:action="@{/maintenance/examinations/{id}(id=*{id})}" th:method="put" th:object="${examination}">
+			<div class="form-group">
+				<label class="control-label">text</label>
+					<input class="form-control" type="text" th:field="*{text}" />
+				<label class="control-label">questionCount</label>
+					<input class="form-control" type="text" name="questionCount" th:field="*{questionCount}" />
+				<label class="control-label">categories</label>
+				<ul>
+					<li th:each="questionCategory:${questionCategories}">
+						<input type="checkbox" name="examinations_categories" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+					</li>
+				</ul>
+			</div>
+			<button class="btn btn-default" type="submit">保存</button>
+		</form>
+		<div class="pull-right">
+			<a class="btn btn-link" href="/maintenance/examinations">一覧画面へ</a>
+		</div>
+	</div>
+</body>
+</html>

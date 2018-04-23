@@ -44,7 +44,7 @@ public class ExaminationController {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
-    	List<Examination> examinations = examinationService.getExaminationsByUser(user);
+    	List<Examination> examinations = examinationService.findByUser(user);
     	model.addAttribute("examinations", examinations);
 
     	return "examinations";
@@ -55,7 +55,7 @@ public class ExaminationController {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
-    	Examination examination = examinationService.getExaminationById(examinationId);
+    	Examination examination = examinationService.findOne(examinationId);
     	session.setAttribute("examination", examination);
 
     	List<Question> questions = questionService.getQuestionsByUserAndExamination(user, examination, true);

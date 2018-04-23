@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('examinations')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2>Examinations</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>text</th>
+					<th>questionCount</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="examination:${examinations}" th:object="${examination}">
+					<td th:text="*{id}"></td>
+					<td th:text="*{text}"></td>
+					<td th:text="*{questionCount}"></td>
+					<td><a class="btn btn-default btn-xs"
+						th:href="@{/maintenance/examinations/{id}/edit(id=*{id})}">編集</a></td>
+					<td>
+						<form th:action="@{/maintenance/examinations/{id}(id=*{id})}" th:method="delete">
+							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<a class="btn btn-default" href="/maintenance/examinations/new">新規</a>
+	</div>
+</body>
+</html>

@@ -23,11 +23,23 @@ public class ExaminationService {
 	@Autowired
 	ExaminationsAuthUsersRepository examinationsAuthUsersRepository;
 
-	public Examination getExaminationById(Long id) {
+    public List<Examination> findAll() {
+        return examinationRepository.findAll();
+    }
+
+	public Examination findOne(Long id) {
 		return examinationRepository.findById(id).get();
 	}
 
-	public List<Examination> getExaminationsByUser(User user) {
+    public Examination save(Examination examination) {
+        return examinationRepository.save(examination);
+    }
+
+    public void delete(Long id) {
+    	examinationRepository.deleteById(id);
+    }
+
+	public List<Examination> findByUser(User user) {
 		List<Examination> resultList = new ArrayList<>();
 		
 		// List Public Examinations

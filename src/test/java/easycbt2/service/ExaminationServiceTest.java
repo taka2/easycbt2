@@ -35,13 +35,13 @@ public class ExaminationServiceTest {
 
 	@Test
 	public void testGetExaminationsByUser1() {
-		List<Examination> examinations = examinationService.getExaminationsByUser(user1);
+		List<Examination> examinations = examinationService.findByUser(user1);
 		assertThat(examinations.size(), is(2));
 	}
 
 	@Test
 	public void testGetExaminationsByUser2() {
-		List<Examination> examinations = examinationService.getExaminationsByUser(user2);
+		List<Examination> examinations = examinationService.findByUser(user2);
 		assertThat(examinations.size(), is(1));
 		assertThat(examinations.get(0).getText(), is("examinationPublic"));
 	}

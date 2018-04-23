@@ -31,7 +31,7 @@ import easycbt2.service.UserService;
 
 @Controller
 @RequestMapping("/maintenance/questions")
-public class QuestionController {
+public class QuestionMaintenanceController {
 	
 	@Autowired
 	UserService userService;
