@@ -9,4 +9,5 @@ import easycbt2.model.User;
 
 public interface TakeExaminationRepository extends JpaRepository<TakeExamination, Long> {
 	public List<TakeExamination> findByUserOrderByIdDesc(User user);
+	public List<TakeExamination> findByUser(User user);
 }
