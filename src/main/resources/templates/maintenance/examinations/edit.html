@@ -14,7 +14,7 @@
 				<label class="control-label">categories</label>
 				<ul>
 					<li th:each="questionCategory:${questionCategories}">
-						<input type="checkbox" name="examinations_categories" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+						<input type="checkbox" name="examinations_categories" th:value="${questionCategory.id}" th:text="${questionCategory.name}" th:checked="${activeQuestionCategories.contains(questionCategory)}"/>
 					</li>
 				</ul>
 			</div>
