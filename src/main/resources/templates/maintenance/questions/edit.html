@@ -9,6 +9,9 @@
 			<div class="form-group">
 				<label class="control-label">text</label>
 					<input class="form-control" type="text" th:field="*{text}"/>
+				<label class="control-label">questionType</label>
+					<div th:text="${question.questionType.getString()}"></div>
+					<input class="form-control" type="hidden" th:field="*{questionType}"/>
 				<label class="control-label">questionCategory</label>
 				<ul>
 					<li th:each="questionCategory:${questionCategories}">
@@ -19,6 +22,16 @@
 					<input class="form-control" type="text" th:field="*{defaultText}" />
 				<label class="control-label">explanation</label>
 					<textarea class="form-control" th:field="*{explanation}" ></textarea>
+					
+				<!-- answer -->
+				<div th:if="${question.questionType.getString()} eq 'text'">
+					<label class="control-label">answerText</label>
+					<ul>
+						<li th:each="questionAnswer:${question.questionAnswerList}">
+							<input class="form-control" type="text" th:name="answerText" th:value="${questionAnswer.text}"/>
+						</li>
+					</ul>
+				</div>
 			</div>
 			<button class="btn btn-default" type="submit">保存</button>
 		</form>

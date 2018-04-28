@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import easycbt2.model.ExaminationsCategories;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionAnswer;
 import easycbt2.model.QuestionCategory;
@@ -132,9 +133,24 @@ public class QuestionMaintenanceController {
     }
 
     @PutMapping("{id}")
-    public String update(@PathVariable Long id, @ModelAttribute Question question) {
+    public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam("answerText") List<String> answerTextList) {
     	question.setId(id);
-        questionService.save(question);
+        Question newQuestion = questionService.save(question);
+
+    	// Delete Answers
+    	for(QuestionAnswer questionAnswer : questionAnswerService.findByQuestion(newQuestion)) {
+    		questionAnswerService.delete(questionAnswer.getId());
+    	}
+
+    	// Save Answers
+    	for(String answerText : answerTextList) {
+    		QuestionAnswer questionAnswer = new QuestionAnswer();
+    		questionAnswer.setQuestion(newQuestion);
+    		questionAnswer.setText(answerText);
+    		questionAnswer.setIsCorrect(true);
+    		questionAnswerService.save(questionAnswer);
+    	}
+
         return "redirect:/maintenance/questions";
     }
 
