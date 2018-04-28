@@ -1,8 +1,14 @@
 package easycbt2.service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +18,8 @@ import easycbt2.model.Question;
 import easycbt2.model.QuestionCategory;
 import easycbt2.model.QuestionsAuthPublic;
 import easycbt2.model.QuestionsAuthUsers;
+import easycbt2.model.TakeExamination;
+import easycbt2.model.TakeExaminationsQuestion;
 import easycbt2.model.User;
 import easycbt2.repository.QuestionRepository;
 import easycbt2.repository.QuestionsAuthPublicRepository;
@@ -25,6 +33,10 @@ public class QuestionService {
 	QuestionsAuthPublicRepository questionsAuthPublicRepository;
 	@Autowired
 	QuestionsAuthUsersRepository questionsAuthUsersRepository;
+	@Autowired
+	TakeExaminationService takeExaminationService;
+	@Autowired
+	DateTimeService dateTimeService; 
 
 	public Question getQuestionById(Long id) {
 		return questionRepository.findById(id).get();
@@ -58,6 +70,9 @@ public class QuestionService {
 			}
 		}
 
+		// Calc weight
+		Map<Question, Long> weightMap = calcWeight(user, resultList);
+		
 		// Randomize
 		Collections.shuffle(resultList);
 
@@ -66,6 +81,42 @@ public class QuestionService {
 		resultList = resultList.subList(0, indexTo);
 
 		return resultList;
+	}
+
+	public Map<Question, Long> calcWeight(User user, List<Question> questions) {
+		Map<Question, Long> resultMap = new HashMap<>();
+		
+		// Initialize map
+		for(Question question : questions) {
+			resultMap.put(question, 0L);
+		}
+		
+		// Current Date
+		Instant instant = dateTimeService.getCurrentDateTime();
+		
+		List<TakeExamination> takeExaminations = takeExaminationService.findByUser(user);
+		for(TakeExamination takeExamination : takeExaminations) {
+			for(TakeExaminationsQuestion takeExaminationsQuestion : takeExamination.getTakeExaminationsQuestions()) {
+				Question question = takeExaminationsQuestion.getQuestion();
+				if(!resultMap.containsKey(question)) {
+					continue;
+				}
+				
+				Boolean isCorrect = takeExaminationsQuestion.isCorrect();
+				Date timestamp = takeExaminationsQuestion.getModifiedDate();
+				Long score = Duration.between(instant, timestamp.toInstant()).getSeconds() * (isCorrect ? 1 : -1);
+				resultMap.put(question, resultMap.get(question) + score);
+			}
+		}
+		
+		// Reset Unanswered Questios score to Long.MAX_VALUE
+		for(Entry<Question, Long> entry : resultMap.entrySet()) {
+			if(entry.getValue() == 0L) {
+				resultMap.put(entry.getKey(), Long.MAX_VALUE);
+			}
+		}
+		
+		return resultMap;
 	}
 
     public Question save(Question question) {

@@ -1,5 +1,6 @@
 package easycbt2.controller.maintenance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +64,18 @@ public class ExaminationMaintenanceController {
     	List<QuestionCategory> questionCategories = questionCategoryService.findAll();
     	model.addAttribute("questionCategories", questionCategories);
 
-    	List<ExaminationsCategories> list = examinationsCategoriesService.findAll();
-    	for(ExaminationsCategories anElement : list) {
-    		anElement.getId();
+    	List<QuestionCategory> activeQuestionCategories = new ArrayList<>();
+    	List<ExaminationsCategories> examinationCategoriesList = examinationsCategoriesService.findByExamination(examination);
+    	for(QuestionCategory questionCategory : questionCategories) {
+	    	for(ExaminationsCategories examinationCategories : examinationCategoriesList) {
+	    		if(questionCategory.equals(examinationCategories.getQuestionCategory())) {
+	    			activeQuestionCategories.add(questionCategory);
+	    			break;
+	    		}
+	    	}
     	}
+    	model.addAttribute("activeQuestionCategories", activeQuestionCategories);
+    	
         return "maintenance/examinations/edit";
     }
 
