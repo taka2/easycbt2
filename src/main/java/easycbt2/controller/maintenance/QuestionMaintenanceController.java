@@ -11,8 +11,13 @@ import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import easycbt2.model.Question;
 import easycbt2.model.QuestionAnswer;
+import easycbt2.model.QuestionCategory;
 import easycbt2.model.QuestionType;
 import easycbt2.model.QuestionsAuthUsers;
 import easycbt2.model.User;
@@ -86,4 +92,55 @@ public class QuestionMaintenanceController {
 		return "redirect:/examinations";
 	}
 
+    @GetMapping
+    public String index(Model model) {
+        List<Question> questions = questionService.findAll();
+        model.addAttribute("questions", questions); 
+        return "maintenance/questions/index";
+    }
+
+    @GetMapping("new")
+    public String newQuestion(Model model) {
+    	List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+    	model.addAttribute("questionCategories", questionCategories);
+
+        return "maintenance/questions/new";
+    }
+
+    @GetMapping("{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+    	Question question = questionService.findOne(id);
+        model.addAttribute("question", question);
+
+        List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+    	model.addAttribute("questionCategories", questionCategories);
+
+        return "maintenance/questions/edit";
+    }
+
+    @GetMapping("{id}")
+    public String show(@PathVariable Long id, Model model) {
+    	Question question = questionService.findOne(id);
+        model.addAttribute("question", question);
+        return "maintenance/questions/show";
+    }
+
+    @PostMapping
+    public String create(@ModelAttribute Question question) {
+    	questionService.save(question);
+        return "redirect:/maintenance/questions";
+    }
+
+    @PutMapping("{id}")
+    public String update(@PathVariable Long id, @ModelAttribute Question question) {
+    	question.setId(id);
+        questionService.save(question);
+        return "redirect:/maintenance/questions";
+    }
+
+    @DeleteMapping("{id}")
+    public String destroy(@PathVariable Long id) {
+    	questionService.delete(id);
+        return "redirect:/maintenance/questions";
+    }
 }

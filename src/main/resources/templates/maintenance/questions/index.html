@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('questions')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2>Questions</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>text</th>
+					<th>questionCategory</th>
+					<th>defaultText</th>
+					<th>explanation</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="question:${questions}" th:object="${question}">
+					<td th:text="*{id}"></td>
+					<td th:text="*{text}"></td>
+					<td th:text="*{questionCategory.name}"></td>
+					<td th:text="*{defaultText}"></td>
+					<td th:text="*{explanation}"></td>
+					<td><a class="btn btn-default btn-xs"
+						th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">編集</a></td>
+					<td>
+						<form th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
+							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div>
+			<a class="btn btn-default" th:href="@{/maintenance/questions/new}">新規</a>
+			<a class="btn btn-default" th:href="@{/maintenance/questions/upload_json}">JSONアップロード</a>
+		</div>
+	</div>
+</body>
+</html>

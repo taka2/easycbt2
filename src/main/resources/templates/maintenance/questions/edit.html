@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('questions')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2>Edit Question</h2>
+		<form th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="put" th:object="${question}">
+			<div class="form-group">
+				<label class="control-label">text</label>
+					<input class="form-control" type="text" th:field="*{text}"/>
+				<label class="control-label">questionCategory</label>
+				<ul>
+					<li th:each="questionCategory:${questionCategories}">
+						<input type="radio" name="questionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}" th:field="*{questionCategory}"/>
+					</li>
+				</ul>
+				<label class="control-label">defaultText</label>
+					<input class="form-control" type="text" th:field="*{defaultText}" />
+				<label class="control-label">explanation</label>
+					<textarea class="form-control" th:field="*{explanation}" ></textarea>
+			</div>
+			<button class="btn btn-default" type="submit">保存</button>
+		</form>
+		<div class="pull-right">
+			<a class="btn btn-link" th:href="@{/maintenance/questions}">一覧画面へ</a>
+		</div>
+	</div>
+</body>
+</html>

@@ -38,10 +38,6 @@ public class QuestionService {
 	@Autowired
 	DateTimeService dateTimeService; 
 
-	public Question getQuestionById(Long id) {
-		return questionRepository.findById(id).get();
-	}
-
 	public List<Question> getQuestionsByUserAndExamination(User user, Examination examination) {
 		return getQuestionsByUserAndExamination(user, examination, false);
 	}
@@ -119,7 +115,19 @@ public class QuestionService {
 		return resultMap;
 	}
 
+    public List<Question> findAll() {
+        return questionRepository.findAll();
+    }
+
+    public Question findOne(Long id) {
+        return questionRepository.getOne(id);
+    }
+
     public Question save(Question question) {
         return questionRepository.save(question);
+    }
+
+    public void delete(Long id) {
+    	questionRepository.deleteById(id);
     }
 }
