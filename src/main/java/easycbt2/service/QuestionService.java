@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,15 +69,26 @@ public class QuestionService {
 
 		// Calc weight
 		Map<Question, Long> weightMap = calcWeight(user, resultList);
+		List<Entry<Question, Long>> list = new ArrayList<>(weightMap.entrySet());
+		Collections.sort(list, new Comparator<Entry<Question, Long>>() {
+			@Override
+			public int compare(Entry<Question, Long> arg0, Entry<Question, Long> arg1) {
+				return Long.compare(arg0.getValue(), arg1.getValue()) * (-1);
+			}
+		});
+		List<Question> weightedList = new ArrayList<>();
+		for(Entry<Question, Long> anElement : list) {
+			weightedList.add(anElement.getKey());
+		}
 		
-		// Randomize
-		Collections.shuffle(resultList);
-
 		// Limit size
-		int indexTo = Math.min(resultList.size(), examination.getQuestionCount());
-		resultList = resultList.subList(0, indexTo);
+		int indexTo = Math.min(weightedList.size(), examination.getQuestionCount());
+		weightedList = weightedList.subList(0, indexTo);
 
-		return resultList;
+		// Randomize
+		Collections.shuffle(weightedList);
+
+		return weightedList;
 	}
 
 	public Map<Question, Long> calcWeight(User user, List<Question> questions) {
