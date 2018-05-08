@@ -142,4 +142,8 @@ public class QuestionService {
     public void delete(Long id) {
     	questionRepository.deleteById(id);
     }
+    
+    public List<Question> findByQuestionCategory(QuestionCategory questionCategory) {
+    	return questionRepository.findByQuestionCategory(questionCategory);
+    }
 }

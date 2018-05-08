@@ -2,8 +2,11 @@ package easycbt2.service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
+import easycbt2.model.QuestionCategory;
 import easycbt2.model.TakeExamination;
 import easycbt2.model.TakeExaminationsAnswer;
 import easycbt2.model.TakeExaminationsQuestion;
@@ -109,5 +113,28 @@ public class TakeExaminationService {
 	
 	public List<TakeExamination> findByUser(User user) {
 		return takeExaminationRepository.findByUser(user);
+	}
+	
+	public Map<QuestionCategory, List<Question>> summaryByQuestionCategoryByUser(User user) {
+		Map<QuestionCategory, List<Question>> summary = new HashMap<>();
+
+		for(TakeExamination takeExamination : findByUser(user)) {
+			for(TakeExaminationsQuestion question : takeExamination.getTakeExaminationsQuestions()) {
+				QuestionCategory questionCategory = question.getQuestion().getQuestionCategory();
+				if(summary.containsKey(questionCategory)) {
+					List<Question> questions = summary.get(questionCategory);
+					if(!questions.contains(question.getQuestion())) {
+						questions.add(question.getQuestion());
+						summary.put(questionCategory, questions);
+					}
+				} else {
+					List<Question> questions = new ArrayList<>();
+					questions.add(question.getQuestion());
+					summary.put(questionCategory, questions);
+				}
+			}
+		}
+		
+		return summary;
 	}
 }
