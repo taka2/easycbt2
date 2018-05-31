@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import easycbt2.model.ExaminationsCategories;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionAnswer;
 import easycbt2.model.QuestionCategory;
@@ -144,6 +143,9 @@ public class QuestionMaintenanceController {
 
     	// Save Answers
     	for(String answerText : answerTextList) {
+    		if(answerText.trim().length() == 0) {
+    			continue;
+    		}
     		QuestionAnswer questionAnswer = new QuestionAnswer();
     		questionAnswer.setQuestion(newQuestion);
     		questionAnswer.setText(answerText);
