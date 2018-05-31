@@ -1,0 +1,8 @@
+.form-control {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.delete-button {
+	float: right;
+}

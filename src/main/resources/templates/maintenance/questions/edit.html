@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('questions')"></head>
+<head th:replace="_head::head('maintenance/questions/questions')"></head>
 <body>
 	<nav th:replace="_navbar::navbar"></nav>
 	<div class="container">
@@ -27,8 +27,12 @@
 				<div th:if="${question.questionType.getString()} eq 'text'">
 					<label class="control-label">answerText</label>
 					<ul>
-						<li th:each="questionAnswer:${question.questionAnswerList}">
-							<input class="form-control" type="text" th:name="answerText" th:value="${questionAnswer.text}"/>
+						<li th:each="questionAnswer,iter:${question.questionAnswerList}" th:id="${'answer' + iter.index}">
+							<input th:id="${'answerText' + iter.index}" class="form-control" type="text" th:name="answerText" th:value="${questionAnswer.text}"/>
+							<button type="button" th:id="${'deleteButton' + iter.index}" class="delete-button btn btn-danger" th:text="${'Delete' + iter.index}" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
+						</li>
+						<li>
+							<input class="form-control" type="text" th:name="answerText"/>
 						</li>
 					</ul>
 				</div>
