@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +33,14 @@ public class ResultController {
 	QuestionService questionService;
 
     @RequestMapping("/results")
-    public String results(Model model, Principal principal) throws IOException {
+    public String results(Model model, Principal principal, Pageable pageable) throws IOException {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findByUsername(username);
     	
-    	List<TakeExamination> takeExaminations = takeExaminationService.findTakeExaminationsByUserOrderByIdDesc(user);
-    	model.addAttribute("takeExaminations", takeExaminations);
+    	Page<TakeExamination> takeExaminations = takeExaminationService.findByUserOrderByIdDescWithPageable(user, pageable);
+    	model.addAttribute("page", takeExaminations);
+    	model.addAttribute("takeExaminations", takeExaminations.getContent());
+    	model.addAttribute("url", "/results");
 
     	return "results";
     }

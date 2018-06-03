@@ -30,6 +30,24 @@
 				</tr>
 			</tbody>
 		</table>
+        <div th:fragment='paginationbar'>
+            <ul>
+                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+                    <span th:if="${page.first}">←先頭</span>
+                    <a th:if="${not page.first}" th:href="@{${url}(page=0)}">←先頭</a>
+                </li>
+                <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
+                    <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
+                    <a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+                        <span th:text='${i+1}'>1</span>
+                    </a>
+                </li>
+                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+                    <span th:if="${page.last}">末尾➝</span>
+                    <a th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">末尾➝</a>
+                </li>
+            </ul>
+        </div>
 	</div>
 </body>
 </html>
