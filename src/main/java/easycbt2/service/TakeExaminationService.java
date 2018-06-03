@@ -13,6 +13,8 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -97,6 +99,10 @@ public class TakeExaminationService {
 		return takeExaminationRepository.findByUserOrderByIdDesc(user);
 	}
 	
+	public Page<TakeExamination> findByUserOrderByIdDescWithPageable(User user, Pageable pageable) {
+		return takeExaminationRepository.findByUserOrderByIdDesc(user, pageable);
+	}
+
 	public TakeExamination findByIdAndUser(Long id, User user) {
 		Optional<TakeExamination> takeExaminationOptional = takeExaminationRepository.findById(id);
 		if(!takeExaminationOptional.isPresent()) {
@@ -114,7 +120,7 @@ public class TakeExaminationService {
 	public List<TakeExamination> findByUser(User user) {
 		return takeExaminationRepository.findByUser(user);
 	}
-	
+
 	public Map<QuestionCategory, List<Question>> summaryByQuestionCategoryByUser(User user) {
 		Map<QuestionCategory, List<Question>> summary = new HashMap<>();
 
