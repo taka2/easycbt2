@@ -121,10 +121,6 @@ public class TakeExaminationService {
 		return takeExaminationRepository.findByUser(user);
 	}
 
-	/**
-	 * @param user
-	 * @return userが受けた試験の問題の一覧をカテゴリごとに返す
-	 */
 	public Map<QuestionCategory, List<Question>> summaryByQuestionCategoryByUser(User user) {
 		Map<QuestionCategory, List<Question>> summary = new HashMap<>();
 
