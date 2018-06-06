@@ -121,22 +121,18 @@ public class TakeExaminationService {
 		return takeExaminationRepository.findByUser(user);
 	}
 
+	/**
+	 * @param user
+	 * @return userが受けた試験の問題の一覧をカテゴリごとに返す
+	 */
 	public Map<QuestionCategory, List<Question>> summaryByQuestionCategoryByUser(User user) {
 		Map<QuestionCategory, List<Question>> summary = new HashMap<>();
 
 		for(TakeExamination takeExamination : findByUser(user)) {
 			for(TakeExaminationsQuestion question : takeExamination.getTakeExaminationsQuestions()) {
 				QuestionCategory questionCategory = question.getQuestion().getQuestionCategory();
-				if(summary.containsKey(questionCategory)) {
-					List<Question> questions = summary.get(questionCategory);
-					if(!questions.contains(question.getQuestion())) {
-						questions.add(question.getQuestion());
-						summary.put(questionCategory, questions);
-					}
-				} else {
-					List<Question> questions = new ArrayList<>();
-					questions.add(question.getQuestion());
-					summary.put(questionCategory, questions);
+				if(!summary.containsKey(questionCategory)) {
+					summary.put(questionCategory, takeExaminationRepository.findByUserAndQuestionCateogry(user, questionCategory));
 				}
 			}
 		}
