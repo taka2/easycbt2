@@ -35,7 +35,7 @@ public class ResultController {
     @RequestMapping("/results")
     public String results(Model model, Principal principal, Pageable pageable) throws IOException {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	Page<TakeExamination> takeExaminations = takeExaminationService.findByUserOrderByIdDescWithPageable(user, pageable);
     	model.addAttribute("page", takeExaminations);
@@ -48,7 +48,7 @@ public class ResultController {
     @RequestMapping("/results/summaryByQuestionCategory")
     public String summaryByQuestionCategory(Model model, Principal principal) throws IOException {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	Map<QuestionCategory, List<Question>> summaryByQuestionCategory = takeExaminationService.summaryByQuestionCategoryByUser(user);
     	model.addAttribute("summaryByQuestionCategory", summaryByQuestionCategory);

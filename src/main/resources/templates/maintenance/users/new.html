@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('maintenance/users')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2>New User</h2>
+		<form th:action="@{/maintenance/users}" th:method="post">
+			<div class="form-group">
+				<label class="control-label">username</label>
+				<input class="form-control" type="text" name="username" autocomplete="nope"/>
+				<label class="control-label">password</label>
+				<input class="form-control" type="password" name="password" autocomplete="nope"/>
+			</div>
+			<button class="btn btn-default" type="submit">作成</button>
+		</form>
+		<div class="pull-right">
+			<a class="btn btn-link" th:href="@{/maintenance/users}">一覧画面へ</a>
+		</div>
+	</div>
+</body>
+</html>

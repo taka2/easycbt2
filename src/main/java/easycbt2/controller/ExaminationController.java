@@ -42,7 +42,7 @@ public class ExaminationController {
     @RequestMapping("/examinations")
     public String examinations(Model model, Principal principal) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	List<Examination> examinations = examinationService.findByUser(user);
     	model.addAttribute("examinations", examinations);
@@ -53,7 +53,7 @@ public class ExaminationController {
     @RequestMapping("/take_examination_list")
     public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam("examination_id") Long examinationId) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	Examination examination = examinationService.findOne(examinationId);
     	session.setAttribute("examination", examination);
@@ -69,7 +69,7 @@ public class ExaminationController {
     @RequestMapping("/retake_examination_list_only_incorrect_answer")
     public String retakeExaminationListOnlyWrongAnswer(Model model, Principal principal, HttpSession session, @RequestParam("take_examination_id") Long takeExaminationId) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(takeExaminationId, user);
     	Examination examination = takeExamination.getExamination();
@@ -86,7 +86,7 @@ public class ExaminationController {
     @PostMapping("/answer_examination_list")
     public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	// Get Information from Session
     	Examination examination = (Examination)session.getAttribute("examination");
@@ -106,7 +106,7 @@ public class ExaminationController {
     @RequestMapping("/show_examination_result")
     public String showExaminationResult(Model model, Principal principal , @RequestParam("take_examination_id") Long takeExaminationId) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
     	
     	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(takeExaminationId, user);
     	if(takeExamination != null) {

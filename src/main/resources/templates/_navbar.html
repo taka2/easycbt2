@@ -20,13 +20,13 @@
 				<li class="nav-item dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Maintenance<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li sec:authorize="hasRole('ROLE_ADMIN')">
+							<a th:href="@{/maintenance/users}">Users</a>
+						</li>
 						<li><a class="dropdown-item" th:href="@{/maintenance/question_categories}">Question Categories</a></li>
 						<li><a class="dropdown-item" th:href="@{/maintenance/examinations}">Examinations</a></li>
 						<li><a class="dropdown-item" th:href="@{/maintenance/questions}">Questions</a></li>
 					</ul>
-				</li>
-				<li sec:authorize="hasRole('ROLE_ADMIN')">
-					<a th:href="@{/results}">Admin</a>
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">

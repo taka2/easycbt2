@@ -59,7 +59,7 @@ public class QuestionMaintenanceController {
 	@Transactional
 	public String uploadJSON(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
 
 		String str = new String(file.getBytes(), "UTF-8");
 		JsonParser jsonParser = JsonParserFactory.getJsonParser();
