@@ -89,7 +89,7 @@ public class ExaminationMaintenanceController {
     @PostMapping
     public String create(@ModelAttribute Examination examination, Model model, @RequestParam("examinations_categories") List<Long> examinationsCategoriesIdList) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findByUsername(username);
+    	User user = userService.findOne(username);
 
     	Examination newExamination = examinationService.save(examination);
     	

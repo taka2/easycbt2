@@ -1,5 +1,7 @@
 package easycbt2.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,13 @@ public class UserService {
 	AuthorityRepository authorityRepository;
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	public User findByUsername(String username) {
-		return userRepository.findById(username).get();
-	}
 
 	public Boolean isExistAdminUser() {
-		return userRepository.existsById(ADMIN_USER_NAME);
+		return isExistsUser(ADMIN_USER_NAME);
+	}
+	
+	public Boolean isExistsUser(String username) {
+		return userRepository.existsById(username);
 	}
 	
 	public User registerUser(String username, String password, String role) {
@@ -40,9 +42,25 @@ public class UserService {
 		
 		Authority authority = new Authority();
 		authority.setUsername(username);
-		authority.setAuthority(ROLE_ADMIN);
+		authority.setAuthority(role);
 		authorityRepository.save(authority);
 
 		return user;
 	}
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findOne(String id) {
+        return userRepository.findById(id).get();
+    }
+
+    public User save(User user) {
+        return registerUser(user.getUsername(), user.getPassword(), ROLE_USER);
+    }
+
+    public void delete(String id) {
+    	userRepository.deleteById(id);
+    }
 }

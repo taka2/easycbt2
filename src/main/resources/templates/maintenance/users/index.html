@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('maintenance/users')"></head>
+<body>
+	<nav th:replace="_navbar::navbar"></nav>
+	<div class="container">
+		<h2>Users</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>username</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user:${users}" th:object="${user}">
+					<td th:text="*{username}"></td>
+					<td th:switch="*{username}">
+					    <span th:case="'admin'"></span>
+						<a th:case="*" class="btn btn-default btn-xs" th:href="@{/maintenance/users/{id}/edit(id=*{username})}">編集</a>
+					</td>
+					<td th:switch="*{username}">
+						<span th:case="'admin'"></span>
+						<form th:case="*" th:action="@{/maintenance/users/{id}(id=*{username})}" th:method="delete">
+							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<a class="btn btn-default" th:href="@{/maintenance/users/new}">新規</a>
+	</div>
+</body>
+</html>
