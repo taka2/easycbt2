@@ -127,13 +127,9 @@ public class TakeExaminationService {
 	public Map<QuestionCategory, List<Question>> summaryByQuestionCategoryByUser(User user) {
 		Map<QuestionCategory, List<Question>> summary = new HashMap<>();
 
-		for(TakeExamination takeExamination : findByUser(user)) {
-			for(TakeExaminationsQuestion question : takeExamination.getTakeExaminationsQuestions()) {
-				QuestionCategory questionCategory = question.getQuestion().getQuestionCategory();
-				if(!summary.containsKey(questionCategory)) {
-					summary.put(questionCategory, takeExaminationRepository.findByUserAndQuestionCateogry(user, questionCategory));
-				}
-			}
+		List<QuestionCategory> questionCategoryList = takeExaminationRepository.findQuestionCategoryByUser(user);
+		for(QuestionCategory questionCategory : questionCategoryList) {
+			summary.put(questionCategory, takeExaminationRepository.findByUserAndQuestionCateogry(user, questionCategory));
 		}
 		
 		return summary;
