@@ -33,7 +33,12 @@ public class TakeExaminationRepositoryTest {
 	}
 
 	@Test
-	public void testGetExaminationsByUser1() {
+	public void testFindQuestionCategoryByUser1() {
+		List<QuestionCategory> list = takeExaminationRepository.findQuestionCategoryByUser(user1);
+		System.out.println(list);
+	}
+	@Test
+	public void testFindByUserAndQuestionCategory1() {
 		List<Question> list = takeExaminationRepository.findByUserAndQuestionCateogry(user1, questionCategory1);
 		System.out.println(list);
 	}
