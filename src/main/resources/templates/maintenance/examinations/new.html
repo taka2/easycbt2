@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('examinations')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('examinations')"></nav>
 	<div class="container">
 		<h2>New Examination</h2>
 		<form th:action="@{/maintenance/examinations}" th:method="post">
@@ -18,10 +18,10 @@
 					</li>
 				</ul>
 			</div>
-			<button class="btn btn-default" type="submit">作成</button>
+			<button class="btn btn-default" type="submit">Create</button>
 		</form>
 		<div class="pull-right">
-			<a class="btn btn-link" th:href="@{/maintenance/examinations}">一覧画面へ</a>
+			<a class="btn btn-link" th:href="@{/maintenance/examinations}">List</a>
 		</div>
 	</div>
 </body>

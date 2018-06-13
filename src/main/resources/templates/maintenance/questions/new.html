@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('questions')"></head>
+<head th:replace="_head::head('maintenance/questions/questions')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
 		<h2>New Question</h2>
 		<form th:action="@{/maintenance/questions}" th:method="post">
@@ -20,10 +20,10 @@
 				<label class="control-label">explanation</label>
 					<textarea class="form-control" name="explanation" ></textarea>
 			</div>
-			<button class="btn btn-default" type="submit">作成</button>
+			<button class="btn btn-default" type="submit">Create</button>
 		</form>
 		<div class="pull-right">
-			<a class="btn btn-link" th:href="@{/maintenance/questions}">一覧画面へ</a>
+			<a class="btn btn-link" th:href="@{/maintenance/questions}">List</a>
 		</div>
 	</div>
 </body>

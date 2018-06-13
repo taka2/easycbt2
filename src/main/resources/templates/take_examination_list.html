@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('take_examination_list')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('take_examination_list')"></nav>
 	<h2 th:text="${session.examination.text}"></h2>
 	<div class="container">
 		<form name="form1" method="POST" th:action="@{/answer_examination_list}" autocomplete="off">
@@ -27,7 +27,7 @@
 			</div>
 
 			<p class="finish">
-				<input type="button" name="finish" value="完了" id='btn_finish' class="btn btn-primary"></input>
+				<input type="button" name="finish" value="Finish" id='btn_finish' class="btn btn-primary"></input>
 			</p>
 		</form>
 	</div>

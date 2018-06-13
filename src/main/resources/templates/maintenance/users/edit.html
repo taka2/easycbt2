@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('maintenance/users')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/users')"></nav>
 	<div class="container">
 		<h2>Edit User</h2>
 		<form th:action="@{/maintenance/users/{id}(id=*{username})}" th:method="put" th:object="${user}">
@@ -12,10 +12,10 @@
 				<label class="control-label">password</label>
 				<input class="form-control" type="password" th:field="*{password}" autocomplete="nope"/>
 			</div>
-			<button class="btn btn-default" type="submit">保存</button>
+			<button class="btn btn-default" type="submit">Save</button>
 		</form>
 		<div class="pull-right">
-			<a class="btn btn-link" th:href="@{/maintenance/users}">一覧画面へ</a>
+			<a class="btn btn-link" th:href="@{/maintenance/users}">List</a>
 		</div>
 	</div>
 </body>

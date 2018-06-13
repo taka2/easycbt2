@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('results')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('results')"></nav>
 	<div class="container">
 		<table class="table table-striped">
 			<thead>
@@ -33,8 +33,8 @@
         <div th:fragment='paginationbar'>
             <ul>
                 <li th:class="${page.first} ? 'disabled':''" style="display:inline">
-                    <span th:if="${page.first}">←先頭</span>
-                    <a th:if="${not page.first}" th:href="@{${url}(page=0)}">←先頭</a>
+                    <span th:if="${page.first}">&lt;&lt;</span>
+                    <a th:if="${not page.first}" th:href="@{${url}(page=0)}">&lt;&lt;</a>
                 </li>
                 <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
                     <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
@@ -43,8 +43,8 @@
                     </a>
                 </li>
                 <li th:class="${page.last} ? 'disabled':''" style="display:inline">
-                    <span th:if="${page.last}">末尾➝</span>
-                    <a th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">末尾➝</a>
+                    <span th:if="${page.last}">&gt;&gt;</span>
+                    <a th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">&gt;&gt;</a>
                 </li>
             </ul>
         </div>

@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('maintenance/questions/upload_json')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/questions/upload_json')"></nav>
 
 	<div class="container">
 		<h2>Upload JSON Questions</h2>
 		<form name="form1" method="POST" th:action="@{/maintenance/questions/upload_json}" enctype="multipart/form-data">
 			<div> File to upload: <input type="file" name="file" /></div>
 			<p class="finish">
-				<input type="button" name="finish" value="アップロード" id='btn_finish' class="btn btn-primary"></input>
+				<input type="button" name="finish" value="Upload" id='btn_finish' class="btn btn-primary"></input>
 			</p>
 		</form>
 	</div>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('question_categories')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('question_categories')"></nav>
 	<div class="container">
 		<h2>Question Categories</h2>
 		<table class="table">
@@ -19,16 +19,16 @@
 					<td th:text="*{id}"></td>
 					<td th:text="*{name}"></td>
 					<td><a class="btn btn-default btn-xs"
-						th:href="@{/maintenance/question_categories/{id}/edit(id=*{id})}">編集</a></td>
+						th:href="@{/maintenance/question_categories/{id}/edit(id=*{id})}">Edit</a></td>
 					<td>
 						<form th:action="@{/maintenance/question_categories/{id}(id=*{id})}" th:method="delete">
-							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
 						</form>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<a class="btn btn-default" th:href="@{/maintenance/question_categories/new}">新規</a>
+		<a class="btn btn-default" th:href="@{/maintenance/question_categories/new}">New</a>
 	</div>
 </body>
 </html>
