@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('questions')"></head>
+<head th:replace="_head::head('maintenance/questions/questions')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
 		<h2>Questions</h2>
 		<table class="table">
@@ -25,18 +25,18 @@
 					<td th:text="*{defaultText}"></td>
 					<td th:text="*{explanation}"></td>
 					<td><a class="btn btn-default btn-xs"
-						th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">編集</a></td>
+						th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">Edit</a></td>
 					<td>
 						<form th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
-							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
 						</form>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<div>
-			<a class="btn btn-default" th:href="@{/maintenance/questions/new}">新規</a>
-			<a class="btn btn-default" th:href="@{/maintenance/questions/upload_json}">JSONアップロード</a>
+			<a class="btn btn-default" th:href="@{/maintenance/questions/new}">New</a>
+			<a class="btn btn-default" th:href="@{/maintenance/questions/upload_json}">Upload JSON Data</a>
 		</div>
 	</div>
 </body>

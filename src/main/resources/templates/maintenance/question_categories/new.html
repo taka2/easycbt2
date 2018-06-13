@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('question_categories')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('question_categories')"></nav>
 	<div class="container">
 		<h2>New Question Category</h2>
 		<form th:action="@{/maintenance/question_categories}" th:method="post">
@@ -10,10 +10,10 @@
 				<label class="control-label">name</label> <input
 					class="form-control" type="text" name="name" />
 			</div>
-			<button class="btn btn-default" type="submit">作成</button>
+			<button class="btn btn-default" type="submit">Create</button>
 		</form>
 		<div class="pull-right">
-			<a class="btn btn-link" th:href="@{/maintenance/question_categories}">一覧画面へ</a>
+			<a class="btn btn-link" th:href="@{/maintenance/question_categories}">List</a>
 		</div>
 	</div>
 </body>

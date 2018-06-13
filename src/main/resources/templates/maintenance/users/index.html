@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="_head::head('maintenance/users')"></head>
 <body>
-	<nav th:replace="_navbar::navbar"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/users')"></nav>
 	<div class="container">
 		<h2>Users</h2>
 		<table class="table">
@@ -18,18 +18,18 @@
 					<td th:text="*{username}"></td>
 					<td th:switch="*{username}">
 					    <span th:case="'admin'"></span>
-						<a th:case="*" class="btn btn-default btn-xs" th:href="@{/maintenance/users/{id}/edit(id=*{username})}">編集</a>
+						<a th:case="*" class="btn btn-default btn-xs" th:href="@{/maintenance/users/{id}/edit(id=*{username})}">Edit</a>
 					</td>
 					<td th:switch="*{username}">
 						<span th:case="'admin'"></span>
 						<form th:case="*" th:action="@{/maintenance/users/{id}(id=*{username})}" th:method="delete">
-							<input class="btn btn-default btn-xs" type="submit" value="削除" />
+							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
 						</form>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<a class="btn btn-default" th:href="@{/maintenance/users/new}">新規</a>
+		<a class="btn btn-default" th:href="@{/maintenance/users/new}">New</a>
 	</div>
 </body>
 </html>

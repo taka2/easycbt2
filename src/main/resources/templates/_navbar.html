@@ -2,7 +2,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<nav class="navbar navbar-default" th:fragment="navbar">
+<nav class="navbar navbar-default" th:fragment="navbar(title)">
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
@@ -13,9 +13,9 @@
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li class="active"><a th:href="@{/examinations}">Examinations</a></li>
-				<li class="active"><a th:href="@{/results}">Results</a></li>
-				<li class="active"><a th:href="@{/results/summaryByQuestionCategory}">SummaryByQuestionCategory</a></li>
+				<li th:classappend="${title == 'examinations'} ? 'active'"><a th:href="@{/examinations}">Examinations</a></li>
+				<li th:classappend="${title == 'results'} ? 'active'"><a th:href="@{/results}">Results</a></li>
+				<li th:classappend="${title == 'summaryByQuestionCategory'} ? 'active'"><a th:href="@{/results/summaryByQuestionCategory}">SummaryByQuestionCategory</a></li>
 				
 				<li class="nav-item dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Maintenance<span class="caret"></span></a>
