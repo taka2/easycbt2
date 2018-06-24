@@ -91,12 +91,14 @@ public class ExaminationMaintenanceController {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findOne(username);
 
+    	examination.setEnabled(true);
     	Examination newExamination = examinationService.save(examination);
     	
     	for(Long questionCategoryId : examinationsCategoriesIdList) {
     		ExaminationsCategories examinationsCategories = new ExaminationsCategories();
     		examinationsCategories.setExamination(newExamination);
     		examinationsCategories.setQuestionCategory(questionCategoryService.findOne(questionCategoryId));
+    		examinationsCategories.setEnabled(true);
     		examinationsCategoriesService.save(examinationsCategories);
     	}
 
@@ -112,6 +114,7 @@ public class ExaminationMaintenanceController {
     @PutMapping("{id}")
     public String update(@PathVariable Long id, @ModelAttribute Examination examination, Model model, @RequestParam("examinations_categories") List<Long> examinationsCategoriesIdList) {
     	examination.setId(id);
+    	examination.setEnabled(true);
     	Examination newExamination = examinationService.save(examination);
 
     	// Delete Examinations Categories
@@ -124,6 +127,7 @@ public class ExaminationMaintenanceController {
     		ExaminationsCategories examinationsCategories = new ExaminationsCategories();
     		examinationsCategories.setExamination(newExamination);
     		examinationsCategories.setQuestionCategory(questionCategoryService.findOne(questionCategoryId));
+    		examinationsCategories.setEnabled(true);
     		examinationsCategoriesService.save(examinationsCategories);
     	}
 

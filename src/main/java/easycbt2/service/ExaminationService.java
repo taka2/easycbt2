@@ -24,11 +24,11 @@ public class ExaminationService {
 	ExaminationsAuthUsersRepository examinationsAuthUsersRepository;
 
     public List<Examination> findAll() {
-        return examinationRepository.findAll();
+    	return examinationRepository.findByEnabled(true);
     }
 
 	public Examination findOne(Long id) {
-		return examinationRepository.findById(id).get();
+		return examinationRepository.findByIdAndEnabled(id, true);
 	}
 
     public Examination save(Examination examination) {
@@ -36,7 +36,9 @@ public class ExaminationService {
     }
 
     public void delete(Long id) {
-    	examinationRepository.deleteById(id);
+    	Examination obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
     }
 
 	public List<Examination> findByUser(User user) {

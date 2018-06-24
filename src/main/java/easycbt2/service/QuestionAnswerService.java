@@ -14,15 +14,21 @@ public class QuestionAnswerService {
 	@Autowired
 	QuestionAnswerRepository questionAnswerRepository;
 
+    public QuestionAnswer findOne(Long id) {
+    	return questionAnswerRepository.findByIdAndEnabled(id, true);
+    }
+
     public QuestionAnswer save(QuestionAnswer questionAnswer) {
         return questionAnswerRepository.save(questionAnswer);
     }
 
     public List<QuestionAnswer> findByQuestion(Question question) {
-    	return questionAnswerRepository.findByQuestion(question);
+    	return questionAnswerRepository.findByQuestionAndEnabled(question, true);
     }
 
     public void delete(Long id) {
-    	questionAnswerRepository.deleteById(id);
+    	QuestionAnswer obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
     }
 }

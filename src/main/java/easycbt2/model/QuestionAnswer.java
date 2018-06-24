@@ -32,6 +32,8 @@ public class QuestionAnswer {
 	private String text;
 	@Column
 	private Boolean isCorrect;
+	@Column
+	private Boolean enabled;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -66,6 +68,12 @@ public class QuestionAnswer {
 	}
 	public void setIsCorrect(Boolean isCorrect) {
 		this.isCorrect = isCorrect;
+	}
+	public Boolean getEnabled() {
+		return enabled;
+	}
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 	public String getCreatedBy() {
 		return createdBy;

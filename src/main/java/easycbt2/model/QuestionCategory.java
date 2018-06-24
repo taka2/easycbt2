@@ -27,6 +27,8 @@ public class QuestionCategory {
 	private Long id;
 	@Column
 	private String name;
+	@Column
+	private Boolean enabled;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -49,6 +51,12 @@ public class QuestionCategory {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public Boolean getEnabled() {
+		return enabled;
+	}
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 	public String getCreatedBy() {
 		return createdBy;

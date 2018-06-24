@@ -2,6 +2,7 @@ package easycbt2.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,8 @@ public class ExaminationsCategories {
 	private Examination examination;
 	@ManyToOne
 	private QuestionCategory questionCategory;
+	@Column
+	private Boolean enabled;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -56,6 +59,12 @@ public class ExaminationsCategories {
 	}
 	public void setQuestionCategory(QuestionCategory questionCategory) {
 		this.questionCategory = questionCategory;
+	}
+	public Boolean getEnabled() {
+		return enabled;
+	}
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 	public String getCreatedBy() {
 		return createdBy;

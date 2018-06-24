@@ -72,6 +72,7 @@ public class QuestionMaintenanceController {
 			question.setQuestionType(QuestionType.valueOf((String)map.get("questionType")));
 			question.setText((String)map.get("text"));
 			question.setQuestionCategory(questionCategoryService.findByName((String)map.get("questionCategory")));
+			question.setEnabled(true);
 			questionService.save(question);
 			
 			@SuppressWarnings("unchecked")
@@ -81,6 +82,7 @@ public class QuestionMaintenanceController {
 				questionAnswer.setQuestion(question);
 				questionAnswer.setText((String)answerMap.get("text"));
 				questionAnswer.setIsCorrect((Boolean)answerMap.get("isCorrect"));
+				questionAnswer.setEnabled(true);
 				questionAnswerService.save(questionAnswer);
 			}
 			
@@ -127,6 +129,7 @@ public class QuestionMaintenanceController {
 
     @PostMapping
     public String create(@ModelAttribute Question question) {
+    	question.setEnabled(true);
     	questionService.save(question);
         return "redirect:/maintenance/questions";
     }
@@ -134,6 +137,7 @@ public class QuestionMaintenanceController {
     @PutMapping("{id}")
     public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam("answerText") List<String> answerTextList) {
     	question.setId(id);
+    	question.setEnabled(true);
         Question newQuestion = questionService.save(question);
 
     	// Delete Answers
@@ -150,6 +154,7 @@ public class QuestionMaintenanceController {
     		questionAnswer.setQuestion(newQuestion);
     		questionAnswer.setText(answerText);
     		questionAnswer.setIsCorrect(true);
+    		questionAnswer.setEnabled(true);
     		questionAnswerService.save(questionAnswer);
     	}
 

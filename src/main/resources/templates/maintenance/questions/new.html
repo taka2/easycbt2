@@ -7,6 +7,7 @@
 		<h2>New Question</h2>
 		<form th:action="@{/maintenance/questions}" th:method="post">
 			<div class="form-group">
+				<input type="hidden" name="questionType" value="TEXT"/>
 				<label class="control-label">text</label>
 					<input class="form-control" type="text" name="text" />
 				<label class="control-label">questionCategory</label>

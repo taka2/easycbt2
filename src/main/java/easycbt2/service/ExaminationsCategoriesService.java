@@ -15,11 +15,11 @@ public class ExaminationsCategoriesService {
 	ExaminationsCategoriesRepository examinationsCategoriesRepository;
 
     public List<ExaminationsCategories> findAll() {
-        return examinationsCategoriesRepository.findAll();
+    	return examinationsCategoriesRepository.findByEnabled(true);
     }
 
 	public ExaminationsCategories findOne(Long id) {
-		return examinationsCategoriesRepository.findById(id).get();
+		return examinationsCategoriesRepository.findByIdAndEnabled(id, true);
 	}
 
     public ExaminationsCategories save(ExaminationsCategories examinationsCategories) {
@@ -27,10 +27,12 @@ public class ExaminationsCategoriesService {
     }
 
     public void delete(Long id) {
-    	examinationsCategoriesRepository.deleteById(id);
+    	ExaminationsCategories obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
     }
 
     public List<ExaminationsCategories> findByExamination(Examination examination) {
-    	return examinationsCategoriesRepository.findByExamination(examination);
+    	return examinationsCategoriesRepository.findByExaminationAndEnabled(examination, true);
     }
 }

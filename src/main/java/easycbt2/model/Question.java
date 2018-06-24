@@ -43,6 +43,8 @@ public class Question {
 	private String defaultText;
 	@Column
 	private String explanation;
+	@Column
+	private Boolean enabled;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -91,6 +93,12 @@ public class Question {
 	}
 	public void setExplanation(String explanation) {
 		this.explanation = explanation;
+	}
+	public Boolean getEnabled() {
+		return enabled;
+	}
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 	public String getCreatedBy() {
 		return createdBy;
