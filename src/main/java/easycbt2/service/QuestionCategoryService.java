@@ -14,11 +14,11 @@ public class QuestionCategoryService {
     private QuestionCategoryRepository questionCategoryRepository;
 
     public List<QuestionCategory> findAll() {
-        return questionCategoryRepository.findAll();
+    	return questionCategoryRepository.findByEnabled(true);
     }
 
     public QuestionCategory findOne(Long id) {
-        return questionCategoryRepository.getOne(id);
+    	return questionCategoryRepository.findByIdAndEnabled(id, true);
     }
 
     public QuestionCategory save(QuestionCategory questionCategory) {
@@ -26,10 +26,12 @@ public class QuestionCategoryService {
     }
 
     public void delete(Long id) {
-    	questionCategoryRepository.deleteById(id);
+    	QuestionCategory obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
     }
     
     public QuestionCategory findByName(String name) {
-    	return questionCategoryRepository.findByName(name);
+    	return questionCategoryRepository.findByNameAndEnabled(name, true);
     }
 }

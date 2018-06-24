@@ -50,6 +50,7 @@ public class QuestionCategoriesMaintenanceController {
 
     @PostMapping
     public String create(@ModelAttribute QuestionCategory questionCategory) {
+    	questionCategory.setEnabled(true);
     	questionCategoryService.save(questionCategory);
         return "redirect:/maintenance/question_categories";
     }
@@ -57,6 +58,7 @@ public class QuestionCategoriesMaintenanceController {
     @PutMapping("{id}")
     public String update(@PathVariable Long id, @ModelAttribute QuestionCategory questionCategory) {
     	questionCategory.setId(id);
+    	questionCategory.setEnabled(true);
         questionCategoryService.save(questionCategory);
         return "redirect:/maintenance/question_categories";
     }

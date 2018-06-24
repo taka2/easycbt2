@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +35,8 @@ public class Examination {
 	private String text;
 	@Column
 	private Integer questionCount;
+	@Column
+	private Boolean enabled;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -65,6 +68,12 @@ public class Examination {
 	public void setQuestionCount(Integer questionCount) {
 		this.questionCount = questionCount;
 	}
+	public Boolean getEnabled() {
+		return enabled;
+	}
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -90,7 +99,7 @@ public class Examination {
 		this.modifiedDate = modifiedDate;
 	}
 	public Set<ExaminationsCategories> getCategoryList() {
-		return categoryList;
+		return categoryList.stream().filter(s -> s.getEnabled()).collect(Collectors.toSet());
 	}
 	public void setCategoryList(Set<ExaminationsCategories> categoryList) {
 		this.categoryList = categoryList;

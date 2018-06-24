@@ -9,4 +9,7 @@ import easycbt2.model.QuestionCategory;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 	public List<Question> findByQuestionCategory(QuestionCategory questionCategory);
+	public List<Question> findByQuestionCategoryAndEnabled(QuestionCategory questionCategory, Boolean enabled);
+	public List<Question> findByEnabled(Boolean enabled);
+	public Question findByIdAndEnabled(Long id, Boolean enabled);
 }

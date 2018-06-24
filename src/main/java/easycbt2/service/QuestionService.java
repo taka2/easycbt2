@@ -128,11 +128,11 @@ public class QuestionService {
 	}
 
     public List<Question> findAll() {
-        return questionRepository.findAll();
+        return questionRepository.findByEnabled(true);
     }
 
     public Question findOne(Long id) {
-        return questionRepository.getOne(id);
+        return questionRepository.findByIdAndEnabled(id, true);
     }
 
     public Question save(Question question) {
@@ -140,10 +140,12 @@ public class QuestionService {
     }
 
     public void delete(Long id) {
-    	questionRepository.deleteById(id);
+    	Question obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
     }
     
     public List<Question> findByQuestionCategory(QuestionCategory questionCategory) {
-    	return questionRepository.findByQuestionCategory(questionCategory);
+    	return questionRepository.findByQuestionCategoryAndEnabled(questionCategory, true);
     }
 }
