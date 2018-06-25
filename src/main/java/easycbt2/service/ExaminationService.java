@@ -53,7 +53,9 @@ public class ExaminationService {
 		// List Examinations restricted by user
 		List<ExaminationsAuthUsers> listUsers = examinationsAuthUsersRepository.findByUser(user);
 		for(ExaminationsAuthUsers anElement : listUsers) {
-			resultList.add(anElement.getExamination());
+			if(!resultList.contains(anElement.getExamination())) {
+				resultList.add(anElement.getExamination());
+			}
 		}
 
 		return resultList;

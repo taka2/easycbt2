@@ -26,11 +26,13 @@ public class ExaminationServiceTest {
 	
 	private User user1;
 	private User user2;
+	private User user4;
 
 	@Before
 	public void before() {
         user1 = userRepository.findById("user1").get();
         user2 = userRepository.findById("user2").get();
+        user4 = userRepository.findById("user4").get();
 	}
 
 	@Test
@@ -42,6 +44,13 @@ public class ExaminationServiceTest {
 	@Test
 	public void testGetExaminationsByUser2() {
 		List<Examination> examinations = examinationService.findByUser(user2);
+		assertThat(examinations.size(), is(1));
+		assertThat(examinations.get(0).getText(), is("examinationPublic"));
+	}
+	
+	@Test
+	public void testGetExaminationsByUser4() {
+		List<Examination> examinations = examinationService.findByUser(user4);
 		assertThat(examinations.size(), is(1));
 		assertThat(examinations.get(0).getText(), is("examinationPublic"));
 	}
