@@ -63,7 +63,9 @@ public class QuestionService {
 		for(QuestionsAuthUsers anElement : listUsers) {
 			Question question = anElement.getQuestion();
 			if(categoryList.contains(question.getQuestionCategory())) {
-				resultList.add(question);
+				if(!resultList.contains(question)) {
+					resultList.add(question);
+				}
 			}
 		}
 
