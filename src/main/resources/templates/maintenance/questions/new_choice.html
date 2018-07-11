@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('maintenance/questions/questions')"></head>
+<body>
+	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
+	<div class="container">
+		<h2>Edit Question</h2>
+		<form th:action="@{/maintenance/questions}" th:method="post">
+			<div class="form-group">
+				<label class="control-label">text</label>
+					<input class="form-control" type="text" name="text"/>
+				<label class="control-label">questionType</label>
+				<ul>
+					<li><input type="radio" name="questionType" th:value="SINGLE_CHOICE" th:text="single_choice"/></li>
+					<li><input type="radio" name="questionType" th:value="MULTIPLE_CHOICE" th:text="multiple_choice"/></li>
+				</ul>
+				<label class="control-label">questionCategory</label>
+				<ul>
+					<li th:each="questionCategory:${questionCategories}">
+						<input type="radio" name="questionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+					</li>
+				</ul>
+				<label class="control-label">explanation</label>
+					<textarea class="form-control" name="explanation" ></textarea>
+					
+				<!-- answer -->
+				<label class="control-label">answerChoice</label>
+				<ul id="answer-text">
+					<li class="form-group">
+						<input class="col-sm-1" type="checkbox" name="answerIsCorrect0"/>
+						<input class="col-sm-9" type="text" name="answerText0"/>
+					</li>
+				</ul>
+				
+			</div>
+			<div>
+				<button class="pull-right col-sm-1 btn btn-default" type="button" th:text="add" onClick="addAnswerChoice()"></button>
+			</div>
+			<div>
+				<button class="btn btn-default" type="submit">Save</button>
+			</div>
+		</form>
+		<div class="pull-right">
+			<a class="btn btn-link" th:href="@{/maintenance/questions}">List</a>
+		</div>
+	</div>
+</body>
+</html>

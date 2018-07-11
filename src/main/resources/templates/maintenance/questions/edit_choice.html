@@ -18,26 +18,25 @@
 						<input type="radio" name="questionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}" th:field="*{questionCategory}"/>
 					</li>
 				</ul>
-				<label class="control-label">defaultText</label>
-					<input class="form-control" type="text" th:field="*{defaultText}" />
 				<label class="control-label">explanation</label>
 					<textarea class="form-control" th:field="*{explanation}" ></textarea>
 					
 				<!-- answer -->
-				<div th:if="${question.questionType.getString()} eq 'text'">
-					<label class="control-label">answerText</label>
-					<ul>
-						<li th:each="questionAnswer,iter:${question.questionAnswerList}" th:id="${'answer' + iter.index}">
-							<input th:id="${'answerText' + iter.index}" class="form-control" type="text" th:name="answerText" th:value="${questionAnswer.text}"/>
-							<button type="button" th:id="${'deleteButton' + iter.index}" class="delete-button btn btn-danger" th:text="${'Delete' + iter.index}" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
-						</li>
-						<li>
-							<input class="form-control" type="text" th:name="answerText"/>
-						</li>
-					</ul>
-				</div>
+				<label class="control-label">answerChoice</label>
+				<ul id="answer-text">
+					<li class="form-group" th:each="questionAnswer,iter:${question.questionAnswerList}" th:id="${'answer' + iter.index}">
+						<input class="col-sm-1" th:id="${'answerIsCorrect' + iter.index}" type="checkbox" th:name="${'answerIsCorrect' + iter.index}" th:checked="${questionAnswer.isCorrect}"/>
+						<input class="col-sm-9" th:id="${'answerText' + iter.index}" type="text" th:name="${'answerText' + iter.index}" th:value="${questionAnswer.text}"/>
+						<button class="col-sm-1 delete-button btn btn-danger" type="button" th:id="${'deleteButton' + iter.index}" th:text="Delete" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
+					</li>
+				</ul>
 			</div>
-			<button class="btn btn-default" type="submit">Save</button>
+			<div>
+				<button class="pull-right col-sm-1 btn btn-default" type="button" th:text="add" onClick="addAnswerChoice()"></button>
+			</div>
+			<div>
+				<button class="btn btn-default" type="submit">Save</button>
+			</div>
 		</form>
 		<div class="pull-right">
 			<a class="btn btn-link" th:href="@{/maintenance/questions}">List</a>

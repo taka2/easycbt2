@@ -47,14 +47,18 @@ public class ExaminationService {
 		// List Public Examinations
 		List<ExaminationsAuthPublic> listPublic = examinationsAuthPublicRepository.findAll();
 		for(ExaminationsAuthPublic anElement : listPublic) {
-			resultList.add(anElement.getExamination());
+			if(anElement.getExamination().getEnabled()) {
+				resultList.add(anElement.getExamination());
+			}
 		}
 		
 		// List Examinations restricted by user
 		List<ExaminationsAuthUsers> listUsers = examinationsAuthUsersRepository.findByUser(user);
 		for(ExaminationsAuthUsers anElement : listUsers) {
-			if(!resultList.contains(anElement.getExamination())) {
-				resultList.add(anElement.getExamination());
+			if(anElement.getExamination().getEnabled()) {
+				if(!resultList.contains(anElement.getExamination())) {
+					resultList.add(anElement.getExamination());
+				}
 			}
 		}
 
