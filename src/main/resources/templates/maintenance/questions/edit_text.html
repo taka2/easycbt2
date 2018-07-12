@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('maintenance/questions/questions')"></head>
+<body>
+	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
+	<div class="container">
+		<h2>Edit Question</h2>
+		<form th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="put" th:object="${question}">
+			<div class="form-group">
+				<label class="control-label">text</label>
+					<input class="form-control" type="text" th:field="*{text}"/>
+				<label class="control-label">questionType</label>
+					<div th:text="${question.questionType.getString()}"></div>
+					<input class="form-control" type="hidden" th:field="*{questionType}"/>
+				<label class="control-label">questionCategory</label>
+				<ul>
+					<li th:each="questionCategory:${questionCategories}">
+						<input type="radio" name="questionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}" th:field="*{questionCategory}"/>
+					</li>
+				</ul>
+				<label class="control-label">defaultText</label>
+					<input class="form-control" type="text" th:field="*{defaultText}" />
+				<label class="control-label">explanation</label>
+					<textarea class="form-control" th:field="*{explanation}" ></textarea>
+					
+				<!-- answer -->
+				<label class="control-label">answerText</label>
+				<ul id="answer-text">
+					<li class="form-group" th:each="questionAnswer,iter:${question.questionAnswerList}" th:id="${'answer' + iter.index}">
+						<input class="col-sm-10" th:id="${'answerText' + iter.index}" type="text" th:name="answerText" th:value="${questionAnswer.text}"/>
+						<button class="col-sm-1 delete-button btn btn-danger" type="button" th:id="${'deleteButton' + iter.index}" th:text="Delete" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
+					</li>
+				</ul>
+				<div>
+					<button class="pull-right col-sm-1 btn btn-default" type="button" th:text="add" onClick="addAnswerText()"></button>
+				</div>
+				<div>
+					<button class="btn btn-default" type="submit">Save</button>
+				</div>
+			</div>
+		</form>
+		<div class="pull-right">
+			<a class="btn btn-link" th:href="@{/maintenance/questions}">List</a>
+		</div>
+	</div>
+</body>
+</html>

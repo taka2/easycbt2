@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -125,7 +126,7 @@ public class Question {
 		this.modifiedDate = modifiedDate;
 	}
 	public Set<QuestionAnswer> getQuestionAnswerList() {
-		return questionAnswerList;
+		return questionAnswerList.stream().filter(s -> s.getEnabled()).collect(Collectors.toSet());
 	}
 	public void setQuestionAnswerList(Set<QuestionAnswer> questionAnswerList) {
 		this.questionAnswerList = questionAnswerList;

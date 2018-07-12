@@ -12,6 +12,7 @@ import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -101,12 +102,21 @@ public class QuestionMaintenanceController {
         return "maintenance/questions/index";
     }
 
-    @GetMapping("new")
-    public String newQuestion(Model model) {
+    @GetMapping("new_choice")
+    public String newChoiceQuestion(Model model) {
+    	return newQuestion(model, "maintenance/questions/new_choice");
+    }
+
+    @GetMapping("new_text")
+    public String newTextQuestion(Model model) {
+        return newQuestion(model, "maintenance/questions/new_text");
+    }
+    
+    public String newQuestion(Model model, String forwardURL) {
     	List<QuestionCategory> questionCategories = questionCategoryService.findAll();
     	model.addAttribute("questionCategories", questionCategories);
-
-        return "maintenance/questions/new";
+    	
+    	return forwardURL;
     }
 
     @GetMapping("{id}/edit")
@@ -117,7 +127,15 @@ public class QuestionMaintenanceController {
         List<QuestionCategory> questionCategories = questionCategoryService.findAll();
     	model.addAttribute("questionCategories", questionCategories);
 
-        return "maintenance/questions/edit";
+    	switch(question.getQuestionType()) {
+    	case TEXT:
+    		return "maintenance/questions/edit_text";
+    	case SINGLE_CHOICE:
+    	case MULTIPLE_CHOICE:
+    		return "maintenance/questions/edit_choice";
+    	default:
+    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	}
     }
 
     @GetMapping("{id}")
@@ -128,14 +146,37 @@ public class QuestionMaintenanceController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute Question question) {
+    public String create(@ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params) {
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	User user = userService.findOne(username);
+
     	question.setEnabled(true);
-    	questionService.save(question);
+    	Question newQuestion = questionService.save(question);
+
+    	// Save Answers
+    	switch(question.getQuestionType()) {
+    	case TEXT:
+    		saveTextAnswers(question, params);
+        	break;
+    	case SINGLE_CHOICE:
+    	case MULTIPLE_CHOICE:
+    		saveChoiceAnswers(question, params);
+    		break;
+    	default:
+    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	}
+
+    	// make question private
+    	QuestionsAuthUsers questionsAuthUsers = new QuestionsAuthUsers();
+    	questionsAuthUsers.setQuestion(newQuestion);
+    	questionsAuthUsers.setUser(user);
+    	questionsAuthUsersService.save(questionsAuthUsers);
+
         return "redirect:/maintenance/questions";
     }
 
     @PutMapping("{id}")
-    public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam("answerText") List<String> answerTextList) {
+    public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params) {
     	question.setId(id);
     	question.setEnabled(true);
         Question newQuestion = questionService.save(question);
@@ -146,19 +187,59 @@ public class QuestionMaintenanceController {
     	}
 
     	// Save Answers
-    	for(String answerText : answerTextList) {
+    	switch(question.getQuestionType()) {
+    	case TEXT:
+    		saveTextAnswers(question, params);
+        	break;
+    	case SINGLE_CHOICE:
+    	case MULTIPLE_CHOICE:
+    		saveChoiceAnswers(question, params);
+    		break;
+    	default:
+    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	}
+
+        return "redirect:/maintenance/questions";
+    }
+
+    private void saveTextAnswers(Question question, MultiValueMap<String, String> params) {
+    	for(String answerText : params.get("answerText")) {
     		if(answerText.trim().length() == 0) {
     			continue;
     		}
     		QuestionAnswer questionAnswer = new QuestionAnswer();
-    		questionAnswer.setQuestion(newQuestion);
+    		questionAnswer.setQuestion(question);
     		questionAnswer.setText(answerText);
     		questionAnswer.setIsCorrect(true);
     		questionAnswer.setEnabled(true);
     		questionAnswerService.save(questionAnswer);
     	}
-
-        return "redirect:/maintenance/questions";
+    }
+    
+    private void saveChoiceAnswers(Question question, MultiValueMap<String, String> params) {
+		// TODO LOOP COUNT
+		for(int i=0; i<20; i++) {
+			List<String> answerTextList = params.get("answerText" + i);
+			if(answerTextList == null || answerTextList.size() == 0) {
+				continue;
+			}
+			String answerText = answerTextList.get(0);
+    		if(answerText.trim().length() == 0) {
+    			continue;
+    		}
+    		Boolean answerIsCorrect = false;
+    		List<String> answerIsCorrectList = params.get("answerIsCorrect" + i);
+    		if(answerIsCorrectList != null && answerIsCorrectList.size() != 0) { 
+    			answerIsCorrect = answerIsCorrectList.get(0).equals("on");
+    		}
+    		
+    		QuestionAnswer questionAnswer = new QuestionAnswer();
+    		questionAnswer.setQuestion(question);
+    		questionAnswer.setText(answerText);
+    		questionAnswer.setIsCorrect(answerIsCorrect);
+    		questionAnswer.setEnabled(true);
+    		questionAnswerService.save(questionAnswer);
+		}
     }
 
     @DeleteMapping("{id}")

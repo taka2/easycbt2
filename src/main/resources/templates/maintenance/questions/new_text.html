@@ -10,6 +10,8 @@
 				<input type="hidden" name="questionType" value="TEXT"/>
 				<label class="control-label">text</label>
 					<input class="form-control" type="text" name="text" />
+				<label class="control-label">questionType</label>
+					<div>text</div>
 				<label class="control-label">questionCategory</label>
 				<ul>
 					<li th:each="questionCategory:${questionCategories}">
@@ -20,8 +22,21 @@
 					<input class="form-control" type="text" name="defaultText" />
 				<label class="control-label">explanation</label>
 					<textarea class="form-control" name="explanation" ></textarea>
+
+				<!-- answer -->
+				<label class="control-label">answerText</label>
+				<ul id="answer-text">
+					<li class="form-group">
+						<input class="col-sm-10" type="text" name="answerText"/>
+					</li>
+				</ul>
+				<div>
+					<button class="pull-right col-sm-1 btn btn-default" type="button" th:text="add" onClick="addAnswerText()"></button>
+				</div>
+				<div>
+					<button class="btn btn-default" type="submit">Save</button>
+				</div>
 			</div>
-			<button class="btn btn-default" type="submit">Create</button>
 		</form>
 		<div class="pull-right">
 			<a class="btn btn-link" th:href="@{/maintenance/questions}">List</a>

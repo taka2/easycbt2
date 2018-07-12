@@ -54,7 +54,9 @@ public class QuestionService {
 		for(QuestionsAuthPublic anElement : listPublic) {
 			Question question = anElement.getQuestion();
 			if(categoryList.contains(question.getQuestionCategory())) {
-				resultList.add(question);
+				if(question.getEnabled()) {
+					resultList.add(question);
+				}
 			}
 		}
 		
@@ -63,8 +65,10 @@ public class QuestionService {
 		for(QuestionsAuthUsers anElement : listUsers) {
 			Question question = anElement.getQuestion();
 			if(categoryList.contains(question.getQuestionCategory())) {
-				if(!resultList.contains(question)) {
-					resultList.add(question);
+				if(question.getEnabled()) {
+					if(!resultList.contains(question)) {
+						resultList.add(question);
+					}
 				}
 			}
 		}
