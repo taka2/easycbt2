@@ -21,7 +21,7 @@
 				</ul>
 				<ul th:if="${question.questionType.getString()} eq 'text'">
 					<li>
-						<input type="text" th:name="${question.id}" size="60"></input>
+						<input type="text" th:name="${question.id}" th:value="${question.defaultText}" size="60"></input>
 					</li>
 				</ul>
 			</div>
