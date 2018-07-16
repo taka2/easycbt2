@@ -12,6 +12,62 @@
 				<input type="button" name="finish" value="Upload" id='btn_finish' class="btn btn-primary"></input>
 			</p>
 		</form>
+		
+		<h3>text</h3>
+		<div>
+			<pre>
+[
+  {
+    "text": "DNSを提供するサービスの名前は？"
+    , "questionType": "TEXT"
+    , "answers": [
+      {
+        "text": "Route53", "isCorrect": true
+      }
+    ]
+    , "questionCategory": "AWS-Certified-Solutions-Architect-Associate-JP"
+  }
+]
+  			</pre>
+		</div>
+		
+		<h3>single_choice</h3>
+		<div>
+			<pre>
+[
+  {
+    "text": "次の構成のうち、最も可用性が高くなる構成はどれか？"
+    , "questionType": "SINGLE_CHOICE"
+    , "answers": [
+      {"text": "1つのリージョン内の1つのAZに4台のWebサーバ(EC2)を配置し、ELBを用いて負荷分散する", "isCorrect": false}
+      , {"text": "1つのリージョン内の2つのAZに各2台のWebサーバ(EC2)を配置し、ELBを用いて負荷分散する", "isCorrect": true}
+      , {"text": "2つのリージョン内の各1つのAZに2台ずつWebサーバ(EC2)を配置し、ELBを用いて負荷分散する", "isCorrect": false}
+      , {"text": "2つのリージョン内の各2つのAZに1台ずつWebサーバ(EC2)を配置し、ELBを用いて負荷分散する", "isCorrect": false}
+    ]
+    , "questionCategory": "AWS-Certified-Solutions-Architect-Associate-JP"
+  }
+]
+  			</pre>
+		</div>
+
+		<h3>multiple_choice</h3>
+		<div>
+			<pre>
+[
+  {
+    "text": "次のうち、利用者の責任で実施しなければいけないセキュリティ対策はどれか？2つ選べ。"
+    , "questionType": "MULTIPLE_CHOICE"
+    , "answers": [
+      {"text": "EC2インスタンスの物理ホスト上のハイパーバイザのセキュリティパッチの適用", "isCorrect": false}
+      , {"text": "S3上のデータの暗号化", "isCorrect": true}
+      , {"text": "物理ディスクの適切な廃棄", "isCorrect": false}
+      , {"text": "EC2インスタンス上のOSのセキュリティパッチの適用", "isCorrect": true}
+    ]
+    , "questionCategory": "AWS-Certified-Solutions-Architect-Associate-JP"
+  }
+]
+  			</pre>
+		</div>
 	</div>
 </body>
 </html>

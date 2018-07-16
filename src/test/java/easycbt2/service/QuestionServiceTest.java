@@ -28,7 +28,6 @@ public class QuestionServiceTest {
 	@Autowired
 	QuestionService questionService;
 	
-	private User user1;
 	private User user3;
 	private User user4;
 	private Examination examination3;
@@ -37,7 +36,6 @@ public class QuestionServiceTest {
 	
 	@Before
 	public void before() {
-		user1 = userRepository.findById("user1").get();
         user3 = userRepository.findById("user3").get();
         user4 = userRepository.findById("user4").get();
         
