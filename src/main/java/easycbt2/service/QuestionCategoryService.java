@@ -14,7 +14,7 @@ public class QuestionCategoryService {
     private QuestionCategoryRepository questionCategoryRepository;
 
     public List<QuestionCategory> findAll() {
-    	return questionCategoryRepository.findByEnabled(true);
+    	return questionCategoryRepository.findByEnabledOrderByIdAsc(true);
     }
 
     public QuestionCategory findOne(Long id) {

@@ -98,9 +98,7 @@ public class ExaminationController {
     	Instant endDateTime = dateTimeService.getCurrentDateTime();
 
     	TakeExamination takeExamination = takeExaminationService.save(user, examination, questions, startDateTime, endDateTime, params);
-    	model.addAttribute("takeExamination", takeExamination);
-
-    	return "take_examination_result";
+    	return "redirect:/show_examination_result?take_examination_id=" + takeExamination.getId();
     }
 
     @RequestMapping("/show_examination_result")

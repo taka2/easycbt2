@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -107,6 +108,11 @@ public class TakeExamination {
 	}
 	public void setTakeExaminationsQuestions(Set<TakeExaminationsQuestion> takeExaminationsQuestions) {
 		this.takeExaminationsQuestions = takeExaminationsQuestions;
+	}
+	public List<TakeExaminationsQuestion> getTakeExaminationsQuestionsOrderByIdAsc() {
+		List<TakeExaminationsQuestion> takeExaminationsQuestionsList = new ArrayList<>(getTakeExaminationsQuestions());
+		Collections.sort(takeExaminationsQuestionsList, TakeExaminationsQuestion.getIdComparator());
+		return takeExaminationsQuestionsList;
 	}
 
 	public int getQuestionCount() {

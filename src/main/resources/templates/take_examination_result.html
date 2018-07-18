@@ -5,7 +5,7 @@
 	<nav th:replace="_navbar::navbar('take_examination_result')"></nav>
 	<h2 th:text="${takeExamination.examination.text}"></h2>
 	<div class="container">
-		<div th:each="takeExaminationQuestion,rowStat:*{takeExamination.takeExaminationsQuestions}">
+		<div th:each="takeExaminationQuestion,rowStat:*{takeExamination.getTakeExaminationsQuestionsOrderByIdAsc()}">
 			<div th:text="${'Q' + (rowStat.index + 1) + '. ' + takeExaminationQuestion.question.text}"></div>
 			<span class="correct_answer" th:if="${takeExaminationQuestion.isCorrect()}">Correct!</span>
 			<span class="incorrect_answer" th:if="${!takeExaminationQuestion.isCorrect()}">Incorrect...</span>

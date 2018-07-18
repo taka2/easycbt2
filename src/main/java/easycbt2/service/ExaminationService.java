@@ -1,6 +1,7 @@
 package easycbt2.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ExaminationService {
 	ExaminationsAuthUsersRepository examinationsAuthUsersRepository;
 
     public List<Examination> findAll() {
-    	return examinationRepository.findByEnabled(true);
+    	return examinationRepository.findByEnabledOrderByIdAsc(true);
     }
 
 	public Examination findOne(Long id) {
@@ -62,6 +63,7 @@ public class ExaminationService {
 			}
 		}
 
+		Collections.sort(resultList, Examination.getIdComparator());
 		return resultList;
 	}
 }

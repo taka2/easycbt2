@@ -127,7 +127,7 @@ public class TakeExaminationService {
 	public Map<QuestionCategory, List<Question>> summaryByQuestionCategoryByUser(User user) {
 		Map<QuestionCategory, List<Question>> summary = new HashMap<>();
 
-		List<QuestionCategory> questionCategoryList = takeExaminationRepository.findQuestionCategoryByUser(user);
+		List<QuestionCategory> questionCategoryList = takeExaminationRepository.findQuestionCategoryByUserOrderByNameAsc(user);
 		for(QuestionCategory questionCategory : questionCategoryList) {
 			summary.put(questionCategory, takeExaminationRepository.findByUserAndQuestionCateogry(user, questionCategory));
 		}

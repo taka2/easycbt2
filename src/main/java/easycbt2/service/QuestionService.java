@@ -134,7 +134,7 @@ public class QuestionService {
 	}
 
     public List<Question> findAll() {
-        return questionRepository.findByEnabled(true);
+        return questionRepository.findByEnabledOrderByIdAsc(true);
     }
 
     public Question findOne(Long id) {

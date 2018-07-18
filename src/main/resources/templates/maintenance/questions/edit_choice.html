@@ -24,7 +24,7 @@
 				<!-- answer -->
 				<label class="control-label">answerChoice</label>
 				<ul id="answer-text">
-					<li class="form-group" th:each="questionAnswer,iter:${question.questionAnswerList}" th:id="${'answer' + iter.index}">
+					<li class="form-group" th:each="questionAnswer,iter:${question.getQuestionAnswerListOrderByIdAsc()}" th:id="${'answer' + iter.index}">
 						<input class="col-sm-1" th:id="${'answerIsCorrect' + iter.index}" type="checkbox" th:name="${'answerIsCorrect' + iter.index}" th:checked="${questionAnswer.isCorrect}"/>
 						<input class="col-sm-9" th:id="${'answerText' + iter.index}" type="text" th:name="${'answerText' + iter.index}" th:value="${questionAnswer.text}"/>
 						<button class="col-sm-1 delete-button btn btn-danger" type="button" th:id="${'deleteButton' + iter.index}" th:text="Delete" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
