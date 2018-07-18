@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('question_categories')"></head>
+<head th:replace="_head::head('maintenance/question_categories/question_categories')"></head>
 <body>
-	<nav th:replace="_navbar::navbar('question_categories')"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/question_categories/question_categories')"></nav>
 	<div class="container">
 		<h2>New Question Category</h2>
 		<form th:action="@{/maintenance/question_categories}" th:method="post">
