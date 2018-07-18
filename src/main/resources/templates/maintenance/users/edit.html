@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('maintenance/users')"></head>
+<head th:replace="_head::head('maintenance/users/users')"></head>
 <body>
-	<nav th:replace="_navbar::navbar('maintenance/users')"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/users/users')"></nav>
 	<div class="container">
 		<h2>Edit User</h2>
 		<form th:action="@{/maintenance/users/{id}(id=*{username})}" th:method="put" th:object="${user}">

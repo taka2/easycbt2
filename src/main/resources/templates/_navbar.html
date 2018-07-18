@@ -23,7 +23,7 @@
 					</ul>
 				</li>
 
-				<li class="nav-item dropdown">
+				<li class="nav-item dropdown" th:classappend="${title.startsWith('maintenance')} ? 'active'">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Maintenance<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li sec:authorize="hasRole('ROLE_ADMIN')">

@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('examinations')"></head>
+<head th:replace="_head::head('maintenance/examinations/examinations')"></head>
 <body>
-	<nav th:replace="_navbar::navbar('examinations')"></nav>
+	<nav th:replace="_navbar::navbar('maintenance/examinations/examinations')"></nav>
 	<div class="container">
 		<h2>New Examination</h2>
 		<form th:action="@{/maintenance/examinations}" th:method="post">
