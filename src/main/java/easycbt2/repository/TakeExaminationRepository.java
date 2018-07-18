@@ -18,8 +18,8 @@ public interface TakeExaminationRepository extends JpaRepository<TakeExamination
 	
 	public Page<TakeExamination> findByUserOrderByIdDesc(User user, Pageable pageable);
 
-	@Query("select distinct qc from TakeExamination t join t.takeExaminationsQuestions tq join tq.question q join q.questionCategory qc where t.user = ?1")
-	public List<QuestionCategory> findQuestionCategoryByUser(User user);
+	@Query("select distinct qc from TakeExamination t join t.takeExaminationsQuestions tq join tq.question q join q.questionCategory qc where t.user = ?1 order by qc.name asc")
+	public List<QuestionCategory> findQuestionCategoryByUserOrderByNameAsc(User user);
 	
 	@Query("select distinct q from TakeExamination t join t.takeExaminationsQuestions tq join tq.question q where t.user = ?1 and q.questionCategory = ?2")
 	public List<Question> findByUserAndQuestionCateogry(User user, QuestionCategory questionCategory);

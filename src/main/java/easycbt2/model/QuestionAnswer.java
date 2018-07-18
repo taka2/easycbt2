@@ -1,5 +1,6 @@
 package easycbt2.model;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -98,5 +99,13 @@ public class QuestionAnswer {
 	}
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public static Comparator<QuestionAnswer> getIdComparator() {
+		return new Comparator<QuestionAnswer>() {
+			public int compare(QuestionAnswer e1, QuestionAnswer e2) {
+				return Long.compare(e1.getId(), e2.getId());
+			}
+		};
 	}
 }

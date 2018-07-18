@@ -49,7 +49,7 @@ public class UserService {
 	}
 
     public List<User> findAll() {
-        return userRepository.findAll();
+        return userRepository.findAllByOrderByUsernameAsc();
     }
 
     public User findOne(String id) {

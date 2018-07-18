@@ -34,7 +34,7 @@ public class TakeExaminationRepositoryTest {
 
 	@Test
 	public void testFindQuestionCategoryByUser1() {
-		List<QuestionCategory> list = takeExaminationRepository.findQuestionCategoryByUser(user1);
+		List<QuestionCategory> list = takeExaminationRepository.findQuestionCategoryByUserOrderByNameAsc(user1);
 		System.out.println(list);
 	}
 	@Test

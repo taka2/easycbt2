@@ -1,6 +1,7 @@
 package easycbt2.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -130,6 +131,11 @@ public class Question {
 	}
 	public void setQuestionAnswerList(Set<QuestionAnswer> questionAnswerList) {
 		this.questionAnswerList = questionAnswerList;
+	}
+	public List<QuestionAnswer> getQuestionAnswerListOrderByIdAsc() {
+		List<QuestionAnswer> questionsAnswerList = new ArrayList<>(getQuestionAnswerList());
+		Collections.sort(questionsAnswerList, QuestionAnswer.getIdComparator());
+		return questionsAnswerList;
 	}
 
 	public List<QuestionAnswer> getCorrectQuestionAnswerList() {

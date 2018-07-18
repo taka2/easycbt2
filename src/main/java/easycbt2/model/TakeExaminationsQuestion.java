@@ -1,5 +1,6 @@
 package easycbt2.model;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -160,5 +161,13 @@ public class TakeExaminationsQuestion {
 			}
 		}
 		return false;
+	}
+
+	public static Comparator<TakeExaminationsQuestion> getIdComparator() {
+		return new Comparator<TakeExaminationsQuestion>() {
+			public int compare(TakeExaminationsQuestion e1, TakeExaminationsQuestion e2) {
+				return Long.compare(e1.getId(), e2.getId());
+			}
+		};
 	}
 }
