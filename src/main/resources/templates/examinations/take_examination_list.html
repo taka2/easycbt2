@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('take_examination_list')"></head>
+<head th:replace="_head::head('examinations/examinations')"></head>
 <body>
-	<nav th:replace="_navbar::navbar('take_examination_list')"></nav>
+	<nav th:replace="_navbar::navbar('examinations/examinations')"></nav>
 	<h2 th:text="${session.examination.text}"></h2>
 	<div class="container">
-		<form name="form1" method="POST" th:action="@{/answer_examination_list}" autocomplete="off">
+		<form name="form1" method="POST" th:action="@{/examinations/{id}/answer_examination_list(id=${session.examination.id})}" autocomplete="off">
 			<div th:each="question,rowStat:*{session.questions}">
 				<span th:text="${'Q' + (rowStat.index + 1) + '. ' + question.text}"></span>
 				<span class="bg-info" th:text="${question.questionCategory.name}"></span>

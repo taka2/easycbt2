@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +28,7 @@ import easycbt2.service.TakeExaminationService;
 import easycbt2.service.UserService;
 
 @Controller
+@RequestMapping("/examinations")
 public class ExaminationController {
 
 	@Autowired
@@ -39,23 +42,23 @@ public class ExaminationController {
 	@Autowired
 	DateTimeService dateTimeService;
 
-    @RequestMapping("/examinations")
-    public String examinations(Model model, Principal principal) {
+    @GetMapping
+    public String index(Model model, Principal principal) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findOne(username);
     	
     	List<Examination> examinations = examinationService.findByUser(user);
     	model.addAttribute("examinations", examinations);
 
-    	return "examinations";
+    	return "examinations/index";
     }
 
-    @RequestMapping("/take_examination_list")
-    public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam("examination_id") Long examinationId) {
+    @GetMapping("{id}/take_examination_list")
+    public String takeExaminationList(@PathVariable Long id, Model model, Principal principal, HttpSession session) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findOne(username);
     	
-    	Examination examination = examinationService.findOne(examinationId);
+    	Examination examination = examinationService.findOne(id);
     	session.setAttribute("examination", examination);
 
     	List<Question> questions = questionService.getQuestionsByUserAndExamination(user, examination, true);
@@ -63,15 +66,15 @@ public class ExaminationController {
     	
     	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
 
-    	return "take_examination_list";
+    	return "examinations/take_examination_list";
     }
 
-    @RequestMapping("/retake_examination_list_only_incorrect_answer")
-    public String retakeExaminationListOnlyWrongAnswer(Model model, Principal principal, HttpSession session, @RequestParam("take_examination_id") Long takeExaminationId) {
+    @GetMapping("{id}/retake_examination_list_only_incorrect_answer")
+    public String retakeExaminationListOnlyWrongAnswer(@PathVariable Long id, Model model, Principal principal, HttpSession session) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findOne(username);
     	
-    	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(takeExaminationId, user);
+    	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(id, user);
     	Examination examination = takeExamination.getExamination();
     	session.setAttribute("examination", examination);
 
@@ -80,11 +83,11 @@ public class ExaminationController {
     	
     	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
 
-    	return "take_examination_list";
+    	return "examinations/take_examination_list";
     }
 
-    @PostMapping("/answer_examination_list")
-    public String takeExaminationList(Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) {
+    @PostMapping("{id}/answer_examination_list")
+    public String takeExaminationList(@PathVariable Long id, Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	User user = userService.findOne(username);
     	
@@ -98,20 +101,6 @@ public class ExaminationController {
     	Instant endDateTime = dateTimeService.getCurrentDateTime();
 
     	TakeExamination takeExamination = takeExaminationService.save(user, examination, questions, startDateTime, endDateTime, params);
-    	return "redirect:/show_examination_result?take_examination_id=" + takeExamination.getId();
-    }
-
-    @RequestMapping("/show_examination_result")
-    public String showExaminationResult(Model model, Principal principal , @RequestParam("take_examination_id") Long takeExaminationId) {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
-    	
-    	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(takeExaminationId, user);
-    	if(takeExamination != null) {
-    		model.addAttribute("takeExamination", takeExamination);
-    		return "take_examination_result";
-    	} else {
-    		return "redirect:/examinations";
-    	}
+    	return "redirect:/results/" + takeExamination.getId();
     }
 }

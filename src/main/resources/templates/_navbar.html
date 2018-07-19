@@ -13,13 +13,13 @@
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li th:classappend="${title == 'examinations'} ? 'active'"><a th:href="@{/examinations}">Examinations</a></li>
+				<li th:classappend="${title.startsWith('examinations')} ? 'active'"><a th:href="@{/examinations}">Examinations</a></li>
 
-				<li class="nav-item dropdown" th:classappend="${title == 'results' || title == 'summaryByQuestionCategory'} ? 'active'">
+				<li class="nav-item dropdown" th:classappend="${title.startsWith('results')} ? 'active'">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Results<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a th:href="@{/results}">Results</a></li>
-						<li><a th:href="@{/results/summaryByQuestionCategory}">SummaryByQuestionCategory</a></li>
+						<li><a th:href="@{/results/category_progress}">Category Progress</a></li>
 					</ul>
 				</li>
 
