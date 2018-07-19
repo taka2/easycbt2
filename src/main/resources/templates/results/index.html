@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('results')"></head>
+<head th:replace="_head::head('results/results')"></head>
 <body>
-	<nav th:replace="_navbar::navbar('results')"></nav>
+	<nav th:replace="_navbar::navbar('results/results')"></nav>
 	<div class="container">
 		<table class="table table-striped">
 			<thead>
@@ -19,14 +19,14 @@
 			</thead>
 			<tbody>
 				<tr th:each="takeExamination,rowStat:*{takeExaminations}">
-					<td><a th:href = "@{'/show_examination_result?take_examination_id=' + ${takeExamination.id}}" th:text="${takeExamination.examination.text}"></a></td>
+					<td><a th:href = "@{/results/{id}(id=${takeExamination.id})}" th:text="${takeExamination.examination.text}"></a></td>
 					<td th:text="${takeExamination.questionCount}"/>
 					<td th:text="${takeExamination.correctCount}"/>
 					<td th:text="${#numbers.formatDecimal(takeExamination.getCorrectPercentage(), 0, 'COMMA', 2, 'POINT')}"/>
 					<td th:text="${takeExamination.getFormattedElapsedTime()}"/>
 					<td th:text="${takeExamination.createdDate}"/>
-					<td><a th:href = "@{'/take_examination_list?examination_id=' + ${takeExamination.examination.id}}">Retake exam as list</a></td>
-					<td><a th:href = "@{'/retake_examination_list_only_incorrect_answer?take_examination_id=' + ${takeExamination.id}}">Retake exam as list(incorrect only)</a></td>
+					<td><a th:href = "@{/examinations/{id}/take_examination_list(id=${takeExamination.examination.id})}">Retake exam as list</a></td>
+					<td><a th:href = "@{/examinations/{id}/retake_examination_list_only_incorrect_answer(id=${takeExamination.id})}">Retake exam as list(incorrect only)</a></td>
 				</tr>
 			</tbody>
 		</table>

@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_head::head('examinations')"></head>
+<head th:replace="_head::head('examinations/examinations')"></head>
 <body>
-	<nav th:replace="_navbar::navbar('examinations')"></nav>
+	<nav th:replace="_navbar::navbar('examinations/examinations')"></nav>
 	<div class="container">
 		<table class="table table-striped">
 			<thead>
@@ -16,7 +16,7 @@
 				<tr th:each="examination,rowStat:*{examinations}">
 					<td th:text="${examination.text}"/>
 					<td th:text="${examination.questionCount}"/>
-					<td><a th:href = "@{'/take_examination_list?examination_id=' + ${examination.id}}">Take exam as list</a></td>
+					<td><a th:href = "@{/examinations/{id}/take_examination_list(id=${examination.id})}">Take exam as list</a></td>
 				</tr>
 			</tbody>
 		</table>
