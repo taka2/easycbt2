@@ -56,6 +56,7 @@ public class UserController {
     		result.addError(new FieldError("user", "username", "user " + user.getUsername() + " already exists."));
     		return "maintenance/users/new";
     	}
+    	user.setEnabled(true);
     	userService.save(user);
         return "redirect:/maintenance/users";
     }
