@@ -9,6 +9,7 @@
 			<thead>
 				<tr>
 					<th>username</th>
+					<th>enabled</th>
 					<th></th>
 					<th></th>
 				</tr>
@@ -16,6 +17,7 @@
 			<tbody>
 				<tr th:each="user:${users}" th:object="${user}">
 					<td th:text="*{username}"></td>
+					<td><input type="checkbox" th:checked="${user.enabled}" disabled="disabled"></td>
 					<td th:switch="*{username}">
 					    <span th:case="'admin'"></span>
 						<a th:case="*" class="btn btn-default btn-xs" th:href="@{/maintenance/users/{id}/edit(id=*{username})}">Edit</a>
@@ -23,7 +25,7 @@
 					<td th:switch="*{username}">
 						<span th:case="'admin'"></span>
 						<form th:case="*" th:action="@{/maintenance/users/{id}(id=*{username})}" th:method="delete">
-							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
+							<input class="btn btn-default btn-xs" type="submit" value="Unable" />
 						</form>
 					</td>
 				</tr>

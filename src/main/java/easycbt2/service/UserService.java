@@ -32,12 +32,12 @@ public class UserService {
 		return userRepository.existsById(username);
 	}
 	
-	public User registerUser(String username, String password, String role) {
+	public User registerUser(String username, String password, String role, Boolean enabled) {
 		User user = new User();
 		user.setUsername(username);
 		String encryptedPassword = bCryptPasswordEncoder.encode(password);
 		user.setPassword(encryptedPassword);
-		user.setEnabled(true);
+		user.setEnabled(enabled);
 		user = userRepository.save(user);
 		
 		Authority authority = new Authority();
@@ -46,6 +46,10 @@ public class UserService {
 		authorityRepository.save(authority);
 
 		return user;
+	}
+
+	public User registerUser(String username, String password, String role) {
+		return registerUser(username, password, role, true);
 	}
 
     public List<User> findAll() {
@@ -57,10 +61,12 @@ public class UserService {
     }
 
     public User save(User user) {
-        return registerUser(user.getUsername(), user.getPassword(), ROLE_USER);
+        return registerUser(user.getUsername(), user.getPassword(), ROLE_USER, user.isEnabled());
     }
 
     public void delete(String id) {
-    	userRepository.deleteById(id);
+    	User obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
     }
 }
