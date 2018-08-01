@@ -1,4 +1,4 @@
-package easycbt2.model;
+package easycbt2.constants;
 
 public enum QuestionType {
 	SINGLE_CHOICE("single_choice")

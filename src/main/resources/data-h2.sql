@@ -14,8 +14,10 @@ DELETE FROM authorities;
 DELETE FROM users;
 
 INSERT INTO users(username, password, enabled) VALUES('user1', '$2a$10$BOv2SDD3xL3/GHH2cCW6cuWdbkigOYdxPza5jpKWVz5aCXtdnG/vW', true);
+INSERT INTO users(username, password, enabled) VALUES('user2', '$2a$10$BOv2SDD3xL3/GHH2cCW6cuWdbkigOYdxPza5jpKWVz5aCXtdnG/vW', true);
 
 INSERT INTO authorities(username, authority) VALUES('user1', 'ROLE_USER');
+INSERT INTO authorities(username, authority) VALUES('user2', 'ROLE_USER');
 
 INSERT INTO question_categories(name, enabled) VALUES('AWS-Certified-Solutions-Architect-Associate-JP', true);
 INSERT INTO question_categories(name, enabled) VALUES('Instant english writing training', true);

@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
-		<h2>New Question</h2>
+		<h2>New Text Question</h2>
 		<form th:action="@{/maintenance/questions}" th:method="post">
 			<div class="form-group">
 				<input type="hidden" name="questionType" value="TEXT"/>
@@ -31,8 +31,14 @@
 					</li>
 				</ul>
 				<div>
-					<button class="pull-right col-sm-1 btn btn-default" type="button" th:text="add" onClick="addAnswerText()"></button>
+					<button class="btn btn-default" type="button" th:text="add" onClick="addAnswerText()"></button>
 				</div>
+
+				<label class="control-label">publication scope</label>
+				<ul>
+					<li><input type="radio" name="scope" value="private" checked/>private</li>
+					<li><input type="radio" name="scope" value="public"/>public</li>
+				</ul>
 				<div>
 					<button class="btn btn-default" type="submit">Save</button>
 				</div>

@@ -4,7 +4,7 @@
 <body>
 	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
-		<h2>Edit Question</h2>
+		<h2>Edit Text Question</h2>
 		<form th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="put" th:object="${question}">
 			<div class="form-group">
 				<label class="control-label">text</label>

@@ -9,11 +9,11 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,15 +24,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import easycbt2.constants.PublicationScope;
+import easycbt2.constants.QuestionType;
+import easycbt2.exception.ApplicationSecurityException;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionAnswer;
 import easycbt2.model.QuestionCategory;
-import easycbt2.model.QuestionType;
+import easycbt2.model.QuestionsAuthPublic;
 import easycbt2.model.QuestionsAuthUsers;
 import easycbt2.model.User;
 import easycbt2.service.QuestionAnswerService;
 import easycbt2.service.QuestionCategoryService;
 import easycbt2.service.QuestionService;
+import easycbt2.service.QuestionsAuthPublicService;
 import easycbt2.service.QuestionsAuthUsersService;
 import easycbt2.service.UserService;
 
@@ -49,6 +53,8 @@ public class QuestionMaintenanceController {
 	@Autowired
 	QuestionAnswerService questionAnswerService;
 	@Autowired
+	QuestionsAuthPublicService questionsAuthPublicService;
+	@Autowired
 	QuestionsAuthUsersService questionsAuthUsersService;
 
 	@GetMapping("/upload_json")
@@ -59,8 +65,7 @@ public class QuestionMaintenanceController {
 	@PostMapping("/upload_json")
 	@Transactional
 	public String uploadJSON(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
+    	User user = userService.getLoginUser();
 
 		String str = new String(file.getBytes(), "UTF-8");
 		JsonParser jsonParser = JsonParserFactory.getJsonParser();
@@ -97,8 +102,11 @@ public class QuestionMaintenanceController {
 
     @GetMapping
     public String index(Model model) {
-        List<Question> questions = questionService.findAll();
+    	User user = userService.getLoginUser();
+
+        List<Question> questions = questionService.findByUser(user);
         model.addAttribute("questions", questions); 
+        
         return "maintenance/questions/index";
     }
 
@@ -121,7 +129,8 @@ public class QuestionMaintenanceController {
 
     @GetMapping("{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
-    	Question question = questionService.findOne(id);
+    	User user = userService.getLoginUser();
+    	Question question = getQuestion(id, user);
         model.addAttribute("question", question);
 
         List<QuestionCategory> questionCategories = questionCategoryService.findAll();
@@ -140,15 +149,15 @@ public class QuestionMaintenanceController {
 
     @GetMapping("{id}")
     public String show(@PathVariable Long id, Model model) {
-    	Question question = questionService.findOne(id);
+    	User user = userService.getLoginUser();
+    	Question question = getQuestion(id, user);
         model.addAttribute("question", question);
         return "maintenance/questions/show";
     }
 
     @PostMapping
-    public String create(@ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params) {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
+    public String create(@ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params, @RequestParam("scope") String scope) {
+    	User user = userService.getLoginUser();
 
     	question.setEnabled(true);
     	Question newQuestion = questionService.save(question);
@@ -166,17 +175,32 @@ public class QuestionMaintenanceController {
     		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
     	}
 
-    	// make question private
-    	QuestionsAuthUsers questionsAuthUsers = new QuestionsAuthUsers();
-    	questionsAuthUsers.setQuestion(newQuestion);
-    	questionsAuthUsers.setUser(user);
-    	questionsAuthUsersService.save(questionsAuthUsers);
+    	PublicationScope scopeObj = PublicationScope.valueOf(scope.toUpperCase());
+    	switch(scopeObj) {
+    	case PUBLIC:
+    		// make question public
+        	QuestionsAuthPublic questionsAuthPublic = new QuestionsAuthPublic();
+        	questionsAuthPublic.setQuestion(newQuestion);
+        	questionsAuthPublicService.save(questionsAuthPublic);
+    		break;
+    	case PRIVATE:
+    	default:
+        	// make question private
+        	QuestionsAuthUsers questionsAuthUsers = new QuestionsAuthUsers();
+        	questionsAuthUsers.setQuestion(newQuestion);
+        	questionsAuthUsers.setUser(user);
+        	questionsAuthUsersService.save(questionsAuthUsers);
+    	}
 
         return "redirect:/maintenance/questions";
     }
 
     @PutMapping("{id}")
     public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params) {
+    	User user = userService.getLoginUser();
+    	// security check
+    	getQuestion(id, user);
+
     	question.setId(id);
     	question.setEnabled(true);
         Question newQuestion = questionService.save(question);
@@ -244,7 +268,25 @@ public class QuestionMaintenanceController {
 
     @DeleteMapping("{id}")
     public String destroy(@PathVariable Long id) {
+    	User user = userService.getLoginUser();
+    	// security check
+    	getQuestion(id, user);
+
     	questionService.delete(id);
         return "redirect:/maintenance/questions";
+    }
+    
+    private Question getQuestion(Long id, User user) throws ApplicationSecurityException {
+    	Question question = questionService.findByIdAndUser(id, user);
+    	if(question == null) {
+    		throw new ApplicationSecurityException();
+    	}
+    	
+    	return question;
+    }
+    
+    @ExceptionHandler(ApplicationSecurityException.class)
+    public String securityExceptionHandler(ApplicationSecurityException e) {
+    	return "redirect:/maintenance/questions";
     }
 }

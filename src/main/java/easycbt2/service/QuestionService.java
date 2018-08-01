@@ -39,37 +39,20 @@ public class QuestionService {
 	@Autowired
 	DateTimeService dateTimeService; 
 
-	public List<Question> getQuestionsByUserAndExamination(User user, Examination examination) {
-		return getQuestionsByUserAndExamination(user, examination, false);
+	public List<Question> findByUserAndExamination(User user, Examination examination) {
+		return findByUserAndExamination(user, examination, false);
 	}
 
-	public List<Question> getQuestionsByUserAndExamination(User user, Examination examination, Boolean isRandomize) {
+	public List<Question> findByUserAndExamination(User user, Examination examination, Boolean isRandomize) {
 		List<Question> resultList = new ArrayList<>();
 
 		// Get Examination categories
 		List<QuestionCategory> categoryList = examination.getCategories();
-
-		// List Public Questions
-		List<QuestionsAuthPublic> listPublic = questionsAuthPublicRepository.findAll();
-		for(QuestionsAuthPublic anElement : listPublic) {
-			Question question = anElement.getQuestion();
-			if(categoryList.contains(question.getQuestionCategory())) {
-				if(question.getEnabled()) {
-					resultList.add(question);
-				}
-			}
-		}
 		
-		// List Questions restricted by user
-		List<QuestionsAuthUsers> listUsers = questionsAuthUsersRepository.findByUser(user);
-		for(QuestionsAuthUsers anElement : listUsers) {
-			Question question = anElement.getQuestion();
+		List<Question> questions = findByUser(user);
+		for(Question question : questions) {
 			if(categoryList.contains(question.getQuestionCategory())) {
-				if(question.getEnabled()) {
-					if(!resultList.contains(question)) {
-						resultList.add(question);
-					}
-				}
+				resultList.add(question);
 			}
 		}
 
@@ -150,8 +133,55 @@ public class QuestionService {
     	obj.setEnabled(false);
     	save(obj);
     }
-    
-    public List<Question> findByQuestionCategory(QuestionCategory questionCategory) {
-    	return questionRepository.findByQuestionCategoryAndEnabled(questionCategory, true);
-    }
+
+	public List<Question> findByUserAndQuestionCategory(User user, QuestionCategory questionCategory) {
+		List<Question> resultList = new ArrayList<>();
+		
+		List<Question> questions = findByUser(user);
+		for(Question question : questions) {
+			if(question.getQuestionCategory().equals(questionCategory)) {
+				resultList.add(question);
+			}
+		}
+		
+		return resultList;
+	}
+
+	public List<Question> findByUser(User user) {
+		List<Question> resultList = new ArrayList<>();
+		
+		// List Public Questions
+		List<QuestionsAuthPublic> listPublic = questionsAuthPublicRepository.findAll();
+		for(QuestionsAuthPublic anElement : listPublic) {
+			if(anElement.getQuestion().getEnabled()) {
+				resultList.add(anElement.getQuestion());
+			}
+		}
+		
+		// List Questions restricted by user
+		List<QuestionsAuthUsers> listUsers = questionsAuthUsersRepository.findByUser(user);
+		for(QuestionsAuthUsers anElement : listUsers) {
+			if(anElement.getQuestion().getEnabled()) {
+				if(!resultList.contains(anElement.getQuestion())) {
+					resultList.add(anElement.getQuestion());
+				}
+			}
+		}
+
+		Collections.sort(resultList, Question.getIdComparator());
+		return resultList;
+	}
+	
+	public Question findByIdAndUser(Long id, User user) {
+		List<Question> questions = findByUser(user);
+		Question result = null;
+		for(Question question : questions) { 
+			if(question.getId() == id) {
+				result = question;
+				break;
+			}
+		}
+		
+		return result;
+	}
 }

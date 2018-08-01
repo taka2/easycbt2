@@ -2,6 +2,7 @@ package easycbt2.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import easycbt2.constants.QuestionType;
 
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
@@ -172,5 +175,13 @@ public class Question {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public static Comparator<Question> getIdComparator() {
+		return new Comparator<Question>() {
+			public int compare(Question e1, Question e2) {
+				return Long.compare(e1.getId(), e2.getId());
+			}
+		};
 	}
 }
