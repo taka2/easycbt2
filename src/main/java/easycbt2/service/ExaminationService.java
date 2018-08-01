@@ -66,4 +66,17 @@ public class ExaminationService {
 		Collections.sort(resultList, Examination.getIdComparator());
 		return resultList;
 	}
+	
+	public Examination findByIdAndUser(Long id, User user) {
+		List<Examination> examinations = findByUser(user);
+		Examination result = null;
+		for(Examination examination : examinations) { 
+			if(examination.getId() == id) {
+				result = examination;
+				break;
+			}
+		}
+		
+		return result;
+	}
 }

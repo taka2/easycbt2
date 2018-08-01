@@ -3,6 +3,7 @@ package easycbt2.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,5 +69,10 @@ public class UserService {
     	User obj = findOne(id);
     	obj.setEnabled(false);
     	save(obj);
+    }
+    
+    public User getLoginUser() {
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    	return findOne(username);
     }
 }

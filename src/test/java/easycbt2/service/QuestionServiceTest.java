@@ -46,32 +46,32 @@ public class QuestionServiceTest {
 
 	@Test
 	public void testQuestionUser3Examination3() {
-		List<Question> questions = questionService.getQuestionsByUserAndExamination(user3, examination3);
+		List<Question> questions = questionService.findByUserAndExamination(user3, examination3);
 		assertThat(questions.size(), is(2));
 	}
 	@Test
 	public void testQuestionUser3Examination4() {
-		List<Question> questions = questionService.getQuestionsByUserAndExamination(user3, examination4);
+		List<Question> questions = questionService.findByUserAndExamination(user3, examination4);
 		assertThat(questions.size(), is(2));
 	}
 	@Test
 	public void testQuestionUser3Examination5() {
-		List<Question> questions = questionService.getQuestionsByUserAndExamination(user3, examination5);
+		List<Question> questions = questionService.findByUserAndExamination(user3, examination5);
 		assertThat(questions.size(), is(4));
 	}
 	@Test
 	public void testQuestionUser4Examination3() {
-		List<Question> questions = questionService.getQuestionsByUserAndExamination(user4, examination3);
+		List<Question> questions = questionService.findByUserAndExamination(user4, examination3);
 		assertThat(questions.size(), is(1));
 	}
 	@Test
 	public void testQuestionUser4Examination4() {
-		List<Question> questions = questionService.getQuestionsByUserAndExamination(user4, examination4);
+		List<Question> questions = questionService.findByUserAndExamination(user4, examination4);
 		assertThat(questions.size(), is(1));
 	}
 	@Test
 	public void testQuestionUser4Examination5() {
-		List<Question> questions = questionService.getQuestionsByUserAndExamination(user4, examination5);
+		List<Question> questions = questionService.findByUserAndExamination(user4, examination5);
 		assertThat(questions.size(), is(2));
 	}
 }

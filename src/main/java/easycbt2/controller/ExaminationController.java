@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -44,9 +43,8 @@ public class ExaminationController {
 
     @GetMapping
     public String index(Model model, Principal principal) {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
-    	
+    	User user = userService.getLoginUser();
+
     	List<Examination> examinations = examinationService.findByUser(user);
     	model.addAttribute("examinations", examinations);
 
@@ -55,13 +53,12 @@ public class ExaminationController {
 
     @GetMapping("{id}/take_examination_list")
     public String takeExaminationList(@PathVariable Long id, Model model, Principal principal, HttpSession session) {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
-    	
+    	User user = userService.getLoginUser();
+
     	Examination examination = examinationService.findOne(id);
     	session.setAttribute("examination", examination);
 
-    	List<Question> questions = questionService.getQuestionsByUserAndExamination(user, examination, true);
+    	List<Question> questions = questionService.findByUserAndExamination(user, examination, true);
     	session.setAttribute("questions", questions);
     	
     	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
@@ -71,9 +68,8 @@ public class ExaminationController {
 
     @GetMapping("{id}/retake_examination_list_only_incorrect_answer")
     public String retakeExaminationListOnlyWrongAnswer(@PathVariable Long id, Model model, Principal principal, HttpSession session) {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
-    	
+    	User user = userService.getLoginUser();
+
     	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(id, user);
     	Examination examination = takeExamination.getExamination();
     	session.setAttribute("examination", examination);
@@ -88,9 +84,8 @@ public class ExaminationController {
 
     @PostMapping("{id}/answer_examination_list")
     public String takeExaminationList(@PathVariable Long id, Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) {
-    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    	User user = userService.findOne(username);
-    	
+    	User user = userService.getLoginUser();
+
     	// Get Information from Session
     	Examination examination = (Examination)session.getAttribute("examination");
     	@SuppressWarnings("unchecked")
