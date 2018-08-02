@@ -1,14 +1,13 @@
 package easycbt2.model;
 
-import java.util.Comparator;
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,15 +20,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
-@Table(name="question_categories")
-public class QuestionCategory {
+@Table(name="question_categories_auth_public")
+public class QuestionCategoriesAuthPublic {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	@Column
-	private String name;
-	@Column
-	private Boolean enabled;
+	@ManyToOne
+	private QuestionCategory questionCategory;
     @CreatedBy
     private String createdBy;
     @Temporal(TemporalType.TIMESTAMP)
@@ -40,24 +37,18 @@ public class QuestionCategory {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date modifiedDate;
-
+    
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
+	public QuestionCategory getQuestionCategory() {
+		return questionCategory;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Boolean getEnabled() {
-		return enabled;
-	}
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
+	public void setQuestionCategory(QuestionCategory questionCategory) {
+		this.questionCategory = questionCategory;
 	}
 	public String getCreatedBy() {
 		return createdBy;
@@ -82,36 +73,5 @@ public class QuestionCategory {
 	}
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
-	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		QuestionCategory other = (QuestionCategory) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-
-	public static Comparator<QuestionCategory> getIdComparator() {
-		return new Comparator<QuestionCategory>() {
-			public int compare(QuestionCategory e1, QuestionCategory e2) {
-				return Long.compare(e1.getId(), e2.getId());
-			}
-		};
 	}
 }

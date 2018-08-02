@@ -9,6 +9,8 @@ DELETE FROM examinations_auth_users;
 DELETE FROM examinations_auth_public;
 DELETE FROM examinations_categories;
 DELETE FROM examinations;
+DELETE FROM question_categories_auth_users;
+DELETE FROM question_categories_auth_public;
 DELETE FROM question_categories;
 DELETE FROM authorities;
 DELETE FROM users;
@@ -21,6 +23,9 @@ INSERT INTO authorities(username, authority) VALUES('user2', 'ROLE_USER');
 
 INSERT INTO question_categories(name, enabled) VALUES('AWS-Certified-Solutions-Architect-Associate-JP', true);
 INSERT INTO question_categories(name, enabled) VALUES('Instant english writing training', true);
+
+INSERT INTO question_categories_auth_public(question_category_id) VALUES((select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'));
+INSERT INTO question_categories_auth_public(question_category_id) VALUES((select id from question_categories where name = 'Instant english writing training'));
 
 INSERT INTO examinations(text, question_count, enabled) VALUES('AWS認定ソリューションアーキテクトアソシエイト(JP) 10問', 10, true);
 INSERT INTO examinations(text, question_count, enabled) VALUES('Instant english writing training', 10, true);
