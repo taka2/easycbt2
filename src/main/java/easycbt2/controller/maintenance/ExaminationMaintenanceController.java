@@ -60,7 +60,9 @@ public class ExaminationMaintenanceController {
 
     @GetMapping("new")
     public String newExamination(Model model) {
-    	List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+    	User user = userService.getLoginUser();
+
+    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
     	model.addAttribute("questionCategories", questionCategories);
         return "maintenance/examinations/new";
     }
@@ -71,7 +73,7 @@ public class ExaminationMaintenanceController {
     	Examination examination = getExamination(id, user);
         model.addAttribute("examination", examination);
 
-    	List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
     	model.addAttribute("questionCategories", questionCategories);
 
     	List<QuestionCategory> activeQuestionCategories = new ArrayList<>();

@@ -121,7 +121,9 @@ public class QuestionMaintenanceController {
     }
     
     public String newQuestion(Model model, String forwardURL) {
-    	List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+    	User user = userService.getLoginUser();
+
+    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
     	model.addAttribute("questionCategories", questionCategories);
     	
     	return forwardURL;
@@ -133,7 +135,7 @@ public class QuestionMaintenanceController {
     	Question question = getQuestion(id, user);
         model.addAttribute("question", question);
 
-        List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+        List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
     	model.addAttribute("questionCategories", questionCategories);
 
     	switch(question.getQuestionType()) {

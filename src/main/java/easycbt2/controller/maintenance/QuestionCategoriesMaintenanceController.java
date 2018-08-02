@@ -6,26 +6,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import easycbt2.constants.PublicationScope;
+import easycbt2.exception.ApplicationSecurityException;
+import easycbt2.model.QuestionCategoriesAuthPublic;
+import easycbt2.model.QuestionCategoriesAuthUsers;
 import easycbt2.model.QuestionCategory;
+import easycbt2.model.User;
+import easycbt2.service.QuestionCategoriesAuthPublicService;
+import easycbt2.service.QuestionCategoriesAuthUsersService;
 import easycbt2.service.QuestionCategoryService;
+import easycbt2.service.UserService;
 
 @Controller
 @RequestMapping("/maintenance/question_categories")
 public class QuestionCategoriesMaintenanceController {
+
+	@Autowired
+	UserService userService;
     @Autowired
     private QuestionCategoryService questionCategoryService;
+    @Autowired
+    private QuestionCategoriesAuthPublicService questionCategoriesAuthPublicService;
+    @Autowired
+    private QuestionCategoriesAuthUsersService questionCategoriesAuthUsersService;
 
     @GetMapping
     public String index(Model model) {
-        List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+    	User user = userService.getLoginUser();
+
+        List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
         model.addAttribute("questionCategories", questionCategories); 
+
         return "maintenance/question_categories/index";
     }
 
@@ -43,20 +63,45 @@ public class QuestionCategoriesMaintenanceController {
 
     @GetMapping("{id}")
     public String show(@PathVariable Long id, Model model) {
-    	QuestionCategory questionCategory = questionCategoryService.findOne(id);
+    	User user = userService.getLoginUser();
+    	QuestionCategory questionCategory = getQuestionCategory(id, user);
         model.addAttribute("questionCategory", questionCategory);
         return "maintenance/question_categories/show";
     }
 
     @PostMapping
-    public String create(@ModelAttribute QuestionCategory questionCategory) {
+    public String create(@ModelAttribute QuestionCategory questionCategory, @RequestParam("scope") String scope) {
+    	User user = userService.getLoginUser();
+
     	questionCategory.setEnabled(true);
-    	questionCategoryService.save(questionCategory);
+    	QuestionCategory newQuestionCategory = questionCategoryService.save(questionCategory);
+
+    	PublicationScope scopeObj = PublicationScope.valueOf(scope.toUpperCase());
+    	switch(scopeObj) {
+    	case PUBLIC:
+    		// make questionCategory public
+        	QuestionCategoriesAuthPublic questionCategoriesAuthPublic = new QuestionCategoriesAuthPublic();
+        	questionCategoriesAuthPublic.setQuestionCategory(newQuestionCategory);
+        	questionCategoriesAuthPublicService.save(questionCategoriesAuthPublic);
+    		break;
+    	case PRIVATE:
+    	default:
+        	// make questionCategory private
+        	QuestionCategoriesAuthUsers questionCategoriesAuthUsers = new QuestionCategoriesAuthUsers();
+        	questionCategoriesAuthUsers.setQuestionCategory(newQuestionCategory);
+        	questionCategoriesAuthUsers.setUser(user);
+        	questionCategoriesAuthUsersService.save(questionCategoriesAuthUsers);
+    	}
+    	
         return "redirect:/maintenance/question_categories";
     }
 
     @PutMapping("{id}")
     public String update(@PathVariable Long id, @ModelAttribute QuestionCategory questionCategory) {
+    	User user = userService.getLoginUser();
+    	// security check
+    	getQuestionCategory(id, user);
+    	
     	questionCategory.setId(id);
     	questionCategory.setEnabled(true);
         questionCategoryService.save(questionCategory);
@@ -65,7 +110,25 @@ public class QuestionCategoriesMaintenanceController {
 
     @DeleteMapping("{id}")
     public String destroy(@PathVariable Long id) {
+    	User user = userService.getLoginUser();
+    	// security check
+    	getQuestionCategory(id, user);
+
     	questionCategoryService.delete(id);
         return "redirect:/maintenance/question_categories";
+    }
+
+    private QuestionCategory getQuestionCategory(Long id, User user) throws ApplicationSecurityException {
+    	QuestionCategory questionCategory = questionCategoryService.findByIdAndUser(id, user);
+    	if(questionCategory == null) {
+    		throw new ApplicationSecurityException();
+    	}
+    	
+    	return questionCategory;
+    }
+
+    @ExceptionHandler(ApplicationSecurityException.class)
+    public String securityExceptionHandler(ApplicationSecurityException e) {
+    	return "redirect:/maintenance/question_categories";
     }
 }
