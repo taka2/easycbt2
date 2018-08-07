@@ -56,7 +56,8 @@ public class QuestionCategoriesMaintenanceController {
 
     @GetMapping("{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
-    	QuestionCategory questionCategory = questionCategoryService.findOne(id);
+    	User user = userService.getLoginUser();
+    	QuestionCategory questionCategory = getQuestionCategoryForRead(id, user);
         model.addAttribute("questionCategory", questionCategory);
         return "maintenance/question_categories/edit";
     }
@@ -64,7 +65,7 @@ public class QuestionCategoriesMaintenanceController {
     @GetMapping("{id}")
     public String show(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
-    	QuestionCategory questionCategory = getQuestionCategory(id, user);
+    	QuestionCategory questionCategory = getQuestionCategoryForRead(id, user);
         model.addAttribute("questionCategory", questionCategory);
         return "maintenance/question_categories/show";
     }
@@ -100,7 +101,7 @@ public class QuestionCategoriesMaintenanceController {
     public String update(@PathVariable Long id, @ModelAttribute QuestionCategory questionCategory) {
     	User user = userService.getLoginUser();
     	// security check
-    	getQuestionCategory(id, user);
+    	getQuestionCategoryForWrite(id, user);
     	
     	questionCategory.setId(id);
     	questionCategory.setEnabled(true);
@@ -112,19 +113,33 @@ public class QuestionCategoriesMaintenanceController {
     public String destroy(@PathVariable Long id) {
     	User user = userService.getLoginUser();
     	// security check
-    	getQuestionCategory(id, user);
+    	getQuestionCategoryForWrite(id, user);
 
     	questionCategoryService.delete(id);
         return "redirect:/maintenance/question_categories";
     }
 
-    private QuestionCategory getQuestionCategory(Long id, User user) throws ApplicationSecurityException {
+    private QuestionCategory getQuestionCategory(Long id, User user, boolean canWriteCheck) throws ApplicationSecurityException {
+    	// security check
+    	if(canWriteCheck) {
+	    	if(!questionCategoryService.canWrite(id, user)) {
+	    		throw new ApplicationSecurityException();
+	    	}
+    	}
     	QuestionCategory questionCategory = questionCategoryService.findByIdAndUser(id, user);
     	if(questionCategory == null) {
     		throw new ApplicationSecurityException();
     	}
     	
     	return questionCategory;
+    }
+
+    private QuestionCategory getQuestionCategoryForRead(Long id, User user) throws ApplicationSecurityException {
+    	return getQuestionCategory(id, user, false);
+    }
+
+    private QuestionCategory getQuestionCategoryForWrite(Long id, User user) throws ApplicationSecurityException {
+    	return getQuestionCategory(id, user, true);
     }
 
     @ExceptionHandler(ApplicationSecurityException.class)

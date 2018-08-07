@@ -20,10 +20,11 @@
 					<td th:text="*{id}"></td>
 					<td th:text="*{text}"></td>
 					<td th:text="*{questionCount}"></td>
-					<td><a class="btn btn-default btn-xs"
-						th:href="@{/maintenance/examinations/{id}/edit(id=*{id})}">Edit</a></td>
 					<td>
-						<form th:action="@{/maintenance/examinations/{id}(id=*{id})}" th:method="delete">
+						<a th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == examination.createdBy}" class="btn btn-default btn-xs" th:href="@{/maintenance/examinations/{id}/edit(id=*{id})}">Edit</a>
+					</td>
+					<td>
+						<form th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == examination.createdBy}" th:action="@{/maintenance/examinations/{id}(id=*{id})}" th:method="delete">
 							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
 						</form>
 					</td>

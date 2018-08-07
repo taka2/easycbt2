@@ -18,6 +18,8 @@ import easycbt2.repository.ExaminationsAuthUsersRepository;
 @Service
 public class ExaminationService {
 	@Autowired
+	private UserService userService;
+	@Autowired
 	ExaminationRepository examinationRepository;
 	@Autowired
 	ExaminationsAuthPublicRepository examinationsAuthPublicRepository;
@@ -78,5 +80,15 @@ public class ExaminationService {
 		}
 		
 		return result;
+	}
+
+	public boolean canWrite(Long id, User user) {
+		Examination examination = findByIdAndUser(id, user);
+		if(user.getUsername().equals(examination.getCreatedBy()) 
+				|| userService.hasAdminRole(user)) {
+			// CreatedBy user or has ADMIN_ROLE
+			return true;
+		}
+		return false;
 	}
 }

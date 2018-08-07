@@ -26,10 +26,11 @@
 					<td th:text="*{questionCategory.name}"></td>
 					<td th:text="*{defaultText}"></td>
 					<td th:text="*{explanation}"></td>
-					<td><a class="btn btn-default btn-xs"
-						th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">Edit</a></td>
 					<td>
-						<form th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
+						<a th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" class="btn btn-default btn-xs" th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">Edit</a>
+					</td>
+					<td>
+						<form th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
 							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
 						</form>
 					</td>

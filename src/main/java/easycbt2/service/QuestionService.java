@@ -29,6 +29,8 @@ import easycbt2.repository.QuestionsAuthUsersRepository;
 @Service
 public class QuestionService {
 	@Autowired
+	private UserService userService;
+	@Autowired
 	QuestionRepository questionRepository;
 	@Autowired
 	QuestionsAuthPublicRepository questionsAuthPublicRepository;
@@ -183,5 +185,15 @@ public class QuestionService {
 		}
 		
 		return result;
+	}
+
+	public boolean canWrite(Long id, User user) {
+		Question question = findByIdAndUser(id, user);
+		if(user.getUsername().equals(question.getCreatedBy()) 
+				|| userService.hasAdminRole(user)) {
+			// CreatedBy user or has ADMIN_ROLE
+			return true;
+		}
+		return false;
 	}
 }

@@ -70,7 +70,7 @@ public class ExaminationMaintenanceController {
     @GetMapping("{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
-    	Examination examination = getExamination(id, user);
+    	Examination examination = getExaminationForRead(id, user);
         model.addAttribute("examination", examination);
 
     	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
@@ -94,7 +94,7 @@ public class ExaminationMaintenanceController {
     @GetMapping("{id}")
     public String show(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
-    	Examination examination = getExamination(id, user);
+    	Examination examination = getExaminationForRead(id, user);
     	model.addAttribute("examination", examination);
     	return "maintenance/examinations/show";
     }
@@ -138,7 +138,7 @@ public class ExaminationMaintenanceController {
     public String update(@PathVariable Long id, @ModelAttribute Examination examination, Model model, @RequestParam("examinations_categories") List<Long> examinationsCategoriesIdList) {
     	User user = userService.getLoginUser();
     	// security check
-    	getExamination(id, user);
+    	getExaminationForWrite(id, user);
 
     	examination.setId(id);
     	examination.setEnabled(true);
@@ -164,7 +164,7 @@ public class ExaminationMaintenanceController {
     @DeleteMapping("{id}")
     public String destroy(@PathVariable Long id) {
     	User user = userService.getLoginUser();
-    	Examination examination = getExamination(id, user);
+    	Examination examination = getExaminationForWrite(id, user);
 
     	for(ExaminationsCategories examinationsCategories : examination.getCategoryList()) {
     		examinationsCategoriesService.delete(examinationsCategories.getId());
@@ -173,13 +173,27 @@ public class ExaminationMaintenanceController {
     	return "redirect:/maintenance/examinations";
     }
 
-    private Examination getExamination(Long id, User user) throws ApplicationSecurityException {
+    private Examination getExamination(Long id, User user, boolean canWriteCheck) throws ApplicationSecurityException {
+    	// security check
+    	if(canWriteCheck) {
+	    	if(!examinationService.canWrite(id, user)) {
+	    		throw new ApplicationSecurityException();
+	    	}
+    	}
     	Examination examination = examinationService.findByIdAndUser(id, user);
     	if(examination == null) {
     		throw new ApplicationSecurityException();
     	}
     	
     	return examination;
+    }
+
+    private Examination getExaminationForRead(Long id, User user) throws ApplicationSecurityException {
+    	return getExamination(id, user, false);
+    }
+
+    private Examination getExaminationForWrite(Long id, User user) throws ApplicationSecurityException {
+    	return getExamination(id, user, true);
     }
 
     @ExceptionHandler(ApplicationSecurityException.class)
