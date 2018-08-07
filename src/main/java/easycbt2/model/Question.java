@@ -50,8 +50,10 @@ public class Question {
 	private String explanation;
 	@Column
 	private Boolean enabled;
+	@Column(updatable=false)
     @CreatedBy
     private String createdBy;
+	@Column(updatable=false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date createdDate;

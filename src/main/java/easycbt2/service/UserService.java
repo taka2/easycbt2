@@ -1,6 +1,7 @@
 package easycbt2.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,5 +75,18 @@ public class UserService {
     public User getLoginUser() {
     	String username = SecurityContextHolder.getContext().getAuthentication().getName();
     	return findOne(username);
+    }
+    
+    /**
+     * If user has ROLE_ADMIN then return true else return false  
+     */
+    public boolean hasAdminRole(User user) {
+    	Set<Authority> authorities = user.getAuthorities();
+    	for(Authority authority : authorities) {
+    		if(ROLE_ADMIN.equals(authority.getAuthority())) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 }

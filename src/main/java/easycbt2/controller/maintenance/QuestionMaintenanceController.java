@@ -132,7 +132,7 @@ public class QuestionMaintenanceController {
     @GetMapping("{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
-    	Question question = getQuestion(id, user);
+    	Question question = getQuestionForRead(id, user);
         model.addAttribute("question", question);
 
         List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
@@ -152,7 +152,7 @@ public class QuestionMaintenanceController {
     @GetMapping("{id}")
     public String show(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
-    	Question question = getQuestion(id, user);
+    	Question question = getQuestionForRead(id, user);
         model.addAttribute("question", question);
         return "maintenance/questions/show";
     }
@@ -201,7 +201,7 @@ public class QuestionMaintenanceController {
     public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params) {
     	User user = userService.getLoginUser();
     	// security check
-    	getQuestion(id, user);
+    	getQuestionForWrite(id, user);
 
     	question.setId(id);
     	question.setEnabled(true);
@@ -272,13 +272,19 @@ public class QuestionMaintenanceController {
     public String destroy(@PathVariable Long id) {
     	User user = userService.getLoginUser();
     	// security check
-    	getQuestion(id, user);
+    	getQuestionForWrite(id, user);
 
     	questionService.delete(id);
         return "redirect:/maintenance/questions";
     }
     
-    private Question getQuestion(Long id, User user) throws ApplicationSecurityException {
+    private Question getQuestion(Long id, User user, boolean canWriteCheck) throws ApplicationSecurityException {
+    	// security check
+    	if(canWriteCheck) {
+	    	if(!questionService.canWrite(id, user)) {
+	    		throw new ApplicationSecurityException();
+	    	}
+    	}
     	Question question = questionService.findByIdAndUser(id, user);
     	if(question == null) {
     		throw new ApplicationSecurityException();
@@ -286,7 +292,15 @@ public class QuestionMaintenanceController {
     	
     	return question;
     }
-    
+
+    private Question getQuestionForRead(Long id, User user) throws ApplicationSecurityException {
+    	return getQuestion(id, user, false);
+    }
+
+    private Question getQuestionForWrite(Long id, User user) throws ApplicationSecurityException {
+    	return getQuestion(id, user, true);
+    }
+
     @ExceptionHandler(ApplicationSecurityException.class)
     public String securityExceptionHandler(ApplicationSecurityException e) {
     	return "redirect:/maintenance/questions";

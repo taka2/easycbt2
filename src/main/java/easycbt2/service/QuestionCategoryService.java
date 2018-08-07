@@ -17,6 +17,8 @@ import easycbt2.repository.QuestionCategoryRepository;
 
 @Service
 public class QuestionCategoryService {
+	@Autowired
+	private UserService userService;
     @Autowired
     private QuestionCategoryRepository questionCategoryRepository;
 	@Autowired
@@ -82,5 +84,15 @@ public class QuestionCategoryService {
 		}
 		
 		return result;
+	}
+	
+	public boolean canWrite(Long id, User user) {
+		QuestionCategory questionCategory = findByIdAndUser(id, user);
+		if(user.getUsername().equals(questionCategory.getCreatedBy()) 
+				|| userService.hasAdminRole(user)) {
+			// CreatedBy user or has ADMIN_ROLE
+			return true;
+		}
+		return false;
 	}
 }
