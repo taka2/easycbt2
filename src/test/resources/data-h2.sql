@@ -9,6 +9,8 @@ DELETE FROM examinations_auth_users;
 DELETE FROM examinations_auth_public;
 DELETE FROM examinations_categories;
 DELETE FROM examinations;
+DELETE FROM question_categories_auth_users;
+DELETE FROM question_categories_auth_public;
 DELETE FROM question_categories;
 DELETE FROM authorities;
 DELETE FROM users;
@@ -26,6 +28,9 @@ INSERT INTO authorities(username, authority) VALUES('user4', 'ROLE_ADMIN');
 
 INSERT INTO question_categories(id, name) VALUES(1, 'category1');
 INSERT INTO question_categories(id, name) VALUES(2, 'category2');
+
+INSERT INTO question_categories_auth_public(id, question_category_id) VALUES(1, 1);
+INSERT INTO question_categories_auth_public(id, question_category_id) VALUES(2, 2);
 
 INSERT INTO examinations(id, text, question_count, enabled) VALUES(1, 'examinationPublic', 10, true);
 INSERT INTO examinations(id, text, question_count, enabled) VALUES(2, 'examinationForUser1', 20, true);

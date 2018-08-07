@@ -115,9 +115,9 @@ public class TakeExaminationService {
 			return null;
 		}
 	}
-	
-	public List<TakeExamination> findByUser(User user) {
-		return takeExaminationRepository.findByUser(user);
+
+	public List<TakeExamination> findByUserOrderByCreatedDateDesc(User user) {
+		return takeExaminationRepository.findByUserOrderByCreatedDateDesc(user);
 	}
 
 	/**
