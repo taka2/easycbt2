@@ -93,18 +93,23 @@ public class QuestionService {
 		// Current Date
 		Instant instant = dateTimeService.getCurrentDateTime();
 		
-		List<TakeExamination> takeExaminations = takeExaminationService.findByUser(user);
+		List<TakeExamination> takeExaminations = takeExaminationService.findByUserOrderByCreatedDateDesc(user);
 		for(TakeExamination takeExamination : takeExaminations) {
 			for(TakeExaminationsQuestion takeExaminationsQuestion : takeExamination.getTakeExaminationsQuestions()) {
 				Question question = takeExaminationsQuestion.getQuestion();
 				if(!resultMap.containsKey(question)) {
 					continue;
 				}
+				if(resultMap.get(question) != 0L) {
+					// 一番新しい成績のみ反映
+					continue;
+				}
 				
 				Boolean isCorrect = takeExaminationsQuestion.isCorrect();
 				Date timestamp = takeExaminationsQuestion.getModifiedDate();
-				Long score = Duration.between(instant, timestamp.toInstant()).getSeconds() * (isCorrect ? 1 : -1);
-				resultMap.put(question, resultMap.get(question) + score);
+				// TODO オーバーフローする可能性
+				Long score = Duration.between(timestamp.toInstant(), instant).getSeconds() * (isCorrect ? 1 : 100);
+				resultMap.put(question, score);
 			}
 		}
 		
