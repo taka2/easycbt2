@@ -78,6 +78,8 @@ public class QuestionMaintenanceController {
 			question.setQuestionType(QuestionType.valueOf((String)map.get("questionType")));
 			question.setText((String)map.get("text"));
 			question.setQuestionCategory(questionCategoryService.findByName((String)map.get("questionCategory")));
+			question.setDefaultText((String)map.get("defaultText"));
+			question.setExplanation((String)map.get("explanation"));
 			question.setEnabled(true);
 			questionService.save(question);
 			
