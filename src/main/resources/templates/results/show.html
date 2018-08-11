@@ -21,6 +21,10 @@
 					<li th:each="expectedAnswer,rowStat:*{takeExaminationQuestion.question.getCorrectQuestionAnswerList()}" th:text="${expectedAnswer.text}"></li>
 				</ul>
 			</div>
+			<div th:if="${takeExaminationQuestion.question.explanation != null}">
+				Explanation:
+				<div th:text="${takeExaminationQuestion.question.explanation}"></div>
+			</div>
 		</div>
 	</div>
 </body>
