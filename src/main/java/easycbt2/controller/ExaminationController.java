@@ -58,7 +58,7 @@ public class ExaminationController {
     	Examination examination = examinationService.findOne(id);
     	session.setAttribute("examination", examination);
 
-    	List<Question> questions = questionService.findByUserAndExamination(user, examination, true);
+    	List<Question> questions = questionService.findByUserAndExaminationWithRandomize(user, examination);
     	session.setAttribute("questions", questions);
     	
     	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());

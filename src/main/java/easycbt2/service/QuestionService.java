@@ -7,9 +7,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,6 @@ import org.springframework.stereotype.Service;
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionCategory;
-import easycbt2.model.QuestionsAuthPublic;
-import easycbt2.model.QuestionsAuthUsers;
 import easycbt2.model.TakeExamination;
 import easycbt2.model.TakeExaminationsQuestion;
 import easycbt2.model.User;
@@ -39,27 +39,89 @@ public class QuestionService {
 	@Autowired
 	TakeExaminationService takeExaminationService;
 	@Autowired
+	TakeExaminationsQuestionService takeExaminationsQuestionService;
+	@Autowired
 	DateTimeService dateTimeService; 
 
-	public List<Question> findByUserAndExamination(User user, Examination examination) {
-		return findByUserAndExamination(user, examination, false);
-	}
+	public List<Question> findAll() {
+        return questionRepository.findByEnabledOrderByIdAsc(true);
+    }
 
-	public List<Question> findByUserAndExamination(User user, Examination examination, Boolean isRandomize) {
+    public Question findOne(Long id) {
+        return questionRepository.findByIdAndEnabled(id, true);
+    }
+
+    public Question save(Question question) {
+        return questionRepository.save(question);
+    }
+
+    public void delete(Long id) {
+    	Question obj = findOne(id);
+    	obj.setEnabled(false);
+    	save(obj);
+    }
+
+	public List<Question> findByUserAndQuestionCategory(User user, QuestionCategory questionCategory) {
 		List<Question> resultList = new ArrayList<>();
-
-		// Get Examination categories
-		List<QuestionCategory> categoryList = examination.getCategories();
 		
 		List<Question> questions = findByUser(user);
 		for(Question question : questions) {
-			if(categoryList.contains(question.getQuestionCategory())) {
+			if(question.getQuestionCategory().equals(questionCategory)) {
 				resultList.add(question);
 			}
 		}
+		
+		return resultList;
+	}
+
+	public List<Question> findByUser(User user) {
+		//List<Question> resultList = new ArrayList<>();
+		Set<Question> resultSet = new HashSet<>();
+		
+		// List Public Questions
+		resultSet.addAll(questionsAuthPublicRepository.findQuestions());
+		
+		// List Questions restricted by user
+		resultSet.addAll(questionsAuthUsersRepository.findQuestionsByUser(user));
+		List<Question> resultList = new ArrayList<>(resultSet);
+
+		Collections.sort(resultList, Question.getIdComparator());
+		return resultList;
+	}
+
+	public Question findByIdAndUser(Long id, User user) {
+		List<Question> questions = findByUser(user);
+		Question result = null;
+		for(Question question : questions) { 
+			if(question.getId() == id) {
+				result = question;
+				break;
+			}
+		}
+		
+		return result;
+	}
+
+	public List<Question> findByUserAndExamination(User user, Examination examination) {
+		Set<Question> resultSet = new HashSet<>();
+		
+		// List Public Questions
+		resultSet.addAll(questionsAuthPublicRepository.findQuestionsByExamination(examination));
+		
+		// List Questions restricted by user
+		resultSet.addAll(questionsAuthUsersRepository.findQuestionsByUserAndExamination(user, examination));
+
+		List<Question> resultList = new ArrayList<>(resultSet);
+		Collections.sort(resultList, Question.getIdComparator());
+		
+		return resultList;
+	}
+
+	public List<Question> findByUserAndExaminationWithRandomize(User user, Examination examination) {
+		List<Question> questions = findByUserAndExamination(user, examination);
 
 		// Calc weight
-		Map<Question, Long> weightMap = calcWeight(user, resultList);
+		Map<Question, Long> weightMap = calcWeight(user, questions);
 		List<Entry<Question, Long>> list = new ArrayList<>(weightMap.entrySet());
 		Collections.sort(list, new Comparator<Entry<Question, Long>>() {
 			@Override
@@ -92,25 +154,16 @@ public class QuestionService {
 		
 		// Current Date
 		Instant instant = dateTimeService.getCurrentDateTime();
-		
-		List<TakeExamination> takeExaminations = takeExaminationService.findByUserOrderByCreatedDateDesc(user);
-		for(TakeExamination takeExamination : takeExaminations) {
-			for(TakeExaminationsQuestion takeExaminationsQuestion : takeExamination.getTakeExaminationsQuestions()) {
-				Question question = takeExaminationsQuestion.getQuestion();
-				if(!resultMap.containsKey(question)) {
-					continue;
-				}
-				if(resultMap.get(question) != 0L) {
-					// 一番新しい成績のみ反映
-					continue;
-				}
-				
-				Boolean isCorrect = takeExaminationsQuestion.isCorrect();
-				Date timestamp = takeExaminationsQuestion.getModifiedDate();
-				// TODO オーバーフローする可能性
-				Long score = Duration.between(timestamp.toInstant(), instant).getSeconds() * (isCorrect ? 1 : 100);
-				resultMap.put(question, score);
+		List<TakeExaminationsQuestion> takeExaminationsQuestions = takeExaminationsQuestionService.findLatests(user);
+		for(TakeExaminationsQuestion takeExaminationsQuestion : takeExaminationsQuestions) {
+			if(!resultMap.containsKey(takeExaminationsQuestion.getQuestion())) {
+				continue;
 			}
+			Boolean isCorrect = takeExaminationsQuestion.isCorrect();
+			Date timestamp = takeExaminationsQuestion.getModifiedDate();
+			// TODO オーバーフローする可能性
+			Long score = Duration.between(timestamp.toInstant(), instant).getSeconds() * (isCorrect ? 1 : 100);
+			resultMap.put(takeExaminationsQuestion.getQuestion(), score);
 		}
 		
 		// Reset Unanswered Questios score to Long.MAX_VALUE
@@ -121,75 +174,6 @@ public class QuestionService {
 		}
 		
 		return resultMap;
-	}
-
-    public List<Question> findAll() {
-        return questionRepository.findByEnabledOrderByIdAsc(true);
-    }
-
-    public Question findOne(Long id) {
-        return questionRepository.findByIdAndEnabled(id, true);
-    }
-
-    public Question save(Question question) {
-        return questionRepository.save(question);
-    }
-
-    public void delete(Long id) {
-    	Question obj = findOne(id);
-    	obj.setEnabled(false);
-    	save(obj);
-    }
-
-	public List<Question> findByUserAndQuestionCategory(User user, QuestionCategory questionCategory) {
-		List<Question> resultList = new ArrayList<>();
-		
-		List<Question> questions = findByUser(user);
-		for(Question question : questions) {
-			if(question.getQuestionCategory().equals(questionCategory)) {
-				resultList.add(question);
-			}
-		}
-		
-		return resultList;
-	}
-
-	public List<Question> findByUser(User user) {
-		List<Question> resultList = new ArrayList<>();
-		
-		// List Public Questions
-		List<QuestionsAuthPublic> listPublic = questionsAuthPublicRepository.findAll();
-		for(QuestionsAuthPublic anElement : listPublic) {
-			if(anElement.getQuestion().getEnabled()) {
-				resultList.add(anElement.getQuestion());
-			}
-		}
-		
-		// List Questions restricted by user
-		List<QuestionsAuthUsers> listUsers = questionsAuthUsersRepository.findByUser(user);
-		for(QuestionsAuthUsers anElement : listUsers) {
-			if(anElement.getQuestion().getEnabled()) {
-				if(!resultList.contains(anElement.getQuestion())) {
-					resultList.add(anElement.getQuestion());
-				}
-			}
-		}
-
-		Collections.sort(resultList, Question.getIdComparator());
-		return resultList;
-	}
-	
-	public Question findByIdAndUser(Long id, User user) {
-		List<Question> questions = findByUser(user);
-		Question result = null;
-		for(Question question : questions) { 
-			if(question.getId() == id) {
-				result = question;
-				break;
-			}
-		}
-		
-		return result;
 	}
 
 	public boolean canWrite(Long id, User user) {
