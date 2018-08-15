@@ -19,8 +19,11 @@ import easycbt2.model.Question;
 import easycbt2.model.QuestionCategory;
 import easycbt2.model.TakeExamination;
 import easycbt2.model.User;
+import easycbt2.service.QuestionCategoryService;
 import easycbt2.service.QuestionService;
 import easycbt2.service.TakeExaminationService;
+import easycbt2.service.TakeExaminationsQuestionService;
+import easycbt2.service.TakeExaminationsQuestionService.SummaryByQuestion;
 import easycbt2.service.UserService;
 
 @Controller
@@ -32,7 +35,11 @@ public class ResultController {
 	@Autowired
 	TakeExaminationService takeExaminationService;
 	@Autowired
+	TakeExaminationsQuestionService takeExaminationsQuestionService;
+	@Autowired
 	QuestionService questionService;
+	@Autowired
+	QuestionCategoryService questionCategoryService;
 
     @GetMapping
     public String index(Model model, Principal principal, Pageable pageable) throws IOException {
@@ -73,5 +80,32 @@ public class ResultController {
     	model.addAttribute("questionCountByQuestionCategory", questionCountByQuestionCategory);
     	
     	return "results/category_progress";
+    }
+    
+    @GetMapping("categories/{id}")
+    public String indexByQuestionCategory(@PathVariable Long id, Model model, Principal principal) throws IOException {
+    	User user = userService.getLoginUser();
+
+    	QuestionCategory questionCategory = questionCategoryService.findByIdAndUser(id, user);
+    	Map<Question, SummaryByQuestion> summaryByQuestions = takeExaminationsQuestionService.summaryByUserAndQuestionCateogry(user, questionCategory);
+    	
+    	model.addAttribute("summaryByQuestions", summaryByQuestions);
+    	
+    	Integer totalNumCorrect = 0;
+    	Integer totalNumWrong = 0;
+    	double totalCorrectPercentage = 0d;
+    	for(Map.Entry<Question, SummaryByQuestion> entry : summaryByQuestions.entrySet()) {
+    		totalNumCorrect += entry.getValue().getNumCorrect();
+    		totalNumWrong += entry.getValue().getNumWrong();
+    	}
+    	if(totalNumCorrect != 0 && totalNumWrong != 0) {
+    		totalCorrectPercentage = totalNumCorrect / (double)(totalNumCorrect + totalNumWrong) * 100;
+    	}
+    	
+    	model.addAttribute("totalNumCorrect", totalNumCorrect);
+    	model.addAttribute("totalNumWrong", totalNumWrong);
+    	model.addAttribute("totalCorrectPercentage", totalCorrectPercentage);
+    	
+    	return "results/summary_by_question";
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionCategory;
-import easycbt2.model.TakeExamination;
 import easycbt2.model.TakeExaminationsQuestion;
 import easycbt2.model.User;
 import easycbt2.repository.QuestionRepository;
