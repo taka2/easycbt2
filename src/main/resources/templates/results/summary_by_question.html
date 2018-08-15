@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('results/results')"></head>
+<body>
+	<nav th:replace="_navbar::navbar('results/results')"></nav>
+	<div class="container">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>text</th>
+					<th>numCorrect</th>
+					<th>numWrong</th>
+					<th>percentage</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="summaryByQuestion,rowStat:*{summaryByQuestions}">
+					<td th:text="${summaryByQuestion.key.id}"></td>
+					<td th:text="${summaryByQuestion.key.text}"></td>
+					<td th:text="${summaryByQuestion.value.numCorrect}"></td>
+					<td th:text="${summaryByQuestion.value.numWrong}"></td>
+					<td th:text="${#numbers.formatDecimal(summaryByQuestion.value.getCorrectPercentage(), 0, 'COMMA', 2, 'POINT')}"/>
+				</tr>
+				<tr>
+					<td>-</td>
+					<td>total</td>
+					<td th:text="${totalNumCorrect}"></td>
+					<td th:text="${totalNumWrong}"></td>
+					<td th:text="${#numbers.formatDecimal(totalCorrectPercentage, 0, 'COMMA', 2, 'POINT')}"/>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
+

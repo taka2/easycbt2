@@ -28,8 +28,8 @@ INSERT INTO authorities(username, authority) VALUES('user3', 'ROLE_ADMIN');
 INSERT INTO authorities(username, authority) VALUES('user4', 'ROLE_ADMIN');
 INSERT INTO authorities(username, authority) VALUES('user6', 'ROLE_USER');
 
-INSERT INTO question_categories(id, name) VALUES(1, 'category1');
-INSERT INTO question_categories(id, name) VALUES(2, 'category2');
+INSERT INTO question_categories(id, name, enabled) VALUES(1, 'category1', true);
+INSERT INTO question_categories(id, name, enabled) VALUES(2, 'category2', true);
 
 INSERT INTO question_categories_auth_public(id, question_category_id) VALUES(1, 1);
 INSERT INTO question_categories_auth_public(id, question_category_id) VALUES(2, 2);
@@ -58,6 +58,11 @@ INSERT INTO questions(id, question_type, text, question_category_id, enabled) VA
 INSERT INTO questions(id, question_type, text, question_category_id, enabled) VALUES(3, 'SINGLE_CHOICE', 'question3', 1, true);
 INSERT INTO questions(id, question_type, text, question_category_id, enabled) VALUES(4, 'SINGLE_CHOICE', 'question4', 2, true);
 
+INSERT INTO questions_answers(id, question_id, text, is_correct, enabled) VALUES(1, 1, 'text1', true, true);
+INSERT INTO questions_answers(id, question_id, text, is_correct, enabled) VALUES(2, 2, 'text2', true, true);
+INSERT INTO questions_answers(id, question_id, text, is_correct, enabled) VALUES(3, 3, 'text3', true, true);
+INSERT INTO questions_answers(id, question_id, text, is_correct, enabled) VALUES(4, 4, 'text4', true, true);
+
 INSERT INTO questions_auth_public(id, question_id) VALUES(1, 1);
 INSERT INTO questions_auth_public(id, question_id) VALUES(2, 2);
 
@@ -69,5 +74,9 @@ INSERT INTO take_examinations(id, user_username, examination_id, elapsed_time) V
 INSERT INTO take_examinations(id, user_username, examination_id, elapsed_time) VALUES(2, 'user6', 1, 800);
 
 INSERT INTO take_examinations_questions(id, take_examination_id, question_id, elapsed_time) VALUES(1, 1, 1, 500);
-INSERT INTO take_examinations_questions(id, take_examination_id, question_id, elapsed_time) VALUES(2, 1, 2, 500);
+INSERT INTO take_examinations_questions(id, take_examination_id, question_id, elapsed_time) VALUES(2, 1, 3, 500);
 INSERT INTO take_examinations_questions(id, take_examination_id, question_id, elapsed_time) VALUES(3, 2, 1, 400);
+
+INSERT INTO take_examinations_answers(id, take_examinations_question_id, answer_id, answer_text) VALUES(1, 1, NULL, NULL);
+INSERT INTO take_examinations_answers(id, take_examinations_question_id, answer_id, answer_text) VALUES(2, 2, 3, NULL);
+INSERT INTO take_examinations_answers(id, take_examinations_question_id, answer_id, answer_text) VALUES(3, 3, 1, NULL);

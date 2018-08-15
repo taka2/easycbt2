@@ -14,7 +14,7 @@
 			</thead>
 			<tbody>
 				<tr th:each="instance,rowStat:*{summaryByQuestionCategory}">
-					<td th:text="${instance.key.name}"/>
+					<td><a th:href = "@{/results/categories/{id}(id=${instance.key.id})}" th:text="${instance.key.name}"></a></td>
 					<td th:text="${questionCountByQuestionCategory.get(instance.key)}"/>
 					<td th:text="${instance.value.size()}"/>
 				</tr>
