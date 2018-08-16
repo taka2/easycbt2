@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,9 @@ public class QuestionService {
 	TakeExaminationsQuestionService takeExaminationsQuestionService;
 	@Autowired
 	DateTimeService dateTimeService; 
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(QuestionService.class);
+	
 	public List<Question> findAll() {
         return questionRepository.findByEnabledOrderByIdAsc(true);
     }
@@ -89,7 +93,13 @@ public class QuestionService {
 	}
 
 	public Question findByIdAndUser(Long id, User user) {
+		logger.info("id = " + id);
+		logger.info("username = " + user.getUsername());
+		logger.info("hasAdminRole = " + userService.hasAdminRole(user));
 		List<Question> questions = findByUser(user);
+		for(Question question : questions) {
+			logger.info("question.id/text = " + question.getId() + "/" + question.getText());
+		}
 		Question result = null;
 		for(Question question : questions) { 
 			if(question.getId() == id) {
@@ -177,6 +187,7 @@ public class QuestionService {
 
 	public boolean canWrite(Long id, User user) {
 		Question question = findByIdAndUser(id, user);
+		
 		if(user.getUsername().equals(question.getCreatedBy()) 
 				|| userService.hasAdminRole(user)) {
 			// CreatedBy user or has ADMIN_ROLE
