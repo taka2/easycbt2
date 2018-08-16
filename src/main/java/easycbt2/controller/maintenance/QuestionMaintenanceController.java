@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
@@ -56,6 +58,8 @@ public class QuestionMaintenanceController {
 	QuestionsAuthPublicService questionsAuthPublicService;
 	@Autowired
 	QuestionsAuthUsersService questionsAuthUsersService;
+
+	private static final Logger logger = LoggerFactory.getLogger(QuestionMaintenanceController.class);
 
 	@GetMapping("/upload_json")
 	public String showUploadJSON() {
@@ -134,7 +138,9 @@ public class QuestionMaintenanceController {
     @GetMapping("{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
+    	logger.info("username = " + user.getUsername());
     	Question question = getQuestionForRead(id, user);
+    	logger.info("question.id/text = " + question.getId() + "/" + question.getText());
         model.addAttribute("question", question);
 
         List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);

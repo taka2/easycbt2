@@ -108,6 +108,7 @@ public class QuestionService {
 			}
 		}
 		
+		logger.info("result = " + result);
 		return result;
 	}
 
