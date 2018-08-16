@@ -35,10 +35,10 @@ public class TakeExaminationsQuestionRepositoryTest {
 		List<TakeExaminationsQuestion> list = takeExaminationsQuestionRepository.findLatests(user6);
 		assertThat(list.size(), is(2));
 		for(TakeExaminationsQuestion anElement : list) {
-			if(anElement.getQuestion().getId() == 1L) {
+			if(anElement.getQuestion().getId().equals(1L)) {
 				assertThat(anElement.getElapsedTime(), is(400L));
 			}
-			if(anElement.getQuestion().getId() == 2L) {
+			if(anElement.getQuestion().getId().equals(2L)) {
 				assertThat(anElement.getElapsedTime(), is(500L));
 			}
 		}

@@ -73,7 +73,7 @@ public class ExaminationService {
 		List<Examination> examinations = findByUser(user);
 		Examination result = null;
 		for(Examination examination : examinations) { 
-			if(examination.getId() == id) {
+			if(examination.getId().equals(id)) {
 				result = examination;
 				break;
 			}

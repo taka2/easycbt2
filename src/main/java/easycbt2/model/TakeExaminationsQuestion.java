@@ -122,7 +122,7 @@ public class TakeExaminationsQuestion {
 			}
 			QuestionAnswer expectedAnswer = expectedAnswers.iterator().next();
 			TakeExaminationsAnswer actualAnswer_ = actualAnswers.iterator().next();
-			return expectedAnswer.getId() == actualAnswer_.getAnswerId();
+			return expectedAnswer.getId().equals(actualAnswer_.getAnswerId());
 		case MULTIPLE_CHOICE:
 			if(expectedAnswers.size() != actualAnswers.size()) {
 				return false;
@@ -147,7 +147,7 @@ public class TakeExaminationsQuestion {
 	
 	private Boolean isContainsAnswerId(List<QuestionAnswer> expectedAnswers, Long actualAnswer) {
 		for(QuestionAnswer expectedAnswer : expectedAnswers) {
-			if(expectedAnswer.getId() == actualAnswer) {
+			if(expectedAnswer.getId().equals(actualAnswer)) {
 				return true;
 			}
 		}
