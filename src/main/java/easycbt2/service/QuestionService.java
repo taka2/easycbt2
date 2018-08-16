@@ -97,12 +97,12 @@ public class QuestionService {
 		logger.info("username = " + user.getUsername());
 		logger.info("hasAdminRole = " + userService.hasAdminRole(user));
 		List<Question> questions = findByUser(user);
-		for(Question question : questions) {
-			logger.info("question.id/text = " + question.getId() + "/" + question.getText());
-		}
+
 		Question result = null;
 		for(Question question : questions) { 
+			logger.info("question.id/text = " + question.getId() + "/" + question.getText());
 			if(question.getId() == id) {
+				logger.info("hit! " + question.getId());
 				result = question;
 				break;
 			}
