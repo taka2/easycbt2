@@ -178,7 +178,7 @@ public class QuestionService {
 		
 		// Reset Unanswered Questios score to Long.MAX_VALUE
 		for(Entry<Question, Long> entry : resultMap.entrySet()) {
-			if(entry.getValue() == 0L) {
+			if(entry.getValue().equals(0L)) {
 				resultMap.put(entry.getKey(), Long.MAX_VALUE);
 			}
 		}

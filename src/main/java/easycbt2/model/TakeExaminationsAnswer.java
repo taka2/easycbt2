@@ -97,7 +97,7 @@ public class TakeExaminationsAnswer {
 		if(answerId != null) {
 			Set<QuestionAnswer> answers = getTakeExaminationsQuestion().getQuestion().getQuestionAnswerList();
 			for(QuestionAnswer answer : answers) {
-				if(answerId == answer.getId()) {
+				if(answerId.equals(answer.getId())) {
 					return answer.getText();
 				}
 			}

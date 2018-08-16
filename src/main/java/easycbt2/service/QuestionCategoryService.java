@@ -77,7 +77,7 @@ public class QuestionCategoryService {
 		List<QuestionCategory> questionCategories = findByUser(user);
 		QuestionCategory result = null;
 		for(QuestionCategory questionCategory : questionCategories) { 
-			if(questionCategory.getId() == id) {
+			if(questionCategory.getId().equals(id)) {
 				result = questionCategory;
 				break;
 			}
