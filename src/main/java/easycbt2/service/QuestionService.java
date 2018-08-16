@@ -101,7 +101,7 @@ public class QuestionService {
 		Question result = null;
 		for(Question question : questions) { 
 			logger.info("question.id/text = " + question.getId() + "/" + question.getText());
-			if(question.getId() == id) {
+			if(question.getId().equals(id)) {
 				logger.info("hit! " + question.getId());
 				result = question;
 				break;
