@@ -37,13 +37,11 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-					role="button" data-toggle="dropdown" aria-haspopup="true"
-					aria-expanded="false" sec:authentication="name"> </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item"
-							href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a>
-					</div>
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" sec:authentication="name"> </a>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" th:href="@{'/maintenance/users/' + ${session.user.username} + '/change_password'}" role="menuitem">Change Password</a></li>
+						<li><a class="dropdown-item" href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a></li>
+					</ul>
 				</li>
 			</ul>
 		</div>

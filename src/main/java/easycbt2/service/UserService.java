@@ -89,4 +89,17 @@ public class UserService {
     	}
     	return false;
     }
+    
+    public boolean hasSameId(User user, String id) {
+    	return user.getUsername().equals(id);
+    }
+    
+    public boolean hasSameCurrentPassword(User user, String currentPassword) {
+    	return bCryptPasswordEncoder.matches(currentPassword, user.getPassword());
+    }
+    
+    public User changePassword(User user, String newPassword) {
+    	user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    	return userRepository.save(user);
+    }
 }

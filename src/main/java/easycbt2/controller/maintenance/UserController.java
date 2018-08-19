@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import easycbt2.model.User;
 import easycbt2.service.UserService;
@@ -50,6 +51,13 @@ public class UserController {
         return "maintenance/users/show";
     }
 
+    @GetMapping("{id}/change_password")
+    public String showChangePassword(@PathVariable String id, Model model) {
+    	User user = userService.getLoginUser();
+        model.addAttribute("user", user);
+        return "maintenance/users/change_password";
+    }
+
     @PostMapping
     public String create(@ModelAttribute User user, BindingResult result) {
     	if(userService.isExistsUser(user.getUsername())) {
@@ -59,6 +67,27 @@ public class UserController {
     	user.setEnabled(true);
     	userService.save(user);
         return "redirect:/maintenance/users";
+    }
+
+    @PutMapping("{id}/change_password")
+    public String changePassword(@PathVariable String id, @RequestParam(value="current_password") String currentPassword, @RequestParam(value="new_password") String newPassword) {
+    	// Get Login User
+    	User user = userService.getLoginUser();
+    	
+    	// Same id?
+    	if(!userService.hasSameId(user, id)) {
+    		return "redirect:/home";
+    	}
+    	
+    	// Same current password?
+    	if(!userService.hasSameCurrentPassword(user, currentPassword)) {
+    		return "redirect:/home";
+    	}
+    	
+    	// Change password
+    	userService.changePassword(user, newPassword);
+    	
+        return "redirect:/home";
     }
 
     @PutMapping("{id}")
