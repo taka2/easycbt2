@@ -15,4 +15,6 @@ public interface QuestionsAuthPublicRepository extends JpaRepository<QuestionsAu
 
 	@Query("select distinct q from QuestionsAuthPublic qap join qap.question q join ExaminationsCategories ec on ec.questionCategory = q.questionCategory where q.enabled = true and ec.examination = ?1")
 	public List<Question> findQuestionsByExamination(Examination examination);
+
+	public List<QuestionsAuthPublic> findByQuestion(Question question);
 }

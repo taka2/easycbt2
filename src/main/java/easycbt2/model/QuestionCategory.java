@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,6 +28,7 @@ public class QuestionCategory {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	@Column
+	@NotBlank
 	private String name;
 	@Column
 	private Boolean enabled;

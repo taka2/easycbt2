@@ -5,7 +5,7 @@
 	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
 		<h2>New Text Question</h2>
-		<form th:action="@{/maintenance/questions}" th:method="post">
+		<form th:action="@{/maintenance/questions/new_text}" th:method="post" th:object="${form}">
 			<div class="form-group">
 				<input type="hidden" name="questionType" value="TEXT"/>
 				<label class="control-label">text</label>
@@ -14,8 +14,8 @@
 					<div>text</div>
 				<label class="control-label">questionCategory</label>
 				<ul>
-					<li th:each="questionCategory:${questionCategories}">
-						<input type="radio" name="questionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+					<li th:each="questionCategory:*{questionCategories}">
+						<input type="radio" name="selectedQuestionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
 					</li>
 				</ul>
 				<label class="control-label">defaultText</label>
@@ -27,7 +27,7 @@
 				<label class="control-label">answerText</label>
 				<ul id="answer-text">
 					<li class="form-group">
-						<input class="col-sm-10" type="text" name="answerText"/>
+						<input class="col-sm-10" type="text" name="questionsAnswers[0].text"/>
 					</li>
 				</ul>
 				<div>
@@ -42,6 +42,11 @@
 				<div>
 					<button class="btn btn-default" type="submit">Save</button>
 				</div>
+				<ul class="error-message">
+			        <li th:each="error : ${#fields.detailedErrors()}">
+			            <span th:text="${error}">Error message</span>
+			        </li>
+				</ul>
 			</div>
 		</form>
 		<div class="pull-right">

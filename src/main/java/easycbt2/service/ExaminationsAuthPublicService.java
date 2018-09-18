@@ -3,6 +3,7 @@ package easycbt2.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import easycbt2.model.Examination;
 import easycbt2.model.ExaminationsAuthPublic;
 import easycbt2.repository.ExaminationsAuthPublicRepository;
 
@@ -13,5 +14,9 @@ public class ExaminationsAuthPublicService {
 
     public ExaminationsAuthPublic save(ExaminationsAuthPublic examinationsAuthPublic) {
         return examinationsAuthPublicRepository.save(examinationsAuthPublic);
+    }
+    
+    public Boolean isPublic(Examination examination) {
+    	return examinationsAuthPublicRepository.findByExamination(examination).size() > 0;
     }
 }

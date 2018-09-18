@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,6 +31,7 @@ public class QuestionAnswer {
 	@ManyToOne
 	private Question question;
 	@Column
+	@NotBlank
 	private String text;
 	@Column
 	private Boolean isCorrect;

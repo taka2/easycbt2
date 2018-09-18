@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +53,7 @@ public class QuestionCategoriesMaintenanceController {
 
     @GetMapping("new")
     public String newQuestionCategory(Model model) {
+    	model.addAttribute("questionCategory", new QuestionCategory());
         return "maintenance/question_categories/new";
     }
 
@@ -71,8 +74,12 @@ public class QuestionCategoriesMaintenanceController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute QuestionCategory questionCategory, @RequestParam("scope") String scope) {
+    public String create(@Validated @ModelAttribute QuestionCategory questionCategory, BindingResult result, @RequestParam("scope") String scope) {
     	User user = userService.getLoginUser();
+
+    	if(result.hasErrors()) {    		
+    		return "maintenance/question_categories/new";
+    	}
 
     	questionCategory.setEnabled(true);
     	QuestionCategory newQuestionCategory = questionCategoryService.save(questionCategory);
@@ -98,11 +105,16 @@ public class QuestionCategoriesMaintenanceController {
     }
 
     @PutMapping("{id}")
-    public String update(@PathVariable Long id, @ModelAttribute QuestionCategory questionCategory) {
+    public String update(@PathVariable Long id, @Validated @ModelAttribute QuestionCategory questionCategory, BindingResult result) {
     	User user = userService.getLoginUser();
+    	
     	// security check
     	getQuestionCategoryForWrite(id, user);
-    	
+
+    	if(result.hasErrors()) {    		
+    		return "maintenance/question_categories/edit";
+    	}
+
     	questionCategory.setId(id);
     	questionCategory.setEnabled(true);
         questionCategoryService.save(questionCategory);

@@ -5,7 +5,7 @@
 	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
 		<h2>New Choice Question</h2>
-		<form th:action="@{/maintenance/questions}" th:method="post">
+		<form th:action="@{/maintenance/questions/new_choice}" th:method="post" th:object="${form}">
 			<div class="form-group">
 				<label class="control-label">text</label>
 					<input class="form-control" type="text" name="text"/>
@@ -16,8 +16,8 @@
 				</ul>
 				<label class="control-label">questionCategory</label>
 				<ul>
-					<li th:each="questionCategory:${questionCategories}">
-						<input type="radio" name="questionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+					<li th:each="questionCategory:*{questionCategories}">
+						<input type="radio" name="selectedQuestionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
 					</li>
 				</ul>
 				<label class="control-label">explanation</label>
@@ -27,8 +27,8 @@
 				<label class="control-label">answerChoice</label>
 				<ul id="answer-text">
 					<li class="form-group">
-						<input class="col-sm-1" type="checkbox" name="answerIsCorrect0"/>
-						<input class="col-sm-9" type="text" name="answerText0"/>
+						<input class="col-sm-1" type="checkbox" name="questionsAnswers[0].isCorrect"/>
+						<input class="col-sm-9" type="text" name="questionsAnswers[0].text"/>
 					</li>
 				</ul>
 				<div>
@@ -40,10 +40,14 @@
 					<li><input type="radio" name="scope" value="private" checked/>private</li>
 					<li><input type="radio" name="scope" value="public"/>public</li>
 				</ul>
-
 				<div>
 					<button class="btn btn-default" type="submit">Save</button>
 				</div>
+				<ul class="error-message">
+			        <li th:each="error : ${#fields.detailedErrors()}">
+			            <span th:text="${error}">Error message</span>
+			        </li>
+				</ul>
 			</div>
 		</form>
 		<div class="pull-right">
