@@ -11,6 +11,11 @@
 					class="form-control" type="text" th:field="*{name}" />
 			</div>
 			<button class="btn btn-default" type="submit">Save</button>
+			<ul class="error-message">
+		        <li th:each="error : ${#fields.detailedErrors()}">
+		            <span th:text="${error}">Error message</span>
+		        </li>
+			</ul>
 		</form>
 		<div class="pull-right">
 			<a class="btn btn-link" th:href="@{/maintenance/question_categories}">List</a>

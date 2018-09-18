@@ -5,7 +5,7 @@
 	<nav th:replace="_navbar::navbar('maintenance/examinations/examinations')"></nav>
 	<div class="container">
 		<h2>New Examination</h2>
-		<form th:action="@{/maintenance/examinations}" th:method="post">
+		<form th:action="@{/maintenance/examinations}" th:method="post" th:object="${form}">
 			<div class="form-group">
 				<label class="control-label">text</label>
 					<input class="form-control" type="text" name="text" />
@@ -14,7 +14,7 @@
 				<label class="control-label">categories</label>
 				<ul>
 					<li th:each="questionCategory:*{questionCategories}">
-						<input type="checkbox" name="examinations_categories" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+						<input type="checkbox" name="selectedQuestionCategories" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
 					</li>
 				</ul>
 				<label class="control-label">publication scope</label>
@@ -24,6 +24,11 @@
 				</ul>
 			</div>
 			<button class="btn btn-default" type="submit">Create</button>
+			<ul class="error-message">
+		        <li th:each="error : ${#fields.detailedErrors()}">
+		            <span th:text="${error}">Error message</span>
+		        </li>
+			</ul>
 		</form>
 		<div class="pull-right">
 			<a class="btn btn-link" th:href="@{/maintenance/examinations}">List</a>

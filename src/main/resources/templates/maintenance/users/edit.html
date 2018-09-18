@@ -9,10 +9,16 @@
 			<div class="form-group">
 				<label class="control-label">username</label>
 				<div th:text="*{username}"></div>
+				<input type="hidden" th:field="*{username}"/>
 				<label class="control-label">password</label>
 				<input class="form-control" type="password" th:field="*{password}" autocomplete="nope"/>
 			</div>
 			<button class="btn btn-default" type="submit">Save</button>
+			<ul class="error-message">
+		        <li th:each="error : ${#fields.detailedErrors()}">
+		            <span th:text="${error}">Error message</span>
+		        </li>
+			</ul>
 		</form>
 		<div class="pull-right">
 			<a class="btn btn-link" th:href="@{/maintenance/users}">List</a>

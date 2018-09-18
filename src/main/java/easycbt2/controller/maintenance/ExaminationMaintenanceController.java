@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import easycbt2.constants.PublicationScope;
 import easycbt2.exception.ApplicationSecurityException;
+import easycbt2.form.ExaminationForm;
 import easycbt2.model.Examination;
 import easycbt2.model.ExaminationsAuthPublic;
 import easycbt2.model.ExaminationsAuthUsers;
@@ -62,59 +64,36 @@ public class ExaminationMaintenanceController {
     public String newExamination(Model model) {
     	User user = userService.getLoginUser();
 
-    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
-    	model.addAttribute("questionCategories", questionCategories);
+    	ExaminationForm form = new ExaminationForm();
+    	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    	model.addAttribute("form", form);
         return "maintenance/examinations/new";
     }
 
-    @GetMapping("{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
-    	User user = userService.getLoginUser();
-    	Examination examination = getExaminationForRead(id, user);
-        model.addAttribute("examination", examination);
-
-    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
-    	model.addAttribute("questionCategories", questionCategories);
-
-    	List<QuestionCategory> activeQuestionCategories = new ArrayList<>();
-    	List<ExaminationsCategories> examinationCategoriesList = examinationsCategoriesService.findByExamination(examination);
-    	for(QuestionCategory questionCategory : questionCategories) {
-	    	for(ExaminationsCategories examinationCategories : examinationCategoriesList) {
-	    		if(questionCategory.equals(examinationCategories.getQuestionCategory())) {
-	    			activeQuestionCategories.add(questionCategory);
-	    			break;
-	    		}
-	    	}
-    	}
-    	model.addAttribute("activeQuestionCategories", activeQuestionCategories);
-    	
-        return "maintenance/examinations/edit";
-    }
-
-    @GetMapping("{id}")
-    public String show(@PathVariable Long id, Model model) {
-    	User user = userService.getLoginUser();
-    	Examination examination = getExaminationForRead(id, user);
-    	model.addAttribute("examination", examination);
-    	return "maintenance/examinations/show";
-    }
-
     @PostMapping
-    public String create(@ModelAttribute Examination examination, Model model, @RequestParam("examinations_categories") List<Long> examinationsCategoriesIdList, @RequestParam("scope") String scope) {
+    public String create(@Validated @ModelAttribute("form") ExaminationForm form, BindingResult result, Model model) {
     	User user = userService.getLoginUser();
 
+    	if(result.hasErrors()) {
+        	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/examinations/new";
+    	}
+
+    	Examination examination = new Examination();
+    	examination.setText(form.getText());
+    	examination.setQuestionCount(form.getQuestionCount());
     	examination.setEnabled(true);
     	Examination newExamination = examinationService.save(examination);
     	
-    	for(Long questionCategoryId : examinationsCategoriesIdList) {
+    	for(QuestionCategory questionCategory : form.getSelectedQuestionCategories()) {
     		ExaminationsCategories examinationsCategories = new ExaminationsCategories();
     		examinationsCategories.setExamination(newExamination);
-    		examinationsCategories.setQuestionCategory(questionCategoryService.findOne(questionCategoryId));
+    		examinationsCategories.setQuestionCategory(questionCategory);
     		examinationsCategories.setEnabled(true);
     		examinationsCategoriesService.save(examinationsCategories);
     	}
 
-    	PublicationScope scopeObj = PublicationScope.valueOf(scope.toUpperCase());
+    	PublicationScope scopeObj = PublicationScope.valueOf(form.getScope().toUpperCase());
     	switch(scopeObj) {
     	case PUBLIC:
     		// make examination public
@@ -134,13 +113,62 @@ public class ExaminationMaintenanceController {
         return "redirect:/maintenance/examinations";
     }
 
-    @PutMapping("{id}")
-    public String update(@PathVariable Long id, @ModelAttribute Examination examination, Model model, @RequestParam("examinations_categories") List<Long> examinationsCategoriesIdList) {
+    @GetMapping("{id}")
+    public String show(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
+    	Examination examination = getExaminationForRead(id, user);
+    	model.addAttribute("examination", examination);
+    	return "maintenance/examinations/show";
+    }
+
+    @GetMapping("{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+    	User user = userService.getLoginUser();
+
+    	Examination examination = getExaminationForRead(id, user);
+
+    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
+    	
+    	String scope = examinationsAuthPublicService.isPublic(examination) ? "public" : "private";
+
+    	List<QuestionCategory> activeQuestionCategories = new ArrayList<>();
+    	List<ExaminationsCategories> examinationCategoriesList = examinationsCategoriesService.findByExamination(examination);
+    	for(QuestionCategory questionCategory : questionCategories) {
+	    	for(ExaminationsCategories examinationCategories : examinationCategoriesList) {
+	    		if(questionCategory.equals(examinationCategories.getQuestionCategory())) {
+	    			activeQuestionCategories.add(questionCategory);
+	    			break;
+	    		}
+	    	}
+    	}
+
+    	ExaminationForm form = new ExaminationForm();
+    	form.setId(id);
+    	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    	form.setText(examination.getText());
+    	form.setQuestionCount(examination.getQuestionCount());
+    	form.setScope(scope);
+    	form.setSelectedQuestionCategories(activeQuestionCategories);
+    	model.addAttribute("form", form);
+    	
+        return "maintenance/examinations/edit";
+    }
+
+    @PutMapping("{id}")
+    public String update(@PathVariable Long id, @Validated @ModelAttribute("form") ExaminationForm form, BindingResult result, Model model) {
+    	User user = userService.getLoginUser();
+
     	// security check
-    	getExaminationForWrite(id, user);
+    	Examination examination = getExaminationForWrite(id, user);
+
+    	if(result.hasErrors()) {
+    		form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/examinations/edit";
+    	}
 
     	examination.setId(id);
+    	examination.setText(form.getText());
+    	examination.setQuestionCount(form.getQuestionCount());
     	examination.setEnabled(true);
     	Examination newExamination = examinationService.save(examination);
 
@@ -150,10 +178,10 @@ public class ExaminationMaintenanceController {
     	}
 
     	// Save Examinations Categories
-    	for(Long questionCategoryId : examinationsCategoriesIdList) {
+    	for(QuestionCategory questionCategory : form.getSelectedQuestionCategories()) {
     		ExaminationsCategories examinationsCategories = new ExaminationsCategories();
     		examinationsCategories.setExamination(newExamination);
-    		examinationsCategories.setQuestionCategory(questionCategoryService.findOne(questionCategoryId));
+    		examinationsCategories.setQuestionCategory(questionCategory);
     		examinationsCategories.setEnabled(true);
     		examinationsCategoriesService.save(examinationsCategories);
     	}

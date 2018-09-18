@@ -6,14 +6,13 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +28,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import easycbt2.constants.PublicationScope;
 import easycbt2.constants.QuestionType;
 import easycbt2.exception.ApplicationSecurityException;
+import easycbt2.form.QuestionChoiceForm;
+import easycbt2.form.QuestionTextForm;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionAnswer;
-import easycbt2.model.QuestionCategory;
 import easycbt2.model.QuestionsAuthPublic;
 import easycbt2.model.QuestionsAuthUsers;
 import easycbt2.model.User;
@@ -58,8 +58,6 @@ public class QuestionMaintenanceController {
 	QuestionsAuthPublicService questionsAuthPublicService;
 	@Autowired
 	QuestionsAuthUsersService questionsAuthUsersService;
-
-	private static final Logger logger = LoggerFactory.getLogger(QuestionMaintenanceController.class);
 
 	@GetMapping("/upload_json")
 	public String showUploadJSON() {
@@ -129,63 +127,37 @@ public class QuestionMaintenanceController {
     public String newQuestion(Model model, String forwardURL) {
     	User user = userService.getLoginUser();
 
-    	List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
-    	model.addAttribute("questionCategories", questionCategories);
+    	QuestionChoiceForm form = new QuestionChoiceForm();
+    	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    	model.addAttribute("form", form);
     	
     	return forwardURL;
     }
 
-    @GetMapping("{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
+    @PostMapping("new_choice")
+    public String createChoice(@Validated @ModelAttribute("form") QuestionChoiceForm form, BindingResult result) {
     	User user = userService.getLoginUser();
-    	logger.info("username = " + user.getUsername());
-    	Question question = getQuestionForRead(id, user);
-    	logger.info("question.id/text = " + question.getId() + "/" + question.getText());
-        model.addAttribute("question", question);
 
-        List<QuestionCategory> questionCategories = questionCategoryService.findByUser(user);
-    	model.addAttribute("questionCategories", questionCategories);
-
-    	switch(question.getQuestionType()) {
-    	case TEXT:
-    		return "maintenance/questions/edit_text";
-    	case SINGLE_CHOICE:
-    	case MULTIPLE_CHOICE:
-    		return "maintenance/questions/edit_choice";
-    	default:
-    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	if(result.hasErrors()) {
+        	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/questions/new_choice";
     	}
-    }
 
-    @GetMapping("{id}")
-    public String show(@PathVariable Long id, Model model) {
-    	User user = userService.getLoginUser();
-    	Question question = getQuestionForRead(id, user);
-        model.addAttribute("question", question);
-        return "maintenance/questions/show";
-    }
-
-    @PostMapping
-    public String create(@ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params, @RequestParam("scope") String scope) {
-    	User user = userService.getLoginUser();
-
+    	Question question = new Question();
+    	question.setQuestionType(form.getQuestionType());
+    	question.setText(form.getText());
+    	question.setQuestionCategory(form.getSelectedQuestionCategory());
+    	question.setExplanation(form.getExplanation());
     	question.setEnabled(true);
     	Question newQuestion = questionService.save(question);
-
-    	// Save Answers
-    	switch(question.getQuestionType()) {
-    	case TEXT:
-    		saveTextAnswers(question, params);
-        	break;
-    	case SINGLE_CHOICE:
-    	case MULTIPLE_CHOICE:
-    		saveChoiceAnswers(question, params);
-    		break;
-    	default:
-    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	
+    	for(QuestionAnswer questionAnswer : form.getQuestionsAnswers()) {
+    		questionAnswer.setQuestion(newQuestion);
+    		questionAnswer.setEnabled(true);
+    		questionAnswerService.save(questionAnswer);
     	}
 
-    	PublicationScope scopeObj = PublicationScope.valueOf(scope.toUpperCase());
+    	PublicationScope scopeObj = PublicationScope.valueOf(form.getScope().toUpperCase());
     	switch(scopeObj) {
     	case PUBLIC:
     		// make question public
@@ -205,13 +177,116 @@ public class QuestionMaintenanceController {
         return "redirect:/maintenance/questions";
     }
 
-    @PutMapping("{id}")
-    public String update(@PathVariable Long id, @ModelAttribute Question question, @RequestParam MultiValueMap<String, String> params) {
+    @PostMapping("new_text")
+    public String createText(@Validated @ModelAttribute("form") QuestionTextForm form, BindingResult result) {
     	User user = userService.getLoginUser();
+
+    	if(result.hasErrors()) {
+        	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/questions/new_text";
+    	}
+
+    	Question question = new Question();
+    	question.setQuestionType(form.getQuestionType());
+    	question.setText(form.getText());
+    	question.setQuestionCategory(form.getSelectedQuestionCategory());
+    	question.setDefaultText(form.getDefaultText());
+    	question.setExplanation(form.getExplanation());
+    	question.setEnabled(true);
+    	Question newQuestion = questionService.save(question);
+    	
+    	for(QuestionAnswer questionAnswer : form.getQuestionsAnswers()) {
+    		questionAnswer.setQuestion(newQuestion);
+    		questionAnswer.setIsCorrect(true);
+    		questionAnswer.setEnabled(true);
+    		questionAnswerService.save(questionAnswer);
+    	}
+
+    	PublicationScope scopeObj = PublicationScope.valueOf(form.getScope().toUpperCase());
+    	switch(scopeObj) {
+    	case PUBLIC:
+    		// make question public
+        	QuestionsAuthPublic questionsAuthPublic = new QuestionsAuthPublic();
+        	questionsAuthPublic.setQuestion(newQuestion);
+        	questionsAuthPublicService.save(questionsAuthPublic);
+    		break;
+    	case PRIVATE:
+    	default:
+        	// make question private
+        	QuestionsAuthUsers questionsAuthUsers = new QuestionsAuthUsers();
+        	questionsAuthUsers.setQuestion(newQuestion);
+        	questionsAuthUsers.setUser(user);
+        	questionsAuthUsersService.save(questionsAuthUsers);
+    	}
+
+        return "redirect:/maintenance/questions";
+    }
+
+    @GetMapping("{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+    	User user = userService.getLoginUser();
+
+    	Question question = getQuestionForRead(id, user);
+
+    	String scope = questionsAuthPublicService.isPublic(question) ? "public" : "private";
+
+    	switch(question.getQuestionType()) {
+    	case TEXT:
+        	QuestionTextForm textForm = new QuestionTextForm();
+        	textForm.setId(id);
+        	textForm.setText(question.getText());
+        	textForm.setQuestionType(question.getQuestionType());
+        	textForm.setSelectedQuestionCategory(question.getQuestionCategory());
+        	textForm.setDefaultText(question.getDefaultText());
+        	textForm.setExplanation(question.getExplanation());
+        	textForm.setQuestionsAnswers(question.getQuestionAnswerListOrderByIdAsc());
+        	textForm.setScope(scope);
+        	textForm.setQuestionCategories(questionCategoryService.findByUser(user));
+        	model.addAttribute("form", textForm);
+    		return "maintenance/questions/edit_text";
+    	case SINGLE_CHOICE:
+    	case MULTIPLE_CHOICE:
+    		QuestionChoiceForm choiceForm = new QuestionChoiceForm();
+    		choiceForm.setId(id);
+    		choiceForm.setText(question.getText());
+    		choiceForm.setQuestionType(question.getQuestionType());
+    		choiceForm.setSelectedQuestionCategory(question.getQuestionCategory());
+    		choiceForm.setExplanation(question.getExplanation());
+    		choiceForm.setQuestionsAnswers(question.getQuestionAnswerListOrderByIdAsc());
+    		choiceForm.setScope(scope);
+    		choiceForm.setQuestionCategories(questionCategoryService.findByUser(user));
+        	model.addAttribute("form", choiceForm);
+    		return "maintenance/questions/edit_choice";
+    	default:
+    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	}
+    }
+
+    @GetMapping("{id}")
+    public String show(@PathVariable Long id, Model model) {
+    	User user = userService.getLoginUser();
+    	Question question = getQuestionForRead(id, user);
+        model.addAttribute("question", question);
+        return "maintenance/questions/show";
+    }
+
+    @PutMapping("{id}/update_choice")
+    public String updateChoice(@PathVariable Long id, @Validated @ModelAttribute("form") QuestionChoiceForm form, BindingResult result) {
+    	User user = userService.getLoginUser();
+
     	// security check
-    	getQuestionForWrite(id, user);
+    	Question question = getQuestionForWrite(id, user);
+
+    	if(result.hasErrors()) {
+        	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/questions/edit_choice";
+    	}
 
     	question.setId(id);
+    	question.setQuestionType(form.getQuestionType());
+    	question.setText(form.getText());
+    	question.setQuestionCategory(form.getSelectedQuestionCategory());
+    	question.setExplanation(form.getExplanation());
     	question.setEnabled(true);
         Question newQuestion = questionService.save(question);
 
@@ -221,59 +296,50 @@ public class QuestionMaintenanceController {
     	}
 
     	// Save Answers
-    	switch(question.getQuestionType()) {
-    	case TEXT:
-    		saveTextAnswers(question, params);
-        	break;
-    	case SINGLE_CHOICE:
-    	case MULTIPLE_CHOICE:
-    		saveChoiceAnswers(question, params);
-    		break;
-    	default:
-    		throw new RuntimeException("Unsupported QuestionType: " + question.getQuestionType());
+    	for(QuestionAnswer questionAnswer : form.getQuestionsAnswers()) {
+    		questionAnswer.setQuestion(newQuestion);
+    		questionAnswer.setEnabled(true);
+    		questionAnswerService.save(questionAnswer);
     	}
 
         return "redirect:/maintenance/questions";
     }
 
-    private void saveTextAnswers(Question question, MultiValueMap<String, String> params) {
-    	for(String answerText : params.get("answerText")) {
-    		if(answerText.trim().length() == 0) {
-    			continue;
-    		}
-    		QuestionAnswer questionAnswer = new QuestionAnswer();
-    		questionAnswer.setQuestion(question);
-    		questionAnswer.setText(answerText);
-    		questionAnswer.setIsCorrect(true);
-    		questionAnswer.setEnabled(true);
-    		questionAnswerService.save(questionAnswer);
+    @PutMapping("{id}/update_text")
+    public String updateText(@PathVariable Long id, @Validated @ModelAttribute("form") QuestionTextForm form, BindingResult result) {
+    	User user = userService.getLoginUser();
+
+    	// security check
+    	Question question = getQuestionForWrite(id, user);
+
+    	if(result.hasErrors()) {
+        	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/questions/edit_text";
     	}
-    }
-    
-    private void saveChoiceAnswers(Question question, MultiValueMap<String, String> params) {
-		// TODO LOOP COUNT
-		for(int i=0; i<20; i++) {
-			List<String> answerTextList = params.get("answerText" + i);
-			if(answerTextList == null || answerTextList.size() == 0) {
-				continue;
-			}
-			String answerText = answerTextList.get(0);
-    		if(answerText.trim().length() == 0) {
-    			continue;
-    		}
-    		Boolean answerIsCorrect = false;
-    		List<String> answerIsCorrectList = params.get("answerIsCorrect" + i);
-    		if(answerIsCorrectList != null && answerIsCorrectList.size() != 0) { 
-    			answerIsCorrect = answerIsCorrectList.get(0).equals("on");
-    		}
-    		
-    		QuestionAnswer questionAnswer = new QuestionAnswer();
-    		questionAnswer.setQuestion(question);
-    		questionAnswer.setText(answerText);
-    		questionAnswer.setIsCorrect(answerIsCorrect);
-    		questionAnswer.setEnabled(true);
-    		questionAnswerService.save(questionAnswer);
-		}
+
+    	question.setId(id);
+    	question.setQuestionType(form.getQuestionType());
+    	question.setText(form.getText());
+    	question.setQuestionCategory(form.getSelectedQuestionCategory());
+    	question.setDefaultText(form.getDefaultText());
+    	question.setExplanation(form.getExplanation());
+    	question.setEnabled(true);
+    	Question newQuestion = questionService.save(question);
+
+    	// Delete Answers
+    	for(QuestionAnswer questionAnswer : questionAnswerService.findByQuestion(newQuestion)) {
+    		questionAnswerService.delete(questionAnswer.getId());
+    	}
+
+    	// Save Answers
+    	for(QuestionAnswer questionAnswer : form.getQuestionsAnswers()) {
+			questionAnswer.setQuestion(newQuestion);
+			questionAnswer.setIsCorrect(true);
+			questionAnswer.setEnabled(true);
+			questionAnswerService.save(questionAnswer);
+    	}
+
+        return "redirect:/maintenance/questions";
     }
 
     @DeleteMapping("{id}")
