@@ -27,6 +27,7 @@
 					<li class="form-group" th:each="questionAnswer,iter:*{questionsAnswers}" th:id="${'answer' + iter.index}">
 						<input class="col-sm-1" type="checkbox" th:name="${'questionsAnswers[' + iter.index + '].isCorrect'}" th:checked="${questionAnswer.isCorrect}"/>
 						<input class="col-sm-9" type="text" th:name="${'questionsAnswers[' + iter.index + '].text'}" th:value="${questionAnswer.text}"/>
+						<input type="hidden" th:name="${'questionsAnswers[' + iter.index + '].id'}" th:value="${questionAnswer.id}"/>
 						<button class="col-sm-1 delete-button btn btn-danger" type="button" th:id="${'deleteButton' + iter.index}" th:text="Delete" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
 					</li>
 				</ul>
