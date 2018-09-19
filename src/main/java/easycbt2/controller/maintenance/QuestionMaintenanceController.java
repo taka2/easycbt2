@@ -143,6 +143,13 @@ public class QuestionMaintenanceController {
     		return "maintenance/questions/new_choice";
     	}
 
+    	// Question Type=SINGLE_CHOICE and multiple correct answers selected
+    	if(form.getQuestionType().equals(QuestionType.SINGLE_CHOICE) && form.getCorrectAnswersCount() != 1) {
+    		result.rejectValue("questionsAnswers", "questionsAnswers.single_choice_multiple_answer");
+    		form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/questions/new_choice";
+    	}
+
     	Question question = new Question();
     	question.setQuestionType(form.getQuestionType());
     	question.setText(form.getText());
@@ -279,6 +286,12 @@ public class QuestionMaintenanceController {
 
     	if(result.hasErrors()) {
         	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    		return "maintenance/questions/edit_choice";
+    	}
+
+    	// Question Type=SINGLE_CHOICE and multiple correct answers selected
+    	if(form.getQuestionType().equals(QuestionType.SINGLE_CHOICE) && form.getCorrectAnswersCount() != 1) {
+    		result.rejectValue("questionsAnswers", "questionsAnswers.single_choice_multiple_answer");
     		return "maintenance/questions/edit_choice";
     	}
 

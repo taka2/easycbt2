@@ -74,4 +74,16 @@ public class QuestionChoiceForm {
 	public void setQuestionCategories(List<QuestionCategory> questionCategories) {
 		this.questionCategories = questionCategories;
 	}
+	
+	public Long getCorrectAnswersCount() {
+		Long result = 0L;
+		
+		for(QuestionAnswer questionAnswer : getQuestionsAnswers()) {
+			if(questionAnswer.getIsCorrect() != null && questionAnswer.getIsCorrect()) {
+				result++;
+			}
+		}
+		
+		return result;
+	}
 }
