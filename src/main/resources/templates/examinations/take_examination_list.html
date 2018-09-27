@@ -3,25 +3,28 @@
 <head th:replace="_head::head('examinations/examinations')"></head>
 <body>
 	<nav th:replace="_navbar::navbar('examinations/examinations')"></nav>
-	<h2 th:text="${session.examination.text}"></h2>
+	<h2 th:text="${form.examination.text}"></h2>
 	<div class="container">
-		<form name="form1" method="POST" th:action="@{/examinations/{id}/answer_examination_list(id=${session.examination.id})}" autocomplete="off">
-			<div th:each="question,rowStat:*{session.questions}">
+		<form name="form1" method="POST" th:action="@{/examinations/{id}/answer_examination_list(id=${form.examination.id})}" autocomplete="off" th:object="${form}">
+		    <input type="hidden" th:field="*{examination}"/>
+		    <input type="hidden" th:field="*{startDateTime}"/>
+			<div th:each="question,rowStat:*{questions}">
+			    <input type="hidden" th:name="${'questions[' + rowStat.index + ']'}" th:value="${question.id}"/>
 				<span th:text="${'Q' + (rowStat.index + 1) + '. ' + question.text}"></span>
 				<span class="bg-info" th:text="${question.questionCategory.name}"></span>
 				<ul th:if="${question.questionType.getString()} eq 'single_choice'">
-					<li th:each="answer:${question.questionAnswerList}">
-						<input type="radio" th:name="${question.id}" th:value="${answer.id}" th:text="${answer.text}"></input>
+					<li th:each="answer,iter:${question.questionAnswerList}">
+						<input type="radio" th:name="${'answers[' + rowStat.index + ']'}" th:value="${answer.id}" th:text="${answer.text}"></input>
 					</li>
 				</ul>
 				<ul th:if="${question.questionType.getString()} eq 'multiple_choice'">
 					<li th:each="answer:${question.questionAnswerList}">
-						<input type="checkbox" th:name="${question.id}" th:value="${answer.id}" th:text="${answer.text}"></input>
+						<input type="checkbox" th:name="${'answers[' + rowStat.index + ']'}" th:value="${answer.id}" th:text="${answer.text}"></input>
 					</li>
 				</ul>
 				<ul th:if="${question.questionType.getString()} eq 'text'">
 					<li>
-						<input type="text" th:name="${question.id}" th:value="${question.defaultText}" size="60"></input>
+						<input type="text" th:name="${'answers[' + rowStat.index + ']'}" th:value="${question.defaultText}" size="60"></input>
 					</li>
 				</ul>
 			</div>

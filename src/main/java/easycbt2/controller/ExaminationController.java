@@ -1,21 +1,18 @@
 package easycbt2.controller;
 
-import java.security.Principal;
 import java.time.Instant;
 import java.util.List;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import easycbt2.form.TakeExaminationForm;
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
 import easycbt2.model.TakeExamination;
@@ -42,7 +39,7 @@ public class ExaminationController {
 	DateTimeService dateTimeService;
 
     @GetMapping
-    public String index(Model model, Principal principal) {
+    public String index(Model model) {
     	User user = userService.getLoginUser();
 
     	List<Examination> examinations = examinationService.findByUser(user);
@@ -52,50 +49,61 @@ public class ExaminationController {
     }
 
     @GetMapping("{id}/take_examination_list")
-    public String takeExaminationList(@PathVariable Long id, Model model, Principal principal, HttpSession session) {
+    public String takeExaminationList(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
-
-    	Examination examination = examinationService.findOne(id);
-    	session.setAttribute("examination", examination);
+    	
+    	TakeExaminationForm form = new TakeExaminationForm();
+    	
+    	Examination examination = examinationService.findByIdAndUser(id, user);
+    	if(examination == null) {
+    		// security check
+    		return "examinations/index";
+    	}
+    	form.setExamination(examinationService.findOne(id));
 
     	List<Question> questions = questionService.findByUserAndExaminationWithRandomize(user, examination);
-    	session.setAttribute("questions", questions);
-    	
-    	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
+    	form.setQuestions(questions);
 
+    	form.setStartDateTime(dateTimeService.getCurrentDateTime());
+
+    	model.addAttribute("form", form);
     	return "examinations/take_examination_list";
     }
 
     @GetMapping("{id}/retake_examination_list_only_incorrect_answer")
-    public String retakeExaminationListOnlyWrongAnswer(@PathVariable Long id, Model model, Principal principal, HttpSession session) {
+    public String retakeExaminationListOnlyWrongAnswer(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
+
+    	TakeExaminationForm form = new TakeExaminationForm();
 
     	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(id, user);
     	Examination examination = takeExamination.getExamination();
-    	session.setAttribute("examination", examination);
+    	form.setExamination(examination);
 
     	List<Question> questions = takeExamination.getIncorrectAnsweredQuestions();
-    	session.setAttribute("questions", questions);
+    	form.setQuestions(questions);
     	
-    	session.setAttribute("startTime", dateTimeService.getCurrentDateTime());
+    	form.setStartDateTime(dateTimeService.getCurrentDateTime());
 
+    	model.addAttribute("form", form);
     	return "examinations/take_examination_list";
     }
 
     @PostMapping("{id}/answer_examination_list")
-    public String takeExaminationList(@PathVariable Long id, Model model, Principal principal, HttpSession session, @RequestParam MultiValueMap<String, String> params) {
+    public String takeExaminationList(@PathVariable Long id, @ModelAttribute("form") TakeExaminationForm form) {
     	User user = userService.getLoginUser();
 
-    	// Get Information from Session
-    	Examination examination = (Examination)session.getAttribute("examination");
-    	@SuppressWarnings("unchecked")
-		List<Question> questions = (List<Question>)session.getAttribute("questions");
-    	Instant startDateTime = (Instant)session.getAttribute("startTime");
-    	
+    	// Get Information from Request
+    	Examination examination = form.getExamination();
+    	if(!examination.getId().equals(id)) {
+    		// invalid examination
+    		return "examinations/take_examination_list";
+    	}
+
     	// End DateTime
     	Instant endDateTime = dateTimeService.getCurrentDateTime();
 
-    	TakeExamination takeExamination = takeExaminationService.save(user, examination, questions, startDateTime, endDateTime, params);
+    	TakeExamination takeExamination = takeExaminationService.save(user, examination, form.getQuestions(), form.getAnswers(), form.getStartDateTime(), endDateTime);
     	return "redirect:/results/" + takeExamination.getId();
     }
 }
