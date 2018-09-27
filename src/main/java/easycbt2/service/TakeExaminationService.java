@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
 import easycbt2.model.Examination;
 import easycbt2.model.Question;
@@ -42,7 +41,7 @@ public class TakeExaminationService {
 	QuestionService questionService;
 
 	@Transactional
-	public TakeExamination save(User user, Examination examination, List<Question> questions, Instant startDateTime, Instant endDateTime, MultiValueMap<String, String> params) {
+	public TakeExamination save(User user, Examination examination, List<Question> questions, List<String> answers, Instant startDateTime, Instant endDateTime) {
 		TakeExamination takeExamination = new TakeExamination();
 		takeExamination.setUser(user);
 		takeExamination.setExamination(examination);
@@ -50,8 +49,14 @@ public class TakeExaminationService {
 		takeExaminationRepository.save(takeExamination);
 
 		Set<TakeExaminationsQuestion> takeExaminationsQuestions = new HashSet<>();
-		for(Question question : questions) {
-			List<String> values = params.get(Long.toString(question.getId()));
+		final int questionsSize = questions == null ? 0 : questions.size();
+		for(int i=0; i<questionsSize; i++) {
+			Question question = questions.get(i);
+			String answer = null;
+			if(answers.size() >= (i+1)) {
+				// radio/checkboxは回答なしの場合リストに含まれないので、questions.size > answers.sizeとなる可能性がある
+				answer = answers.get(i);
+			}
 
 			// Questions
     		TakeExaminationsQuestion takeExaminationsQuestion = new TakeExaminationsQuestion();
@@ -62,12 +67,14 @@ public class TakeExaminationService {
 
     		// Answers
 			Set<TakeExaminationsAnswer> takeExaminationsAnswers = new HashSet<>();
-			if(values == null) {
+			if(answer == null) {
+				// no answer for the question
     			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
     			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
     			takeExaminationsAnswerRepository.save(takeExaminationAnswer);
     			takeExaminationsAnswers.add(takeExaminationAnswer);
 			} else {
+				String[] values = answer.split(",");
 				for(String value : values) {
 	    			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
 	    			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
