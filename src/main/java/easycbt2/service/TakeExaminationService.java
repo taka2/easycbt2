@@ -74,7 +74,16 @@ public class TakeExaminationService {
     			takeExaminationsAnswerRepository.save(takeExaminationAnswer);
     			takeExaminationsAnswers.add(takeExaminationAnswer);
 			} else {
-				String[] values = answer.split(",");
+				String[] values = null;
+				switch(question.getQuestionType()) {
+					case MULTIPLE_CHOICE:
+						values = answer.split(",");
+						break;
+					default:
+						values = new String[1];
+						values[0] = answer;						
+				}
+
 				for(String value : values) {
 	    			TakeExaminationsAnswer takeExaminationAnswer = new TakeExaminationsAnswer();
 	    			takeExaminationAnswer.setTakeExaminationsQuestion(takeExaminationsQuestion);
