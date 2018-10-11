@@ -168,6 +168,9 @@ public class QuestionMaintenanceController {
     	
     	for(QuestionAnswer questionAnswer : form.getQuestionsAnswers()) {
     		questionAnswer.setQuestion(newQuestion);
+    		if(questionAnswer.getIsCorrect() == null) {
+    			questionAnswer.setIsCorrect(false);
+    		}
     		questionAnswer.setEnabled(true);
     		questionAnswerService.save(questionAnswer);
     	}
@@ -319,6 +322,9 @@ public class QuestionMaintenanceController {
     	// Save Answers
     	for(QuestionAnswer questionAnswer : form.getQuestionsAnswers()) {
     		questionAnswer.setQuestion(newQuestion);
+    		if(questionAnswer.getIsCorrect() == null) {
+    			questionAnswer.setIsCorrect(false);
+    		}
     		questionAnswer.setEnabled(true);
     		questionAnswerService.save(questionAnswer);
     	}
