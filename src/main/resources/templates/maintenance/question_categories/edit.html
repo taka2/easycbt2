@@ -5,10 +5,11 @@
 	<nav th:replace="_navbar::navbar('maintenance/question_categories/question_categories')"></nav>
 	<div class="container">
 		<h2>Edit Question Category</h2>
-		<form th:action="@{/maintenance/question_categories/{id}(id=*{id})}" th:method="put" th:object="${questionCategory}">
+		<form th:action="@{/maintenance/question_categories/{id}(id=*{id})}" th:method="put" th:object="${form}">
 			<div class="form-group">
 				<label class="control-label">name</label> <input
 					class="form-control" type="text" th:field="*{name}" />
+				<input type="hidden" th:field="*{scope}"/>
 			</div>
 			<button class="btn btn-default" type="submit">Save</button>
 			<ul class="error-message">

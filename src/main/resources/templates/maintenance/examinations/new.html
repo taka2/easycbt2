@@ -8,19 +8,19 @@
 		<form th:action="@{/maintenance/examinations}" th:method="post" th:object="${form}">
 			<div class="form-group">
 				<label class="control-label">text</label>
-					<input class="form-control" type="text" name="text" />
+					<input class="form-control" type="text" th:field="*{text}" />
 				<label class="control-label">questionCount</label>
-					<input class="form-control" type="text" name="questionCount" />
+					<input class="form-control" type="text" th:field="*{questionCount}" />
 				<label class="control-label">categories</label>
 				<ul>
 					<li th:each="questionCategory:*{questionCategories}">
-						<input type="checkbox" name="selectedQuestionCategories" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+						<input type="checkbox" name="selectedQuestionCategories" th:value="${questionCategory.id}" th:text="${questionCategory.name}"  th:checked="${form.selectedQuestionCategories != null && form.selectedQuestionCategories.contains(questionCategory)}"/>
 					</li>
 				</ul>
 				<label class="control-label">publication scope</label>
 				<ul>
-					<li><input type="radio" name="scope" value="private" checked/>private</li>
-					<li><input type="radio" name="scope" value="public"/>public</li>
+					<li><input type="radio" name="scope" value="private" th:checked="*{scope=='private'}"/>private</li>
+					<li><input type="radio" name="scope" value="public" th:checked="*{scope=='public'}"/>public</li>
 				</ul>
 			</div>
 			<button class="btn btn-default" type="submit">Create</button>

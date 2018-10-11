@@ -66,6 +66,7 @@ public class ExaminationMaintenanceController {
 
     	ExaminationForm form = new ExaminationForm();
     	form.setQuestionCategories(questionCategoryService.findByUser(user));
+    	form.setScope("private");
     	model.addAttribute("form", form);
         return "maintenance/examinations/new";
     }

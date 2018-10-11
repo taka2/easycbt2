@@ -5,14 +5,14 @@
 	<nav th:replace="_navbar::navbar('maintenance/question_categories/question_categories')"></nav>
 	<div class="container">
 		<h2>New Question Category</h2>
-		<form th:action="@{/maintenance/question_categories}" th:method="post" th:object="${questionCategory}">
+		<form th:action="@{/maintenance/question_categories}" th:method="post" th:object="${form}">
 			<div class="form-group">
 				<label class="control-label">name</label> <input
-					class="form-control" type="text" name="name" />
+					class="form-control" type="text" th:field="*{name}" />
 				<label class="control-label">publication scope</label>
 				<ul>
-					<li><input type="radio" name="scope" value="private" checked/>private</li>
-					<li><input type="radio" name="scope" value="public"/>public</li>
+					<li><input type="radio" name="scope" value="private" th:checked="*{scope=='private'}"/>private</li>
+					<li><input type="radio" name="scope" value="public" th:checked="*{scope=='public'}"/>public</li>
 				</ul>
 			</div>
 			<button class="btn btn-default" type="submit">Create</button>

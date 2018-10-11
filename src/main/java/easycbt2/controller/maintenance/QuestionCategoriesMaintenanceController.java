@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import easycbt2.constants.PublicationScope;
 import easycbt2.exception.ApplicationSecurityException;
+import easycbt2.form.QuestionCategoryForm;
 import easycbt2.model.QuestionCategoriesAuthPublic;
 import easycbt2.model.QuestionCategoriesAuthUsers;
 import easycbt2.model.QuestionCategory;
@@ -53,38 +53,26 @@ public class QuestionCategoriesMaintenanceController {
 
     @GetMapping("new")
     public String newQuestionCategory(Model model) {
-    	model.addAttribute("questionCategory", new QuestionCategory());
+    	QuestionCategoryForm form = new QuestionCategoryForm();
+    	form.setScope("private");
+    	model.addAttribute("form", form);
         return "maintenance/question_categories/new";
     }
 
-    @GetMapping("{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
-    	User user = userService.getLoginUser();
-    	QuestionCategory questionCategory = getQuestionCategoryForRead(id, user);
-        model.addAttribute("questionCategory", questionCategory);
-        return "maintenance/question_categories/edit";
-    }
-
-    @GetMapping("{id}")
-    public String show(@PathVariable Long id, Model model) {
-    	User user = userService.getLoginUser();
-    	QuestionCategory questionCategory = getQuestionCategoryForRead(id, user);
-        model.addAttribute("questionCategory", questionCategory);
-        return "maintenance/question_categories/show";
-    }
-
     @PostMapping
-    public String create(@Validated @ModelAttribute QuestionCategory questionCategory, BindingResult result, @RequestParam("scope") String scope) {
+    public String create(@Validated @ModelAttribute("form") QuestionCategoryForm form, BindingResult result) {
     	User user = userService.getLoginUser();
 
     	if(result.hasErrors()) {    		
     		return "maintenance/question_categories/new";
     	}
 
+    	QuestionCategory questionCategory = new QuestionCategory();
+    	questionCategory.setName(form.getName());
     	questionCategory.setEnabled(true);
     	QuestionCategory newQuestionCategory = questionCategoryService.save(questionCategory);
 
-    	PublicationScope scopeObj = PublicationScope.valueOf(scope.toUpperCase());
+    	PublicationScope scopeObj = PublicationScope.valueOf(form.getScope().toUpperCase());
     	switch(scopeObj) {
     	case PUBLIC:
     		// make questionCategory public
@@ -104,18 +92,43 @@ public class QuestionCategoriesMaintenanceController {
         return "redirect:/maintenance/question_categories";
     }
 
+    @GetMapping("{id}")
+    public String show(@PathVariable Long id, Model model) {
+    	User user = userService.getLoginUser();
+    	QuestionCategory questionCategory = getQuestionCategoryForRead(id, user);
+        model.addAttribute("questionCategory", questionCategory);
+        return "maintenance/question_categories/show";
+    }
+
+    @GetMapping("{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+    	User user = userService.getLoginUser();
+    	QuestionCategory questionCategory = getQuestionCategoryForRead(id, user);
+    	
+    	String scope = questionCategoriesAuthPublicService.isPublic(questionCategory) ? "public" : "private";
+    	
+    	QuestionCategoryForm form = new QuestionCategoryForm();
+    	form.setId(questionCategory.getId());
+    	form.setName(questionCategory.getName());
+    	form.setScope(scope);
+        model.addAttribute("form", form);
+        
+        return "maintenance/question_categories/edit";
+    }
+
     @PutMapping("{id}")
-    public String update(@PathVariable Long id, @Validated @ModelAttribute QuestionCategory questionCategory, BindingResult result) {
+    public String update(@PathVariable Long id, @Validated @ModelAttribute("form") QuestionCategoryForm form, BindingResult result) {
     	User user = userService.getLoginUser();
     	
     	// security check
-    	getQuestionCategoryForWrite(id, user);
+    	QuestionCategory questionCategory = getQuestionCategoryForWrite(id, user);
 
     	if(result.hasErrors()) {    		
     		return "maintenance/question_categories/edit";
     	}
 
     	questionCategory.setId(id);
+    	questionCategory.setName(form.getName());
     	questionCategory.setEnabled(true);
         questionCategoryService.save(questionCategory);
         return "redirect:/maintenance/question_categories";

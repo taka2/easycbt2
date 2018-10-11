@@ -8,37 +8,44 @@
 		<form th:action="@{/maintenance/questions/new_choice}" th:method="post" th:object="${form}">
 			<div class="form-group">
 				<label class="control-label">text</label>
-					<input class="form-control" type="text" name="text"/>
+					<input class="form-control" type="text" th:field="*{text}"/>
 				<label class="control-label">questionType</label>
 				<ul>
-					<li><input type="radio" name="questionType" th:value="SINGLE_CHOICE" th:text="single_choice"/></li>
-					<li><input type="radio" name="questionType" th:value="MULTIPLE_CHOICE" th:text="multiple_choice"/></li>
+					<li><input type="radio" name="questionType" th:value="SINGLE_CHOICE" th:text="single_choice" th:checked="${form.questionType==T(easycbt2.constants.QuestionType).SINGLE_CHOICE}"/></li>
+					<li><input type="radio" name="questionType" th:value="MULTIPLE_CHOICE" th:text="multiple_choice" th:checked="${form.questionType==T(easycbt2.constants.QuestionType).MULTIPLE_CHOICE}"/></li>
 				</ul>
 				<label class="control-label">questionCategory</label>
 				<ul>
 					<li th:each="questionCategory:*{questionCategories}">
-						<input type="radio" name="selectedQuestionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}"/>
+						<input type="radio" name="selectedQuestionCategory" th:value="${questionCategory.id}" th:text="${questionCategory.name}" th:field="*{selectedQuestionCategory}"/>
 					</li>
 				</ul>
 				<label class="control-label">explanation</label>
-					<textarea class="form-control" name="explanation" ></textarea>
+					<textarea class="form-control" th:field="*{explanation}" ></textarea>
 					
 				<!-- answer -->
 				<label class="control-label">answerChoice</label>
 				<ul id="answer-text">
-					<li class="form-group">
-						<input class="col-sm-1" type="checkbox" name="questionsAnswers[0].isCorrect"/>
-						<input class="col-sm-9" type="text" name="questionsAnswers[0].text"/>
+					<li class="form-group" th:each="questionAnswer,iter:*{questionsAnswers}" th:id="${'answer' + iter.index}">
+						<input class="col-sm-1" type="checkbox" th:name="${'questionsAnswers[' + iter.index + '].isCorrect'}" th:checked="${questionAnswer.isCorrect}"/>
+						<input class="col-sm-9" type="text" th:name="${'questionsAnswers[' + iter.index + '].text'}" th:value="${questionAnswer.text}"/>
+						<input type="hidden" th:name="${'questionsAnswers[' + iter.index + '].id'}" th:value="${questionAnswer.id}"/>
+						<button class="col-sm-1 delete-button btn btn-danger" type="button" th:id="${'deleteButton' + iter.index}" th:text="Delete" th:onClick="${'deleteAnswerText(' + iter.index + ')'}"></button>
 					</li>
 				</ul>
+				<script th:inline="javascript">
+					/*<![CDATA[*/
+					answerTextIndex = /*[[${form.questionsAnswers != null ? form.questionsAnswers.size() : 0 }]]*/;
+					/*]]>*/
+				</script>
 				<div>
 					<button class="btn btn-default" type="button" th:text="add" onClick="addAnswerChoice()"></button>
 				</div>
 
 				<label class="control-label">publication scope</label>
 				<ul>
-					<li><input type="radio" name="scope" value="private" checked/>private</li>
-					<li><input type="radio" name="scope" value="public"/>public</li>
+					<li><input type="radio" name="scope" value="private" th:checked="*{scope=='private'}"/>private</li>
+					<li><input type="radio" name="scope" value="public" th:checked="*{scope=='public'}"/>public</li>
 				</ul>
 				<div>
 					<button class="btn btn-default" type="submit">Save</button>
