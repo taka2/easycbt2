@@ -1,6 +1,7 @@
 package easycbt2.controller.maintenance;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import easycbt2.constants.PublicationScope;
 import easycbt2.constants.QuestionType;
 import easycbt2.exception.ApplicationSecurityException;
 import easycbt2.form.QuestionChoiceForm;
+import easycbt2.form.QuestionForm;
 import easycbt2.form.QuestionTextForm;
 import easycbt2.model.Question;
 import easycbt2.model.QuestionAnswer;
@@ -116,19 +118,25 @@ public class QuestionMaintenanceController {
 
     @GetMapping("new_choice")
     public String newChoiceQuestion(Model model) {
-    	return newQuestion(model, "maintenance/questions/new_choice");
+    	return newQuestion(new QuestionChoiceForm(), model, "maintenance/questions/new_choice");
     }
 
     @GetMapping("new_text")
     public String newTextQuestion(Model model) {
-        return newQuestion(model, "maintenance/questions/new_text");
+    	return newQuestion(new QuestionTextForm(), model, "maintenance/questions/new_text");
     }
-    
-    public String newQuestion(Model model, String forwardURL) {
+
+    public String newQuestion(QuestionForm form, Model model, String forwardURL) {
     	User user = userService.getLoginUser();
 
-    	QuestionChoiceForm form = new QuestionChoiceForm();
     	form.setQuestionCategories(questionCategoryService.findByUser(user));
+
+    	List<QuestionAnswer> questionsAnswers = new ArrayList<>();
+    	questionsAnswers.add(new QuestionAnswer());
+    	form.setQuestionsAnswers(questionsAnswers);
+
+    	form.setScope("private");
+
     	model.addAttribute("form", form);
     	
     	return forwardURL;
