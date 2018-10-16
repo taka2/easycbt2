@@ -10,13 +10,15 @@
 					<th>text</th>
 					<th>questionCount</th>
 					<th> </th>
+					<th> </th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="examination,rowStat:*{examinations}">
 					<td th:text="${examination.text}"/>
 					<td th:text="${examination.questionCount}"/>
-					<td><a th:href = "@{/examinations/{id}/take_examination_list(id=${examination.id})}">Take exam as list</a></td>
+					<td><a th:href = "@{/examinations/{id}/take_examination_list_random(id=${examination.id})}">list(random)</a></td>
+					<td><a th:href = "@{/examinations/{id}/take_examination_list_fill(id=${examination.id})}">list(fill)</a></td>
 				</tr>
 			</tbody>
 		</table>

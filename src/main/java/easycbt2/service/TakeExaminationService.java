@@ -53,7 +53,7 @@ public class TakeExaminationService {
 		for(int i=0; i<questionsSize; i++) {
 			Question question = questions.get(i);
 			String answer = null;
-			if(answers.size() >= (i+1)) {
+			if(answers != null && answers.size() >= (i+1)) {
 				// radio/checkboxは回答なしの場合リストに含まれないので、questions.size > answers.sizeとなる可能性がある
 				answer = answers.get(i);
 			}

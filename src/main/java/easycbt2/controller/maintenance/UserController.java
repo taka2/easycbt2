@@ -1,5 +1,6 @@
 package easycbt2.controller.maintenance;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import easycbt2.form.ChangePasswordForm;
+import easycbt2.model.FillExtractionCondition;
 import easycbt2.model.User;
+import easycbt2.service.FillExtractionConditionService;
 import easycbt2.service.UserService;
 
 @Controller
@@ -24,6 +27,8 @@ import easycbt2.service.UserService;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private FillExtractionConditionService fillExtractionConditionService;
 
     @GetMapping
     public String index(Model model) {
@@ -119,4 +124,33 @@ public class UserController {
     	
         return "redirect:/home";
     }
+
+    @GetMapping("{id}/fill_extraction_status")
+    public String showFillExtractionStatus(@PathVariable String id, Model model) {
+    	User user = userService.getLoginUser();
+    	FillExtractionCondition fillExtractionCondition = fillExtractionConditionService.findByUser(user);
+        
+    	model.addAttribute("user", user);
+    	model.addAttribute("fillExtractionCondition", fillExtractionCondition);
+
+        return "maintenance/users/fill_extraction_status";
+    }
+
+    @PutMapping("{id}/fill_extraction_status")
+    public String updateFillExtractionStatus(@PathVariable String id, Model model) {
+    	// Get Login User
+    	User user = userService.getLoginUser();
+    	
+    	FillExtractionCondition fillExtractionCondition = fillExtractionConditionService.findByUser(user);
+    	if(fillExtractionCondition == null) {
+    		fillExtractionCondition = new FillExtractionCondition();
+    	}
+    	fillExtractionCondition.setUser(user);
+    	//fillExtractionCondition.setExtractionDate(Date.from(dateTimeService.getCurrentDateTime()));
+    	fillExtractionCondition.setExtractionDate(new Date());
+    	fillExtractionConditionService.save(fillExtractionCondition);
+    	
+        return "redirect:/maintenance/users/" + user.getUsername() + "/fill_extraction_status";
+    }
+
 }
