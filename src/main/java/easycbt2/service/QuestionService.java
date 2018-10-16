@@ -42,8 +42,8 @@ public class QuestionService {
 	@Autowired
 	TakeExaminationsQuestionService takeExaminationsQuestionService;
 	@Autowired
-	DateTimeService dateTimeService; 
-	
+	DateTimeService dateTimeService;
+
 	private static final Logger logger = LoggerFactory.getLogger(QuestionService.class);
 	
 	public List<Question> findAll() {
@@ -128,10 +128,14 @@ public class QuestionService {
 	}
 
 	public List<Question> findByUserAndExaminationWithRandomize(User user, Examination examination) {
+		return findByUserAndExaminationWithRandomize(user, examination, true, null);
+	}
+
+	public List<Question> findByUserAndExaminationWithRandomize(User user, Examination examination, Boolean isIncludeCorrect, Date takeExaminationDate) {
 		List<Question> questions = findByUserAndExamination(user, examination);
 
 		// Calc weight
-		Map<Question, Long> weightMap = calcWeight(user, questions);
+		Map<Question, Long> weightMap = calcWeight(user, questions, isIncludeCorrect, takeExaminationDate);
 		List<Entry<Question, Long>> list = new ArrayList<>(weightMap.entrySet());
 		Collections.sort(list, new Comparator<Entry<Question, Long>>() {
 			@Override
@@ -154,7 +158,23 @@ public class QuestionService {
 		return weightedList;
 	}
 
-	public Map<Question, Long> calcWeight(User user, List<Question> questions) {
+	public Map<Question, Long> calcWeightAll(User user, List<Question> questions) {
+		return calcWeight(user, questions, true, null);
+	}
+	
+	public Map<Question, Long> calcWeightExceptCorrect(User user, List<Question> questions, Date takeExaminationDate) {
+		return calcWeight(user, questions, false, takeExaminationDate);
+	}
+
+	/**
+	 * 指定ユーザの受験履歴をもとに、指定問題リストの出題優先度を計算する。
+	 * @param user ユーザ
+	 * @param questions 問題リスト
+	 * @param isIncludeCorrect 正解を含めるかどうか、true: 正解を含める、false: 正解を含めない（未実施、または、不正解のみ）
+	 * @param takeExaminationDate この日時以降の受験履歴のみ参照する
+	 * @return 問題と優先度のMap
+	 */
+	public Map<Question, Long> calcWeight(User user, List<Question> questions, Boolean isIncludeCorrect, Date takeExaminationDate) {
 		Map<Question, Long> resultMap = new HashMap<>();
 		
 		// Initialize map
@@ -164,7 +184,12 @@ public class QuestionService {
 		
 		// Current Date
 		Instant instant = dateTimeService.getCurrentDateTime();
-		List<TakeExaminationsQuestion> takeExaminationsQuestions = takeExaminationsQuestionService.findLatests(user);
+		List<TakeExaminationsQuestion> takeExaminationsQuestions = null;
+		if(takeExaminationDate != null) {
+			takeExaminationsQuestions = takeExaminationsQuestionService.findLatestsByTakeExaminationDate(user, takeExaminationDate);
+		} else {
+			takeExaminationsQuestions = takeExaminationsQuestionService.findLatests(user);
+		}
 		for(TakeExaminationsQuestion takeExaminationsQuestion : takeExaminationsQuestions) {
 			if(!resultMap.containsKey(takeExaminationsQuestion.getQuestion())) {
 				continue;
@@ -173,7 +198,11 @@ public class QuestionService {
 			Date timestamp = takeExaminationsQuestion.getModifiedDate();
 			// TODO オーバーフローする可能性
 			Long score = Duration.between(timestamp.toInstant(), instant).getSeconds() * (isCorrect ? 1 : 100);
-			resultMap.put(takeExaminationsQuestion.getQuestion(), score);
+			if(!isIncludeCorrect && isCorrect) {
+				resultMap.remove(takeExaminationsQuestion.getQuestion());
+			} else {
+				resultMap.put(takeExaminationsQuestion.getQuestion(), score);
+			}
 		}
 		
 		// Reset Unanswered Questios score to Long.MAX_VALUE

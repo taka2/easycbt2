@@ -1,5 +1,6 @@
 package easycbt2.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,11 @@ public class TakeExaminationsQuestionService {
 	public List<TakeExaminationsQuestion> findLatests(User user) {
 		return takeExaminationsQuestionRepository.findLatests(user);
 	}
-	
+
+	public List<TakeExaminationsQuestion> findLatestsByTakeExaminationDate(User user, Date takeExaminationDate) {
+		return takeExaminationsQuestionRepository.findLatestsByTakeExaminationDate(user, takeExaminationDate);
+	}
+
 	public Map<Question, SummaryByQuestion> summaryByUserAndQuestionCateogry(User user, QuestionCategory questionCategory) {
 		Map<Question, SummaryByQuestion> resultMap = new HashMap<>();
 

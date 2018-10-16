@@ -15,6 +15,7 @@
 					<th>dateTime</th>
 					<th> </th>
 					<th> </th>
+					<th> </th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,8 +26,9 @@
 					<td th:text="${#numbers.formatDecimal(takeExamination.getCorrectPercentage(), 0, 'COMMA', 2, 'POINT')}"/>
 					<td th:text="${takeExamination.getFormattedElapsedTime()}"/>
 					<td th:text="${takeExamination.createdDate}"/>
-					<td><a th:href = "@{/examinations/{id}/take_examination_list(id=${takeExamination.examination.id})}">Retake exam as list</a></td>
-					<td><a th:href = "@{/examinations/{id}/retake_examination_list_only_incorrect_answer(id=${takeExamination.id})}">Retake exam as list(incorrect only)</a></td>
+					<td><a th:href = "@{/examinations/{id}/take_examination_list_random(id=${takeExamination.examination.id})}">list(random)</a></td>
+					<td><a th:href = "@{/examinations/{id}/retake_examination_list_random_only_incorrect_answer(id=${takeExamination.id})}">list(random/incorrect only)</a></td>
+					<td><a th:href = "@{/examinations/{id}/take_examination_list_fill(id=${takeExamination.examination.id})}">list(fill)</a></td>
 				</tr>
 			</tbody>
 		</table>

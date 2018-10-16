@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_head::head('maintenance/users/users')"></head>
+<body>
+	<nav th:replace="_navbar::navbar('maintenance/users/users')"></nav>
+	<div class="container">
+		<h2>Fill Extraction Status</h2>
+		<form th:action="@{/maintenance/users/{id}/fill_extraction_status(id=${user.username})}" th:method="put" th:object="${form}">
+			<div class="form-group">
+				<label class="control-label">fill extraction date</label>
+				<div th:if="${fillExtractionCondition != null}" th:text="${fillExtractionCondition.extractionDate}"></div>
+			</div>
+			<button class="btn btn-default" type="submit">Update</button>
+		</form>
+	</div>
+</body>
+</html>
