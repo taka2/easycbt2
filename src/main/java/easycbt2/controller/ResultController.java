@@ -2,8 +2,6 @@ package easycbt2.controller;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +20,7 @@ import easycbt2.model.User;
 import easycbt2.service.QuestionCategoryService;
 import easycbt2.service.QuestionService;
 import easycbt2.service.TakeExaminationService;
+import easycbt2.service.TakeExaminationService.FillProgressByQuestionCategory;
 import easycbt2.service.TakeExaminationsQuestionService;
 import easycbt2.service.TakeExaminationsQuestionService.SummaryByQuestion;
 import easycbt2.service.UserService;
@@ -70,15 +69,18 @@ public class ResultController {
     public String summaryByQuestionCategory(Model model, Principal principal) throws IOException {
     	User user = userService.getLoginUser();
 
-    	Map<QuestionCategory, List<Question>> summaryByQuestionCategory = takeExaminationService.summaryByQuestionCategoryByUser(user);
-    	model.addAttribute("summaryByQuestionCategory", summaryByQuestionCategory);
-
-    	Map<QuestionCategory, Integer> questionCountByQuestionCategory = new HashMap<>();
-    	for(QuestionCategory questionCategory : summaryByQuestionCategory.keySet()) {
-    		questionCountByQuestionCategory.put(questionCategory, questionService.findByUserAndQuestionCategory(user, questionCategory).size());
-    	}
-    	model.addAttribute("questionCountByQuestionCategory", questionCountByQuestionCategory);
+//    	Map<QuestionCategory, List<Question>> summaryByQuestionCategory = takeExaminationService.summaryByQuestionCategoryByUser(user);
+//    	model.addAttribute("summaryByQuestionCategory", summaryByQuestionCategory);
+//
+//    	Map<QuestionCategory, Integer> questionCountByQuestionCategory = new HashMap<>();
+//    	for(QuestionCategory questionCategory : summaryByQuestionCategory.keySet()) {
+//    		questionCountByQuestionCategory.put(questionCategory, questionService.findByUserAndQuestionCategory(user, questionCategory).size());
+//    	}
+//    	model.addAttribute("questionCountByQuestionCategory", questionCountByQuestionCategory);
     	
+    	Map<QuestionCategory, FillProgressByQuestionCategory> fillProgress = takeExaminationService.getFillProgressByUser(user);
+    	model.addAttribute("fillProgress", fillProgress);
+
     	return "results/category_progress";
     }
     

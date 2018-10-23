@@ -19,14 +19,14 @@ public class TakeExaminationsQuestionService {
 	@Autowired
 	TakeExaminationsQuestionRepository takeExaminationsQuestionRepository;
 
-	public List<TakeExaminationsQuestion> findLatests(User user) {
-		return takeExaminationsQuestionRepository.findLatests(user);
-	}
-
 	public List<TakeExaminationsQuestion> findLatestsByTakeExaminationDate(User user, Date takeExaminationDate) {
 		return takeExaminationsQuestionRepository.findLatestsByTakeExaminationDate(user, takeExaminationDate);
 	}
 
+	public List<TakeExaminationsQuestion> findLatestsByQuestionCategoryAndTakeExaminationDate(User user, QuestionCategory questionCategory, Date takeExaminationDate) {
+		return takeExaminationsQuestionRepository.findLatestsByQuestionCategoryAndTakeExaminationDate(user, questionCategory, takeExaminationDate);
+	}
+	
 	public Map<Question, SummaryByQuestion> summaryByUserAndQuestionCateogry(User user, QuestionCategory questionCategory) {
 		Map<Question, SummaryByQuestion> resultMap = new HashMap<>();
 

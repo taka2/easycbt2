@@ -184,12 +184,8 @@ public class QuestionService {
 		
 		// Current Date
 		Instant instant = dateTimeService.getCurrentDateTime();
-		List<TakeExaminationsQuestion> takeExaminationsQuestions = null;
-		if(takeExaminationDate != null) {
-			takeExaminationsQuestions = takeExaminationsQuestionService.findLatestsByTakeExaminationDate(user, takeExaminationDate);
-		} else {
-			takeExaminationsQuestions = takeExaminationsQuestionService.findLatests(user);
-		}
+		List<TakeExaminationsQuestion> takeExaminationsQuestions = takeExaminationsQuestionService.findLatestsByTakeExaminationDate(user, takeExaminationDate);
+
 		for(TakeExaminationsQuestion takeExaminationsQuestion : takeExaminationsQuestions) {
 			if(!resultMap.containsKey(takeExaminationsQuestion.getQuestion())) {
 				continue;

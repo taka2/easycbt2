@@ -10,13 +10,23 @@
 					<th>key</th>
 					<th>all</th>
 					<th>done</th>
+					<th>undone</th>
+					<th>progress</th>
+					<th>latestCorrectCount</th>
+					<th>latestWrongCount</th>
+					<th>correctPercentage</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="instance,rowStat:*{summaryByQuestionCategory}">
+				<tr th:each="instance,rowStat:${fillProgress}">
 					<td><a th:href = "@{/results/categories/{id}(id=${instance.key.id})}" th:text="${instance.key.name}"></a></td>
-					<td th:text="${questionCountByQuestionCategory.get(instance.key)}"/>
-					<td th:text="${instance.value.size()}"/>
+					<td th:text="${instance.value.questionCount}"/>
+					<td th:text="${instance.value.getDoneCount()}"/>
+					<td th:text="${instance.value.getUndoneCount()}"/>
+					<td th:text="${#numbers.formatDecimal(instance.value.getProgress()*100, 0, 'COMMA', 2, 'POINT')}"/>
+					<td th:text="${instance.value.latestCorrectCount}"/>
+					<td th:text="${instance.value.latestWrongCount}"/>
+					<td th:text="${#numbers.formatDecimal(instance.value.getCorrectPercentage()*100, 0, 'COMMA', 2, 'POINT')}"/>
 				</tr>
 			</tbody>
 		</table>
