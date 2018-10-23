@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import easycbt2.form.TakeExaminationForm;
 import easycbt2.model.Examination;
-import easycbt2.model.FillExtractionCondition;
 import easycbt2.model.Question;
 import easycbt2.model.TakeExamination;
 import easycbt2.model.User;
@@ -88,12 +87,7 @@ public class ExaminationController {
     	}
     	form.setExamination(examinationService.findOne(id));
 
-    	FillExtractionCondition fillExtractionCondition = fillExtractionConditionService.findByUser(user);
-    	Date extractionDate = null;
-    	if(fillExtractionCondition != null) {
-    		extractionDate = fillExtractionCondition.getExtractionDate();
-    	}
-
+    	Date extractionDate = fillExtractionConditionService.findExtractionDateByUser(user);
     	List<Question> questions = questionService.findByUserAndExaminationWithRandomize(user, examination, false, extractionDate);
     	if(questions.size() == 0) {
     		return "redirect:/examinations";

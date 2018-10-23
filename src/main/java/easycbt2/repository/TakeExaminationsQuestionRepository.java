@@ -17,6 +17,9 @@ public interface TakeExaminationsQuestionRepository extends JpaRepository<TakeEx
 	@Query("select max(teq) from TakeExaminationsQuestion teq join teq.takeExamination te where te.user = ?1 and te.createdDate >= ?2 group by teq.question")
 	public List<TakeExaminationsQuestion> findLatestsByTakeExaminationDate(User user, Date takeExaminationDate);
 
+	@Query("select max(teq) from TakeExaminationsQuestion teq join teq.takeExamination te join teq.question q where te.user = ?1 and q.questionCategory = ?2 and te.createdDate >= ?3 group by teq.question")
+	public List<TakeExaminationsQuestion> findLatestsByQuestionCategoryAndTakeExaminationDate(User user, QuestionCategory questionCategory, Date takeExaminationDate);
+	
 	@Query("select teq from TakeExaminationsQuestion teq join teq.takeExamination te join teq.question q where te.user = ?1 AND q.questionCategory = ?2")
 	public List<TakeExaminationsQuestion> findByUserAndQuestionCategory(User user, QuestionCategory questionCategory);
 }

@@ -2,6 +2,7 @@ package easycbt2.service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,8 @@ public class TakeExaminationService {
 	ExaminationService examinationService;
 	@Autowired
 	QuestionService questionService;
+	@Autowired
+	FillExtractionConditionService fillExtractionConditionService;
 
 	@Transactional
 	public TakeExamination save(User user, Examination examination, List<Question> questions, List<String> answers, Instant startDateTime, Instant endDateTime) {
@@ -149,5 +152,95 @@ public class TakeExaminationService {
 		}
 		
 		return summary;
+	}
+	
+	/**
+	 * userが受けたFillモードの進捗をカテゴリごとに返す
+	 * @param user
+	 * @param questionCategory
+	 * @return userが受けたFillモードのカテゴリごとの進捗
+	 */
+	public Map<QuestionCategory, FillProgressByQuestionCategory> getFillProgressByUser(User user) {
+		Map<QuestionCategory, FillProgressByQuestionCategory> resultMap = new HashMap<>();
+
+		// 受講履歴の抽出日付
+		Date extractionDate = fillExtractionConditionService.findExtractionDateByUser(user);
+		
+		// 受講履歴のあるユーザごとのカテゴリー一覧を取得
+		List<QuestionCategory> questionCategoryList = takeExaminationRepository.findQuestionCategoryByUserOrderByNameAsc(user);
+		
+		for(QuestionCategory questionCategory : questionCategoryList) {
+			// 問題総数
+			Integer questionCount = questionService.findByUserAndQuestionCategory(user, questionCategory).size();
+			
+			// 直近の正解／不正解を取得する
+			List<TakeExaminationsQuestion> takeExaminationsQuestionList = takeExaminationsQuestionRepository.findLatestsByQuestionCategoryAndTakeExaminationDate(user, questionCategory, extractionDate);
+			int latestCorrectCount = 0;
+			int latestWrongCount = 0;
+			for(TakeExaminationsQuestion teq : takeExaminationsQuestionList) {
+				if(teq.isCorrect()) {
+					latestCorrectCount++;
+				} else {
+					latestWrongCount++;
+				}
+			}
+			
+			FillProgressByQuestionCategory result = new FillProgressByQuestionCategory();
+			result.setQuestionCategory(questionCategory);
+			result.setQuestionCount(questionCount);
+			result.setLatestCorrectCount(latestCorrectCount);
+			result.setLatestWrongCount(latestWrongCount);
+			resultMap.put(questionCategory, result);
+		}
+		
+		return resultMap;
+	}
+
+	public static class FillProgressByQuestionCategory {
+		private QuestionCategory questionCategory;
+		private int questionCount;
+		private int latestCorrectCount;
+		private int latestWrongCount;
+
+		public QuestionCategory getQuestionCategory() {
+			return questionCategory;
+		}
+		public void setQuestionCategory(QuestionCategory questionCategory) {
+			this.questionCategory = questionCategory;
+		}
+		public int getQuestionCount() {
+			return questionCount;
+		}
+		public void setQuestionCount(int questionCount) {
+			this.questionCount = questionCount;
+		}
+		public int getLatestCorrectCount() {
+			return latestCorrectCount;
+		}
+		public void setLatestCorrectCount(int latestCorrectCount) {
+			this.latestCorrectCount = latestCorrectCount;
+		}
+		public int getLatestWrongCount() {
+			return latestWrongCount;
+		}
+		public void setLatestWrongCount(int latestWrongCount) {
+			this.latestWrongCount = latestWrongCount;
+		}
+
+		public int getDoneCount() {
+			return getLatestCorrectCount() + getLatestWrongCount();
+		}
+		
+		public int getUndoneCount() {
+			return getQuestionCount() - getDoneCount();
+		}
+		
+		public double getProgress() {
+			return (double)getDoneCount() / getQuestionCount();
+		}
+		
+		public double getCorrectPercentage() {
+			return (double)getLatestCorrectCount() / getDoneCount();
+		}
 	}
 }
