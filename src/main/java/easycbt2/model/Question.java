@@ -40,13 +40,13 @@ public class Question {
 	private Long id;
 	@Enumerated(EnumType.STRING)
 	private QuestionType questionType;
-	@Column
+	@Column(length=1024)
 	private String text;
 	@ManyToOne
 	private QuestionCategory questionCategory;
-	@Column
+	@Column(length=1024)
 	private String defaultText;
-	@Column
+	@Column(length=1024)
 	private String explanation;
 	@Column
 	private Boolean enabled;
