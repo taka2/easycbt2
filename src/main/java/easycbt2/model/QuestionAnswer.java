@@ -30,7 +30,7 @@ public class QuestionAnswer {
 	private Long id;
 	@ManyToOne
 	private Question question;
-	@Column
+	@Column(length=1024)
 	@NotBlank
 	private String text;
 	@Column
