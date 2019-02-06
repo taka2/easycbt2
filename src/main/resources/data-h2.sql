@@ -38,9 +38,9 @@ INSERT INTO examinations_auth_public(examination_id) VALUES((select id from exam
 
 -- INSERT INTO examinations_auth_users(examination_id, user_username) VALUES((select id from examinations where text = 'Instant english writing training'), 'user1');
 
-INSERT INTO questions(question_type, text, question_category_id, enabled) VALUES('SINGLE_CHOICE', '次の構成のうち、最も可用性が高くなる構成はどれか？', (select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'), true);
-INSERT INTO questions(question_type, text, question_category_id, enabled) VALUES('MULTIPLE_CHOICE', '次のうち、利用者の責任で実施しなければいけないセキュリティ対策はどれか？2つ選べ。', (select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'), true);
-INSERT INTO questions(question_type, text, question_category_id, enabled) VALUES('TEXT', 'DNSを提供するサービスの名前は？', (select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'), true);
+INSERT INTO questions(question_type, text, question_category_id, explanation, enabled) VALUES('SINGLE_CHOICE', '次の構成のうち、最も可用性が高くなる構成はどれか？', (select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'), 'ELBは複数リージョンをまたげない（それが出来るのはRoute53）。複数のAZ（データセンター）に配置しないと負荷分散にならない。', true);
+INSERT INTO questions(question_type, text, question_category_id, explanation, enabled) VALUES('MULTIPLE_CHOICE', '次のうち、利用者の責任で実施しなければいけないセキュリティ対策はどれか？2つ選べ。', (select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'), '物理ディスクや、物理ホストの管理はAWSが行う。', true);
+INSERT INTO questions(question_type, text, question_category_id, explanation, enabled) VALUES('TEXT', 'DNSを提供するサービスの名前は？', (select id from question_categories where name = 'AWS-Certified-Solutions-Architect-Associate-JP'), 'DNSを提供するサービスはRoute53。', true);
 
 INSERT INTO questions_auth_public(question_id) VALUES((select id from questions where question_type = 'SINGLE_CHOICE'));
 INSERT INTO questions_auth_public(question_id) VALUES((select id from questions where question_type = 'MULTIPLE_CHOICE'));
