@@ -147,13 +147,13 @@ public class QuestionService {
 		for(Entry<Question, Long> anElement : list) {
 			weightedList.add(anElement.getKey());
 		}
-		
-		// Limit size
-		int indexTo = Math.min(weightedList.size(), examination.getQuestionCount());
-		weightedList = weightedList.subList(0, indexTo);
 
 		// Randomize
 		Collections.shuffle(weightedList);
+
+		// Limit size
+		int indexTo = Math.min(weightedList.size(), examination.getQuestionCount());
+		weightedList = weightedList.subList(0, indexTo);
 
 		return weightedList;
 	}
