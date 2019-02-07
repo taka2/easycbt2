@@ -8,12 +8,14 @@
 
 .background-0 {
   background-color: #FEFEFE;
-  #border-top: solid 0.5px #999999;
   border-bottom: solid 0.5px #999999;
 }
 
 .background-1 {
   background-color: #F8F8F8;
-  #border-top: solid 0.5px #999999;
   border-bottom: solid 0.5px #999999;
+}
+
+.retake_exam_cell {
+  padding-right: 10px;
 }

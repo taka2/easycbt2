@@ -26,6 +26,16 @@
 				<div th:text="${takeExaminationQuestion.question.explanation}"></div>
 			</div>
 		</div>
+
+		<div>
+			<table class = "retake_exam">
+				<tr>
+					<td class="retake_exam_cell"><a th:href = "@{/examinations/{id}/take_examination_list_random(id=${takeExamination.examination.id})}">list(random)</a></td>
+					<td class="retake_exam_cell"><a th:href = "@{/examinations/{id}/retake_examination_list_random_only_incorrect_answer(id=${takeExamination.id})}">list(random/incorrect only)</a></td>
+					<td class="retake_exam_cell"><a th:href = "@{/examinations/{id}/take_examination_list_fill(id=${takeExamination.examination.id})}">list(fill)</a></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 </body>
 </html>
