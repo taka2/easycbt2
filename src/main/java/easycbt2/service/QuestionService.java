@@ -16,6 +16,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import easycbt2.model.Examination;
@@ -90,6 +93,28 @@ public class QuestionService {
 
 		Collections.sort(resultList, Question.getIdComparator());
 		return resultList;
+	}
+
+	public Page<Question> findByUser(User user, Pageable pageable) {
+		//List<Question> resultList = new ArrayList<>();
+		Set<Question> resultSet = new HashSet<>();
+		
+		// List Public Questions
+		resultSet.addAll(questionsAuthPublicRepository.findQuestions());
+		
+		// List Questions restricted by user
+		resultSet.addAll(questionsAuthUsersRepository.findQuestionsByUser(user));
+		List<Question> resultList = new ArrayList<>(resultSet);
+
+		Collections.sort(resultList, Question.getIdComparator());
+		int fromIndex = pageable.getPageNumber() * pageable.getPageSize();
+		int toIndex = Math.min((pageable.getPageNumber()+1) * pageable.getPageSize(), resultList.size());
+		
+		return new PageImpl<Question>(
+			resultList.subList(fromIndex, toIndex)
+			, pageable
+			, resultList.size()
+		);
 	}
 
 	public Question findByIdAndUser(Long id, User user) {

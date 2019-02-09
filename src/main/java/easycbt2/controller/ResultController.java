@@ -1,7 +1,6 @@
 package easycbt2.controller;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ public class ResultController {
 	QuestionCategoryService questionCategoryService;
 
     @GetMapping
-    public String index(Model model, Principal principal, Pageable pageable) throws IOException {
+    public String index(Model model, Pageable pageable) throws IOException {
     	User user = userService.getLoginUser();
 
     	Page<TakeExamination> takeExaminations = takeExaminationService.findByUserOrderByIdDescWithPageable(user, pageable);
@@ -53,7 +52,7 @@ public class ResultController {
     }
 
     @GetMapping("{id}")
-    public String show(@PathVariable Long id, Model model, Principal principal) {
+    public String show(@PathVariable Long id, Model model) {
     	User user = userService.getLoginUser();
 
     	TakeExamination takeExamination = takeExaminationService.findByIdAndUser(id, user);
@@ -66,17 +65,8 @@ public class ResultController {
     }
 
     @GetMapping("category_progress")
-    public String summaryByQuestionCategory(Model model, Principal principal) throws IOException {
+    public String summaryByQuestionCategory(Model model) throws IOException {
     	User user = userService.getLoginUser();
-
-//    	Map<QuestionCategory, List<Question>> summaryByQuestionCategory = takeExaminationService.summaryByQuestionCategoryByUser(user);
-//    	model.addAttribute("summaryByQuestionCategory", summaryByQuestionCategory);
-//
-//    	Map<QuestionCategory, Integer> questionCountByQuestionCategory = new HashMap<>();
-//    	for(QuestionCategory questionCategory : summaryByQuestionCategory.keySet()) {
-//    		questionCountByQuestionCategory.put(questionCategory, questionService.findByUserAndQuestionCategory(user, questionCategory).size());
-//    	}
-//    	model.addAttribute("questionCountByQuestionCategory", questionCountByQuestionCategory);
     	
     	Map<QuestionCategory, FillProgressByQuestionCategory> fillProgress = takeExaminationService.getFillProgressByUser(user);
     	model.addAttribute("fillProgress", fillProgress);
@@ -85,7 +75,7 @@ public class ResultController {
     }
     
     @GetMapping("categories/{id}")
-    public String indexByQuestionCategory(@PathVariable Long id, Model model, Principal principal) throws IOException {
+    public String indexByQuestionCategory(@PathVariable Long id, Model model) throws IOException {
     	User user = userService.getLoginUser();
 
     	QuestionCategory questionCategory = questionCategoryService.findByIdAndUser(id, user);
