@@ -37,6 +37,24 @@
 				</tr>
 			</tbody>
 		</table>
+        <div th:fragment='paginationbar'>
+            <ul>
+                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+                    <span th:if="${page.first}">&lt;&lt;</span>
+                    <a th:if="${not page.first}" th:href="@{${url}(page=0)}">&lt;&lt;</a>
+                </li>
+                <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
+                    <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
+                    <a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+                        <span th:text='${i+1}'>1</span>
+                    </a>
+                </li>
+                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+                    <span th:if="${page.last}">&gt;&gt;</span>
+                    <a th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">&gt;&gt;</a>
+                </li>
+            </ul>
+        </div>
 		<div>
 			<a class="btn btn-default" th:href="@{/maintenance/questions/new_choice}">New(Choice)</a>
 			<a class="btn btn-default" th:href="@{/maintenance/questions/new_text}">New(Text)</a>

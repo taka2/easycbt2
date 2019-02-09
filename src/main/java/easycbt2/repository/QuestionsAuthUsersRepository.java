@@ -2,6 +2,8 @@ package easycbt2.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,6 +17,9 @@ public interface QuestionsAuthUsersRepository extends JpaRepository<QuestionsAut
 
 	@Query("select distinct q from QuestionsAuthUsers qau join qau.question q where q.enabled = true AND qau.user = ?1")
 	public List<Question> findQuestionsByUser(User user);
+
+	@Query("select distinct q from QuestionsAuthUsers qau join qau.question q where q.enabled = true AND qau.user = ?1")
+	public Page<Question> findQuestionsByUser(User user, Pageable pageable);
 
 	@Query("select distinct q from QuestionsAuthUsers qau join qau.question q join ExaminationsCategories ec on ec.questionCategory = q.questionCategory where q.enabled = true and qau.user = ?1 and ec.examination = ?2")
 	public List<Question> findQuestionsByUserAndExamination(User user, Examination examination);
