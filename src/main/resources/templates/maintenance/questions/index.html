@@ -5,38 +5,41 @@
 	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
 		<h2>Questions</h2>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>id</th>
-					<th>questionType</th>
-					<th>text</th>
-					<th>questionCategory</th>
-					<th>defaultText</th>
-					<th>explanation</th>
-					<th></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="question:${questions}" th:object="${question}">
-					<td th:text="*{id}"></td>
-					<td th:text="*{questionType.getString()}"></td>
-					<td th:text="*{text}"></td>
-					<td th:text="*{questionCategory.name}"></td>
-					<td th:text="*{defaultText}"></td>
-					<td th:text="*{explanation}"></td>
-					<td>
-						<a th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" class="btn btn-default btn-xs" th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">Edit</a>
-					</td>
-					<td>
-						<form th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
-							<input class="btn btn-default btn-xs" type="submit" value="Delete" />
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>id</th>
+						<th>questionType</th>
+						<th>text</th>
+						<th>questionCategory</th>
+						<th>defaultText</th>
+						<th>explanation</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="question:${questions}" th:object="${question}">
+						<td style="width:5%" th:text="*{id}"></td>
+						<td style="width:10%" th:text="*{questionType.getString()}"></td>
+						<td style="width:20%" th:text="*{#stringhelper.substring(text, 0, 100)}"></td>
+						<td style="width:15%" th:text="*{questionCategory.name}"></td>
+						<td style="width:20%" th:text="*{#stringhelper.substring(defaultText, 0, 100)}"></td>
+						<td style="width:20%" th:text="*{#stringhelper.substring(explanation, 0, 100)}"></td>
+						<td style="width:5%">
+							<a th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" class="btn btn-default btn-xs" th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">Edit</a>
+						</td>
+						<td style="width:5%">
+							<form th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
+								<input class="btn btn-default btn-xs" type="submit" value="Delete" />
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
         <div th:fragment='paginationbar'>
             <ul>
                 <li th:class="${page.first} ? 'disabled':''" style="display:inline">

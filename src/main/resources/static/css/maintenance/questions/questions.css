@@ -10,3 +10,7 @@
 .error-message {
 	color: red;
 }
+
+table td {
+	word-break : break-all;
+}
