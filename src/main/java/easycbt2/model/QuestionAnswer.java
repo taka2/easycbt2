@@ -21,6 +21,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @EntityListeners(value = AuditingEntityListener.class)
 @Table(name="questions_answers")
@@ -29,6 +31,7 @@ public class QuestionAnswer {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne
+	@JsonBackReference
 	private Question question;
 	@Column(length=1024)
 	@NotBlank
