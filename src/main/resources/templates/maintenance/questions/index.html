@@ -5,59 +5,12 @@
 	<nav th:replace="_navbar::navbar('maintenance/questions/questions')"></nav>
 	<div class="container">
 		<h2>Questions</h2>
-		<div class="table-responsive">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>id</th>
-						<th>questionType</th>
-						<th>text</th>
-						<th>questionCategory</th>
-						<th>defaultText</th>
-						<th>explanation</th>
-						<th></th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="question:${questions}" th:object="${question}">
-						<td style="width:5%" th:text="*{id}"></td>
-						<td style="width:10%" th:text="*{questionType.getString()}"></td>
-						<td style="width:20%" th:text="*{#stringhelper.substring(text, 0, 100)}"></td>
-						<td style="width:15%" th:text="*{questionCategory.name}"></td>
-						<td style="width:20%" th:text="*{#stringhelper.substring(defaultText, 0, 100)}"></td>
-						<td style="width:20%" th:text="*{#stringhelper.substring(explanation, 0, 100)}"></td>
-						<td style="width:5%">
-							<a th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" class="btn btn-default btn-xs" th:href="@{/maintenance/questions/{id}/edit(id=*{id})}">Edit</a>
-						</td>
-						<td style="width:5%">
-							<form th:if="${#authorization.expression('hasRole(''ADMIN'')') || #authentication.getPrincipal().getUsername() == question.createdBy}" th:action="@{/maintenance/questions/{id}(id=*{id})}" th:method="delete">
-								<input class="btn btn-default btn-xs" type="submit" value="Delete" />
-							</form>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 
-        <div th:fragment='paginationbar'>
-            <ul>
-                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
-                    <span th:if="${page.first}">&lt;&lt;</span>
-                    <a th:if="${not page.first}" th:href="@{${url}(page=0)}">&lt;&lt;</a>
-                </li>
-                <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
-                    <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
-                    <a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
-                        <span th:text='${i+1}'>1</span>
-                    </a>
-                </li>
-                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
-                    <span th:if="${page.last}">&gt;&gt;</span>
-                    <a th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">&gt;&gt;</a>
-                </li>
-            </ul>
-        </div>
+	    <div class="table-controls">	
+	        <span><label>Filter: </label> <input id="filter-value" type="text" placeholder="value to filter"></span>
+	    </div>
+		<div id="example-table"></div>
+
 		<div>
 			<a class="btn btn-default" th:href="@{/maintenance/questions/new_choice}">New(Choice)</a>
 			<a class="btn btn-default" th:href="@{/maintenance/questions/new_text}">New(Text)</a>

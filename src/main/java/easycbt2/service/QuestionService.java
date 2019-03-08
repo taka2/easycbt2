@@ -96,7 +96,6 @@ public class QuestionService {
 	}
 
 	public Page<Question> findByUser(User user, Pageable pageable) {
-		//List<Question> resultList = new ArrayList<>();
 		Set<Question> resultSet = new HashSet<>();
 		
 		// List Public Questions

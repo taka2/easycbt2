@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -31,6 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/image/**", "/css/**", "/js/**", "/", "/index", "/error", "/maintenance/admin/register_admin")
 				.permitAll()
 				.anyRequest().authenticated()
+				.and()
+			.csrf()
+				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 				.and()
 			.formLogin()
 				.successHandler(new AuthenticationSuccessHandler() {
